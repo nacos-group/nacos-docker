@@ -1,0 +1,94 @@
+version: "2"
+services:
+  nacos1:
+    hostname: nacos1
+    container_name: nacos1
+    image: paderlol/nacos:dev
+    volumes:
+    - ./logs:/home/nacos/logs
+    ports:
+    - "8848:8848"
+    - "9555:9555"
+    environment:
+    - PREFER_HOST_MODE=hostname
+    - NACOS_SERVERS=nacos1:8848 nacos2:8848 nacos3:8848
+    - DB_HOST_ZERO=mysql1
+    - DB_NAME_ZERO=nacos_devtest
+    - DB_PORT_ZERO=3306
+    - DB_HOST_ONE=mysql2
+    - DB_NAME_ONE=nacos_devtest
+    - DB_PORT_ONE=3306
+    - DB_USER=nacos
+    - DB_PASSWORD=nacos
+    restart: always
+    depends_on:
+    - mysql1
+    - mysql2
+
+  nacos2:
+    hostname: nacos2
+    image: paderlol/nacos:dev
+    container_name: nacos2
+    ports:
+    - "8849:8848"
+    environment:
+    - PREFER_HOST_MODE=hostname
+    - NACOS_SERVERS=nacos1:8848 nacos2:8848 nacos3:8848
+    - DB_HOST_ZERO=mysql1
+    - DB_NAME_ZERO=nacos_devtest
+    - DB_PORT_ZERO=3306
+    - DB_HOST_ONE=mysql2
+    - DB_NAME_ONE=nacos_devtest
+    - DB_PORT_ONE=3306
+    - DB_USER=nacos
+    - DB_PASSWORD=nacos
+    restart: always
+    depends_on:
+    - mysql1
+    - mysql2
+  nacos3:
+    hostname: nacos3
+    image: paderlol/nacos:dev
+    container_name: nacos3
+    ports:
+    - "8850:8848"
+    environment:
+    - PREFER_HOST_MODE=hostname
+    - NACOS_SERVERS=nacos1:8848 nacos2:8848 nacos3:8848
+    - DB_HOST_ZERO=mysql1
+    - DB_NAME_ZERO=nacos_devtest
+    - DB_PORT_ZERO=3306
+    - DB_HOST_ONE=mysql2
+    - DB_NAME_ONE=nacos_devtest
+    - DB_PORT_ONE=3306
+    - DB_USER=nacos
+    - DB_PASSWORD=nacos
+    restart: always
+    depends_on:
+    - mysql1
+    - mysql2
+  mysql1:
+    container_name: mysql1
+    image: mysql:5.7
+    environment:
+    - MYSQL_ROOT_PASSWORD=root
+    - MYSQL_DATABASE=nacos_devtest
+    - MYSQL_USER=nacos
+    - MYSQL_PASSWORD=nacos
+    volumes:
+    - ./mysql:/var/lib/mysql
+    - ./initdb:/docker-entrypoint-initdb.d
+    ports:
+    - "3306:3306"
+  mysql2:
+    container_name: mysql2
+    image: mysql:5.7
+    environment:
+    - MYSQL_ROOT_PASSWORD=root
+    - MYSQL_DATABASE=nacos_devtest
+    - MYSQL_USER=nacos
+    - MYSQL_PASSWORD=nacos
+    volumes:
+      - ./initdb:/docker-entrypoint-initdb.d
+    ports:
+    - "3305:3306"
