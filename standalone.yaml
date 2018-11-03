@@ -7,6 +7,6 @@ services:
     - PREFER_HOST_MODE=hostname
     - MODE=standalone
     volumes:
-    - /Users/zhanglong/Dowloads/nacos/logs:/home/nacos/logs
+    - ./logs:/home/nacos/logs
     ports:
     - "8848:8848"
