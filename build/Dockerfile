@@ -20,7 +20,7 @@ RUN apk add -U tzdata \
 
 # set startup log dir
 RUN mkdir logs \
-	&& cd logs \
+	&& cd logs \cd ..
 	&& touch start.log \
 	&& ln -sf /dev/stdout $BASE_DIR/logs/start.log \
 	&& ln -sf /dev/stderr $BASE_DIR/logs/start.log
