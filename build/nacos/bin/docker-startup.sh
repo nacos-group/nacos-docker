@@ -34,4 +34,5 @@ JAVA_OPT="${JAVA_OPT} ${JAVA_OPT_EXT}"
 JAVA_OPT="${JAVA_OPT} --spring.config.location=${CUSTOM_SEARCH_LOCATIONS}"
 JAVA_OPT="${JAVA_OPT} --logging.config=${BASE_DIR}/conf/nacos-logback.xml"
 
-nohup $JAVA ${JAVA_OPT} > ${BASE_DIR}/logs/start.log  
+echo "nacos is starting"
+nohup $JAVA ${JAVA_OPT} > ${BASE_DIR}/logs/start.log 2>&1 < /dev/null
