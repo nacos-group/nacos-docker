@@ -7,9 +7,9 @@
 ### 项目目录
 
 * build：nacos 镜像制作的源码,目前里面存放的是dev分支的jar
-* initdb：nacos集群SQL脚本
+* env: 镜像运行环境变量文件
 * logs: nacos 运行日志挂载的卷
-* mysql:docker mysql 运行挂载卷
+* mysql: docker mysql-master 运行挂载卷
 
 ### 运行环境
 

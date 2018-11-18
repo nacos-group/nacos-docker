@@ -1,7 +1,7 @@
 version: "2"
 services:
   nacos1:
-    image: paderlol/nacos:0.3.0
+    image: paderlol/nacos:0.4.0
     container_name: nacos1
     networks:
       nacos_net:
@@ -11,96 +11,67 @@ services:
     ports:
     - "8848:8848"
     - "9555:9555"
-    environment:
-    - NACOS_SERVERS=172.16.238.10:8848 172.16.238.11:8848 172.16.238.12:8848
-    - DB_HOST_ZERO=172.16.238.13
-    - DB_NAME_ZERO=nacos_devtest
-    - DB_PORT_ZERO=3306
-    - DB_HOST_ONE=172.16.238.14
-    - DB_NAME_ONE=nacos_devtest
-    - DB_PORT_ONE=3306
-    - DB_USER=nacos
-    - DB_PASSWORD=nacos
+    env_file:
+      - ./env/nacos-release.env
     restart: always
     depends_on:
-    - mysql1
-    - mysql2
+    - mysql-master
+    - mysql-slave
 
   nacos2:
-    image: paderlol/nacos:0.3.0
+    image: paderlol/nacos:0.4.0
     container_name: nacos2
     networks:
       nacos_net:
         ipv4_address: 172.16.238.11
     ports:
     - "8849:8848"
-    environment:
-    - NACOS_SERVERS=172.16.238.10:8848 172.16.238.11:8848 172.16.238.12:8848
-    - DB_HOST_ZERO=172.16.238.13
-    - DB_NAME_ZERO=nacos_devtest
-    - DB_PORT_ZERO=3306
-    - DB_HOST_ONE=172.16.238.14
-    - DB_NAME_ONE=nacos_devtest
-    - DB_PORT_ONE=3306
-    - DB_USER=nacos
-    - DB_PASSWORD=nacos
+    env_file:
+      - ./env/nacos-release.env
     restart: always
     depends_on:
-    - mysql1
-    - mysql2
+    - mysql-master
+    - mysql-slave
   nacos3:
-    image: paderlol/nacos:0.3.0
+    image: paderlol/nacos:0.4.0
     container_name: nacos3
     networks:
       nacos_net:
         ipv4_address: 172.16.238.12
     ports:
     - "8850:8848"
-    environment:
-    - NACOS_SERVERS=172.16.238.10:8848 172.16.238.11:8848 172.16.238.12:8848
-    - DB_HOST_ZERO=172.16.238.13
-    - DB_NAME_ZERO=nacos_devtest
-    - DB_PORT_ZERO=3306
-    - DB_HOST_ONE=172.16.238.14
-    - DB_NAME_ONE=nacos_devtest
-    - DB_PORT_ONE=3306
-    - DB_USER=nacos
-    - DB_PASSWORD=nacos
+    env_file:
+      - ./env/nacos-release.env
     restart: always
     depends_on:
-    - mysql1
-    - mysql2
-  mysql1:
-    container_name: mysql1
-    image: mysql:5.7
+    - mysql-master
+    - mysql-slave
+  mysql-master:
+    container_name: mysql-master
+    image: paderlol/nacos-mysql-master:latest
     networks:
       nacos_net:
         ipv4_address: 172.16.238.13
-    environment:
-    - MYSQL_ROOT_PASSWORD=root
-    - MYSQL_DATABASE=nacos_devtest
-    - MYSQL_USER=nacos
-    - MYSQL_PASSWORD=nacos
+    env_file:
+      - ./env/mysql-common.env
+      - ./env/mysql-master.env
     volumes:
     - ./mysql:/var/lib/mysql
-    - ./initdb:/docker-entrypoint-initdb.d
     ports:
     - "3306:3306"
-  mysql2:
-    container_name: mysql2
-    image: mysql:5.7
+  mysql-slave:
+    container_name: mysql-slave
+    image: paderlol/nacos-mysql-slave:latest
     networks:
       nacos_net:
         ipv4_address: 172.16.238.14
-    environment:
-    - MYSQL_ROOT_PASSWORD=root
-    - MYSQL_DATABASE=nacos_devtest
-    - MYSQL_USER=nacos
-    - MYSQL_PASSWORD=nacos
-    volumes:
-    - ./initdb:/docker-entrypoint-initdb.d
+    env_file:
+      - ./env/mysql-common.env
+      - ./env/mysql-slave.env
     ports:
     - "3305:3306"
+    depends_on:
+      - mysql-master
 networks:
   nacos_net:
     driver: bridge
