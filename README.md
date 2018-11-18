@@ -20,7 +20,7 @@
 ### 注意事项
 
 1. 如果想体验目前的nacos server release版本**集群**,请执行docker-compose 指定**cluster-release.yaml**运行,体验dev请运行**cluster-dev.yaml**,dev和release版本的唯一区别是在集群运行时增加了集群节点主机名的解析,不用再docker配置中要指定IP了.其他并无太大区别.
-2. 更改release版本号,配置文件中默认的**paderlol/nacos:dev** ->paderlol/nacos:**版本号**,如0.1.0、0.2.0，0.3.0,或者直接去[docker镜像](https://hub.docker.com/r/paderlol/nacos/)仓库查看版本
+2. 更改release版本号,配置文件中默认的**paderlol/nacos:dev** ->paderlol/nacos:**版本号**,如0.1.0、0.2.0，0.3.0,0.4.0或者直接去[docker镜像](https://hub.docker.com/r/paderlol/nacos/)仓库查看版本
 
 
 
