@@ -13,8 +13,8 @@ This project contains a Docker image meant to facilitate the deployment of [Naco
 
 ## Precautions
 > The cluster configuration domain name resolution is not supported until version 0.5.0 of Nacos
-1. When the Nacos version is below 0.5.0, use the **cluster-ip.yaml** file when executing the docker-compose command
-2. When the Nacos 0.5.0 or later, use either **cluster-hostname.yaml** or **cluster-ip.yaml**  in the execution of the docker-composer command
+1. When the Nacos version is below 0.5.0, You can use **cluster-ip.yaml**  when you execute the docker-compose command
+2. When Nacos version 0.5.0 or higher, You can use either **cluster-hostname.yaml** or **cluster-ip.yaml** when you execute the docker-compose command
 
 
 
