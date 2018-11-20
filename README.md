@@ -1,34 +1,28 @@
-### 简介
+# Nacos Docker
 
-本项目是 [Nacos](https://github.com/alibaba/nacos) Server的docker镜像的build源码,以及Nacos server 在docker的单机和集群的运行例子.
-
-
-
-### 项目目录
-
-* build：nacos 镜像制作的源码,目前里面存放的是最新0.5.0的jar
-* env: 镜像运行环境变量文件
-* logs: nacos 运行日志挂载的卷
-* mysql: docker mysql-master 运行挂载卷
-
-### 运行环境
-
-* [Docker](https://www.docker.com/)
+This project contains a Docker image meant to facilitate the deployment of [Nacos](https://github.com/alibaba/nacos) 
+.
 
 
 
-### 注意事项
-> nacos 0.5.0 开始才支持集群配置域名解析,所以需要集群使用需要注意以下事项
-1. Nacos server 低于0.5.0版本,执行docker-compose 指定**cluster-ip.yaml**运行.
-2. Nacos server 0.5.0或者更高版本集群,执行docker-compose 指定**cluster-hostname.yaml**或者**cluster-ip.yaml**运行都可以
+## Project directory
+
+* build：Nacos makes the source code of the docker image
+* env: Environment variable file for compose yaml
+
+
+## Precautions
+> The cluster configuration domain name resolution is not supported until version 0.5.0 of Nacos
+1. When the Nacos version is below 0.5.0, use the **cluster-ip.yaml** file when executing the docker-compose command
+2. When the Nacos 0.5.0 or later, use either **cluster-hostname.yaml** or **cluster-ip.yaml**  in the execution of the docker-composer command
 
 
 
-### 使用方法
+## Quick Start
 
-打开命令窗口执行：
+Run the following command：
 
-* Clone 项目 并且进入项目根目录
+* Clone project
 
   ```powershell
   git clone https://github.com/paderlol/nacos-docker.git
@@ -36,31 +30,31 @@
   ```
 
 
-* 单机
+* Stand-alone
 
   ```powershell
   docker-compose -f standalone.yaml up
   ```
 
-* 集群
+* Cluster
 
   ```powershell
   docker-compose -f cluster-hostname.yaml up 
   ```
 
 
-* 注册服务
+* Service registration
 
   ```powershell
   curl -X PUT 'http://127.0.0.1:8848/nacos/v1/ns/instance?serviceName=nacos.naming.serviceName&ip=20.18.7.10&port=8080'
   ```
 
-* 注册配置
+* Publish config
 
   ```powershell
   curl -X POST "http://127.0.0.1:8848/nacos/v1/cs/configs?dataId=nacos.cfg.dataId&group=test&content=helloWorld"
   ```
 
-* 访问控制台
+* Open the Nacos console in your browser
 
-  浏览器访问：http://127.0.0.1:8848/nacos/
+  link：http://127.0.0.1:8848/nacos/
