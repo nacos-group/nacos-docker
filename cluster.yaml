@@ -3,7 +3,7 @@ services:
   nacos1:
     hostname: nacos1
     container_name: nacos1
-    image: paderlol/nacos:dev
+    image: paderlol/nacos:0.5.0
     volumes:
     - ./logs:/home/nacos/logs
     ports:
@@ -18,7 +18,7 @@ services:
 
   nacos2:
     hostname: nacos2
-    image: paderlol/nacos:dev
+    image: paderlol/nacos:0.5.0
     container_name: nacos2
     ports:
     - "8849:8848"
@@ -30,7 +30,7 @@ services:
     - mysql-slave
   nacos3:
     hostname: nacos3
-    image: paderlol/nacos:dev
+    image: paderlol/nacos:0.5.0
     container_name: nacos3
     ports:
     - "8850:8848"
