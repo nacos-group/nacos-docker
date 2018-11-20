@@ -6,7 +6,7 @@
 
 ### 项目目录
 
-* build：nacos 镜像制作的源码,目前里面存放的是dev分支的jar
+* build：nacos 镜像制作的源码,目前里面存放的是最新0.5.0的jar
 * env: 镜像运行环境变量文件
 * logs: nacos 运行日志挂载的卷
 * mysql: docker mysql-master 运行挂载卷
@@ -18,9 +18,9 @@
 
 
 ### 注意事项
-
-1. 如果想体验目前的nacos server release版本**集群**,请执行docker-compose 指定**cluster-release.yaml**运行,体验dev请运行**cluster-dev.yaml**,dev和release版本的唯一区别是在集群运行时增加了集群节点主机名的解析,不用再docker配置中要指定IP了.其他并无太大区别.
-2. 更改release版本号,配置文件中默认的**paderlol/nacos:dev** ->paderlol/nacos:**版本号**,如0.1.0、0.2.0，0.3.0,0.4.0或者直接去[docker镜像](https://hub.docker.com/r/paderlol/nacos/)仓库查看版本
+> nacos 0.5.0 开始才支持集群配置域名解析,所以需要集群使用需要注意以下事项
+1. Nacos server 低于0.5.0版本,执行docker-compose 指定**cluster-ip.yaml**运行.
+2. Nacos server 0.5.0或者更高版本集群,执行docker-compose 指定**cluster-hostname.yaml**或者**cluster-ip.yaml**运行都可以
 
 
 
@@ -45,7 +45,7 @@
 * 集群
 
   ```powershell
-  docker-compose -f cluster.yaml up 
+  docker-compose -f cluster-hostname.yaml up 
   ```
 
 
