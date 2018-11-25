@@ -1,3 +1,5 @@
-version:0.3.0
-1.根据nacos startup 脚本更新 nacos docker startup 脚本
-2.替换build nacos server jar为最新0.5.0
+version:0.4.0
+1.修复单机启动内存数据库缺脚本异常问题
+2.替换nacos基础镜像为centos
+3.增加ping、curl、vim命令
+4.重新优化env文件命名

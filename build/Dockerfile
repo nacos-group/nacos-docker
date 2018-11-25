@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM centos:7.5.1804
 MAINTAINER pader "huangmnlove@163.com"
 
 # set environment
@@ -7,21 +7,19 @@ ENV MODE="cluster" \
     BASE_DIR="/home/nacos" \
     CLASSPATH=".:/home/nacos/conf:$CLASSPATH" \
     CLUSTER_CONF="/home/nacos/conf/cluster.conf" \
-    JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
-    JAVA="/usr/lib/jvm/java-8-openjdk-amd64/bin/java"
+    JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk" \
+    JAVA="/usr/lib/jvm/java-1.8.0-openjdk/bin/java"
 
 RUN set -x \
-    && apt-get update \
-    && apt-get install -y openjdk-8-jre-headless wget netcat-openbsd \
-    && apt-get autoremove -y wget \
-    && apt-get install -y tzdata \
+    && yum update -y \
+    && yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel wget iputils nc tzdata vim libcurl\
+    && yum autoremove -y wget \
     && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-    && rm -rf /var/lib/apt/lists/*
+    && yum clean all
 
 WORKDIR /home/nacos
 
 COPY nacos $BASE_DIR
-
 
 
 # set startup log dir
