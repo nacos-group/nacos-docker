@@ -11,7 +11,7 @@ ENV MODE="cluster" \
     NACOS_USER="nacos" \
     JAVA="/usr/lib/jvm/java-1.8.0-openjdk/bin/java"
 
-ARG NACOS_VERSION=0.6.0
+ARG NACOS_VERSION=0.5.0
 
 WORKDIR /$BASE_DIR
 
