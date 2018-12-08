@@ -1,7 +1,7 @@
 version: "2"
 services:
   nacos1:
-    image: paderlol/nacos:latest
+    image: nacos/nacos-server:latest
     container_name: nacos1
     networks:
       nacos_net:
@@ -19,7 +19,7 @@ services:
       - mysql-slave
 
   nacos2:
-    image: paderlol/nacos:latest
+    image: nacos/nacos-server:latest
     container_name: nacos2
     networks:
       nacos_net:
@@ -33,7 +33,7 @@ services:
       - mysql-master
       - mysql-slave
   nacos3:
-    image: paderlol/nacos:latest
+    image: nacos/nacos-server:latest
     container_name: nacos3
     networks:
       nacos_net:
@@ -48,7 +48,7 @@ services:
       - mysql-slave
   mysql-master:
     container_name: mysql-master
-    image: paderlol/nacos-mysql-master:latest
+    image: nacos/nacos-mysql-master:latest
     networks:
       nacos_net:
         ipv4_address: 172.16.238.13
@@ -61,7 +61,7 @@ services:
       - "3306:3306"
   mysql-slave:
     container_name: mysql-slave
-    image: paderlol/nacos-mysql-slave:latest
+    image: nacos/nacos-mysql-slave:latest
     networks:
       nacos_net:
         ipv4_address: 172.16.238.14

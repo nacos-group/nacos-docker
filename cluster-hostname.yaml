@@ -3,7 +3,7 @@ services:
   nacos1:
     hostname: nacos1
     container_name: nacos1
-    image: paderlol/nacos:latest
+    image: nacos/nacos-server:latest
     volumes:
       - ./cluster-logs/nacos1:/home/nacos/logs
     ports:
@@ -18,7 +18,7 @@ services:
 
   nacos2:
     hostname: nacos2
-    image: paderlol/nacos:latest
+    image: nacos/nacos-server:latest
     container_name: nacos2
     volumes:
       - ./cluster-logs/nacos2:/home/nacos/logs
@@ -32,7 +32,7 @@ services:
       - mysql-slave
   nacos3:
     hostname: nacos3
-    image: paderlol/nacos:latest
+    image: nacos/nacos-server:latest
     container_name: nacos3
     volumes:
       - ./cluster-logs/nacos3:/home/nacos/logs
@@ -46,7 +46,7 @@ services:
       - mysql-slave
   mysql-master:
     container_name: mysql-master
-    image: paderlol/nacos-mysql-master:latest
+    image: nacos/nacos-mysql-master:latest
     env_file:
       - ./env/mysql-common.env
       - ./env/mysql-master.env
@@ -56,7 +56,7 @@ services:
       - "3306:3306"
   mysql-slave:
     container_name: mysql-slave
-    image: paderlol/nacos-mysql-slave:latest
+    image: nacos/nacos-mysql-slave:latest
     env_file:
       - ./env/mysql-common.env
       - ./env/mysql-slave.env
