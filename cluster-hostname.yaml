@@ -5,62 +5,64 @@ services:
     container_name: nacos1
     image: paderlol/nacos:latest
     volumes:
-    - ./cluster-logs/nacos1:/home/nacos/logs
+      - ./cluster-logs/nacos1:/home/nacos/logs
     ports:
-    - "8848:8848"
-    - "9555:9555"
+      - "8848:8848"
+      - "9555:9555"
     env_file:
-    - ./env/nacos-hostname.env
-    restart: always
+      - ./env/nacos-hostname.env
+    restart: on-failure
     depends_on:
-    - mysql-master
-    - mysql-slave
+      - mysql-master
+      - mysql-slave
 
   nacos2:
     hostname: nacos2
     image: paderlol/nacos:latest
     container_name: nacos2
     volumes:
-    - ./cluster-logs/nacos2:/home/nacos/logs
+      - ./cluster-logs/nacos2:/home/nacos/logs
     ports:
-    - "8849:8848"
+      - "8849:8848"
     env_file:
-    - ./env/nacos-hostname.env
-    restart: always
+      - ./env/nacos-hostname.env
+    restart: on-failure
     depends_on:
-    - mysql-master
-    - mysql-slave
+      - mysql-master
+      - mysql-slave
   nacos3:
     hostname: nacos3
     image: paderlol/nacos:latest
     container_name: nacos3
     volumes:
-    - ./cluster-logs/nacos3:/home/nacos/logs
+      - ./cluster-logs/nacos3:/home/nacos/logs
     ports:
-    - "8850:8848"
+      - "8850:8848"
     env_file:
-    - ./env/nacos-hostname.env
-    restart: always
+      - ./env/nacos-hostname.env
+    restart: on-failure
     depends_on:
-    - mysql-master
-    - mysql-slave
+      - mysql-master
+      - mysql-slave
   mysql-master:
     container_name: mysql-master
     image: paderlol/nacos-mysql-master:latest
     env_file:
-    - ./env/mysql-common.env
-    - ./env/mysql-master.env
+      - ./env/mysql-common.env
+      - ./env/mysql-master.env
     volumes:
-    - ./mysql:/var/lib/mysql
+      - ./mysql-master:/var/lib/mysql
     ports:
-    - "3306:3306"
+      - "3306:3306"
   mysql-slave:
     container_name: mysql-slave
     image: paderlol/nacos-mysql-slave:latest
     env_file:
-    - ./env/mysql-common.env
-    - ./env/mysql-slave.env
+      - ./env/mysql-common.env
+      - ./env/mysql-slave.env
+    volumes:
+      - ./mysql-slave:/var/lib/mysql
     ports:
-    - "3305:3306"
+      - "3305:3306"
     depends_on:
-    - mysql-master
+      - mysql-master

@@ -1,5 +1,4 @@
-version:0.4.0
-1.修复单机启动内存数据库缺脚本异常问题
-2.替换nacos基础镜像为centos
-3.增加ping、curl、vim命令
-4.重新优化env文件命名
+version:0.6.0
+1.优化镜像构建脚本,通过自动下载最新源文件进行构建
+2.docker image 版本与nacos server版本保持一致
+3.构建最新nacos 0.6.0镜像
