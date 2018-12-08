@@ -1,7 +1,7 @@
 version: "2"
 services:
   nacos:
-    image: paderlol/nacos:latest
+    image: nacos/nacos-server:0.5.0
     container_name: nacos-standalone
     environment:
     - PREFER_HOST_MODE=hostname
