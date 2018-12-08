@@ -8,26 +8,36 @@ ENV MODE="cluster" \
     CLASSPATH=".:/home/nacos/conf:$CLASSPATH" \
     CLUSTER_CONF="/home/nacos/conf/cluster.conf" \
     JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk" \
+    NACOS_USER="nacos" \
     JAVA="/usr/lib/jvm/java-1.8.0-openjdk/bin/java"
+
+ARG NACOS_VERSION=0.6.0
+
+WORKDIR /$BASE_DIR
 
 RUN set -x \
     && yum update -y \
     && yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel wget iputils nc tzdata vim libcurl\
+    && wget  https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}/nacos-server-${NACOS_VERSION}.tar.gz -P /home \
+    && tar -xzvf /home/nacos-server-${NACOS_VERSION}.tar.gz -C /home \
+    && rm -rf /home/nacos-server-${NACOS_VERSION}.tar.gz /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql \
     && yum autoremove -y wget \
     && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && yum clean all
 
-WORKDIR /home/nacos
 
-COPY nacos $BASE_DIR
+
+
+ADD bin/docker-startup.sh bin/docker-startup.sh
+ADD conf/application.properties conf/application.properties
 
 
 # set startup log dir
 RUN mkdir -p logs \
 	&& cd logs \
 	&& touch start.out \
-	&& ln -sf /dev/stdout $BASE_DIR/logs/start.out \
-	&& ln -sf /dev/stderr $BASE_DIR/logs/start.out
+	&& ln -sf /dev/stdout start.out \
+	&& ln -sf /dev/stderr start.out
 RUN chmod +x bin/docker-startup.sh
 
 EXPOSE 8848
