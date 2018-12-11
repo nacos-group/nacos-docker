@@ -14,11 +14,17 @@
 set -x
 export DEFAULT_SEARCH_LOCATIONS="classpath:/,classpath:/config/,file:./,file:./config/"
 export CUSTOM_SEARCH_LOCATIONS=${DEFAULT_SEARCH_LOCATIONS},file:${BASE_DIR}/conf/
-
+PLUGINS_DIR="/home/nacos/plugins/peer-finder"
 function print_servers(){
-  for server in ${NACOS_SERVERS}; do
-       	 	echo "$server" >> "$CLUSTER_CONF"
-	done
+   if [[ ! -d "${PLUGINS_DIR}" ]]; then
+    echo "" > "$CLUSTER_CONF"
+    for server in ${NACOS_SERVERS}; do
+            echo "$server" >> "$CLUSTER_CONF"
+    done
+   else
+    bash $PLUGINS_DIR/plugin.sh
+   sleep 30
+	fi
 }
 #===========================================================================================
 # JVM Configuration
@@ -30,6 +36,7 @@ if [[ "${MODE}" == "standalone" ]]; then
 else
 
   JAVA_OPT="${JAVA_OPT} -server -Xms2g -Xmx2g -Xmn1g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m"
+  JAVA_OPT="${JAVA_OPT} -Xdebug -Xrunjdwp:transport=dt_socket,address=9555,server=y,suspend=n"
   JAVA_OPT="${JAVA_OPT} -XX:-OmitStackTraceInFastThrow -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${BASE_DIR}/logs/java_heapdump.hprof"
   JAVA_OPT="${JAVA_OPT} -XX:-UseLargePages"
   print_servers
