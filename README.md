@@ -31,10 +31,15 @@ Run the following command：
   ```
 
 
-* Stand-alone
+* Standalone Derby
 
   ```powershell
-  docker-compose -f example/standalone.yaml up
+  docker-compose -f example/standalone-derby.yaml up
+  ```
+* Standalone Mysql
+
+  ```powershell
+  docker-compose -f example/standalone-mysql.yaml up
   ```
 
 * Cluster
