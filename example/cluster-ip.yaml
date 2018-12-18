@@ -7,13 +7,13 @@ services:
       nacos_net:
         ipv4_address: 172.16.238.10
     volumes:
-      - ./logs:/home/nacos/logs
+      - ./cluster-logs/nacos1:/home/nacos/logs
     ports:
       - "8848:8848"
       - "9555:9555"
     env_file:
       - ../env/nacos-ip.env
-    restart: always
+    restart: on-failure
     depends_on:
       - mysql-master
       - mysql-slave
@@ -24,6 +24,8 @@ services:
     networks:
       nacos_net:
         ipv4_address: 172.16.238.11
+    volumes:
+      - ./cluster-logs/nacos2:/home/nacos/logs
     ports:
       - "8849:8848"
     env_file:
@@ -38,6 +40,8 @@ services:
     networks:
       nacos_net:
         ipv4_address: 172.16.238.12
+    volumes:
+      - ./cluster-logs/nacos2:/home/nacos/logs
     ports:
       - "8850:8848"
     env_file:
