@@ -1,4 +1,3 @@
-version:0.6.0
-1.优化镜像构建脚本,通过自动下载最新源文件进行构建
-2.docker image 版本与nacos server版本保持一致
-3.构建最新nacos 0.6.0镜像
+version:0.7.0
+1.构建nacos 0.7.0 最新镜像
+2.增加Mysql 单机编排支持
