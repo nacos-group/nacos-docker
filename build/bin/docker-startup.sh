@@ -14,7 +14,7 @@
 set -x
 export DEFAULT_SEARCH_LOCATIONS="classpath:/,classpath:/config/,file:./,file:./config/"
 export CUSTOM_SEARCH_LOCATIONS=${DEFAULT_SEARCH_LOCATIONS},file:${BASE_DIR}/conf/
-PLUGINS_DIR="/home/nacos/plugins/peer-finder"
+PLUGINS_DIRPLUGINS_DIR="/home/nacos/plugins/peer-finder"
 function print_servers(){
    if [[ ! -d "${PLUGINS_DIR}" ]]; then
     echo "" > "$CLUSTER_CONF"
@@ -46,6 +46,7 @@ JAVA_MAJOR_VERSION=$($JAVA -version 2>&1 | sed -E -n 's/.* version "([0-9]*).*$/
 if [[ "$JAVA_MAJOR_VERSION" -ge "9" ]] ; then
   JAVA_OPT="${JAVA_OPT} -Xlog:gc*:file=${BASE_DIR}/logs/nacos_gc.log:time,tags:filecount=10,filesize=102400"
 else
+  JAVA_OPT="${JAVA_OPT} -Djava.ext.dirs=${JAVA_HOME}/jre/lib/ext:${JAVA_HOME}/lib/ext:${BASE_DIR}/plugins/cmdb"
   JAVA_OPT="${JAVA_OPT} -Xloggc:${BASE_DIR}/logs/nacos_gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M"
 fi
 
