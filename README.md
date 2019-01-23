@@ -12,13 +12,6 @@ This project contains a Docker image meant to facilitate the deployment of [Naco
 * example: Docker compose example for Nacos server
 
 
-## Precautions
-> The cluster configuration domain name resolution is not supported until version 0.5.0 of Nacos
-1. When the Nacos version is below 0.5.0, You can use **cluster-ip.yaml**  when you execute the docker-compose command
-2. When Nacos version 0.5.0 or higher, You can use either **cluster-hostname.yaml** or **cluster-ip.yaml** when you execute the docker-compose command
-
-
-
 ## Quick Start
 
 Run the following command：
@@ -54,21 +47,47 @@ Run the following command：
   ```powershell
   curl -X PUT 'http://127.0.0.1:8848/nacos/v1/ns/instance?serviceName=nacos.naming.serviceName&ip=20.18.7.10&port=8080'
   ```
+
 * Service discovery
 
     ```powershell
     curl -X GET 'http://127.0.0.1:8848/nacos/v1/ns/instances?serviceName=nacos.naming.serviceName'
     ```
+
 * Publish config
 
   ```powershell
   curl -X POST "http://127.0.0.1:8848/nacos/v1/cs/configs?dataId=nacos.cfg.dataId&group=test&content=helloWorld"
   ```
+
 * Get config
 
   ```powershell
     curl -X GET "http://127.0.0.1:8848/nacos/v1/cs/configs?dataId=nacos.cfg.dataId&group=test"
   ```
-* Open the Nacos console in your browser
 
+  
+
+* Open the Nacos console in your browser
+  
   link：http://127.0.0.1:8848/nacos/
+
+
+
+
+## Common property configuration 
+
+| name                          | description                            | option                                 |
+| ----------------------------- | -------------------------------------- | -------------------------------------- |
+| MODE                          | cluster/standalone                     | cluster/standalone default **cluster** |
+| PREFER_HOST_MODE              | Whether hostname are supported         | hostname/ip default **ip**             |
+| NACOS_SERVER_PORT             | nacos server port                      | default **8848**                       |
+| SPRING_DATASOURCE_PLATFORM    | standalone support mysql               | mysql / empty default empty            |
+| MYSQL_MASTER_SERVICE_HOST     | mysql master host                      |                                        |
+| MYSQL_MASTER_SERVICE_PORT     | mysql master database port             | default : **3306**                     |
+| MYSQL_MASTER_SERVICE_DB_NAME  | mysql master database name             |                                        |
+| MYSQL_MASTER_SERVICE_USER     | username of master database            |                                        |
+| MYSQL_MASTER_SERVICE_PASSWORD | password of master database            |                                        |
+| MYSQL_SLAVE_SERVICE_HOST      | mysql slave host                       |                                        |
+| MYSQL_SLAVE_SERVICE_PORT      | mysql slave database port              | default :3306                          |
+
