@@ -1,2 +1,4 @@
 version:0.8.0
 1.构建nacos 0.8.0 最新镜像
+2.增加支持nacos prometheus+grafana例子
+3.增加自定义配置文件

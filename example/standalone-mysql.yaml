@@ -16,6 +16,7 @@ services:
       - MYSQL_MASTER_SERVICE_PASSWORD=nacos
     volumes:
       - ./standalone-logs/:/home/nacos/logs
+      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8848:8848"
       - "9555:9555"
@@ -44,3 +45,20 @@ services:
       - "3305:3306"
     depends_on:
       - mysql-master
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus-standalone.yaml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - nacos
+    restart: on-failure
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000
+    restart: on-failure
+

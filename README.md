@@ -1,8 +1,8 @@
 # Nacos Docker
 
-This project contains a Docker image meant to facilitate the deployment of [Nacos](https://github.com/alibaba/nacos) 
-.
+![Docker Pulls](https://img.shields.io/docker/pulls/nacos/nacos-server.svg?maxAge=604800)
 
+This project contains a Docker image meant to facilitate the deployment of [Nacos](https://github.com/alibaba/nacos).
 
 
 ## Project directory
@@ -91,3 +91,8 @@ Run the following command：
 | MYSQL_SLAVE_SERVICE_HOST      | mysql slave host                       |                                        |
 | MYSQL_SLAVE_SERVICE_PORT      | mysql slave database port              | default :3306                          |
 
+## Nacos + Grafana + Prometheus
+Usage reference：[Nacos monitor-guide](https://nacos.io/zh-cn/docs/monitor-guide.html)
+
+**Note**:  When Grafana creates a new data source, the data source address must be **http://prometheus:9090**
+ 
