@@ -6,6 +6,7 @@ services:
     image: nacos/nacos-server:latest
     volumes:
       - ./cluster-logs/nacos1:/home/nacos/logs
+      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8848:8848"
       - "9555:9555"
@@ -22,6 +23,7 @@ services:
     container_name: nacos2
     volumes:
       - ./cluster-logs/nacos2:/home/nacos/logs
+      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8849:8848"
     env_file:
@@ -36,6 +38,7 @@ services:
     container_name: nacos3
     volumes:
       - ./cluster-logs/nacos3:/home/nacos/logs
+      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8850:8848"
     env_file:
@@ -66,3 +69,21 @@ services:
       - "3305:3306"
     depends_on:
       - mysql-master
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus-cluster.yaml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - nacos1
+      - nacos2
+      - nacos3
+    restart: on-failure
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+        - 3000:3000
+    restart: on-failure

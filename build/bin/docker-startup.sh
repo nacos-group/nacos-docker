@@ -13,7 +13,8 @@
 # limitations under the License.
 set -x
 export DEFAULT_SEARCH_LOCATIONS="classpath:/,classpath:/config/,file:./,file:./config/"
-export CUSTOM_SEARCH_LOCATIONS=${DEFAULT_SEARCH_LOCATIONS},file:${BASE_DIR}/conf/
+export CUSTOM_SEARCH_LOCATIONS=${DEFAULT_SEARCH_LOCATIONS},file:${BASE_DIR}/conf/,${BASE_DIR}/init.d/
+export CUSTOM_SEARCH_NAMES="application,custom"
 PLUGINS_DIRPLUGINS_DIR="/home/nacos/plugins/peer-finder"
 function print_servers(){
    if [[ ! -d "${PLUGINS_DIR}" ]]; then
@@ -58,6 +59,7 @@ JAVA_OPT="${JAVA_OPT} -Dnacos.home=${BASE_DIR}"
 JAVA_OPT="${JAVA_OPT} -jar ${BASE_DIR}/target/nacos-server.jar"
 JAVA_OPT="${JAVA_OPT} ${JAVA_OPT_EXT}"
 JAVA_OPT="${JAVA_OPT} --spring.config.location=${CUSTOM_SEARCH_LOCATIONS}"
+JAVA_OPT="${JAVA_OPT} --spring.config.name=${CUSTOM_SEARCH_NAMES}"
 JAVA_OPT="${JAVA_OPT} --logging.config=${BASE_DIR}/conf/nacos-logback.xml"
 
 echo "nacos is starting,you can check the ${BASE_DIR}/logs/start.out"
