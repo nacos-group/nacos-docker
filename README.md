@@ -83,6 +83,7 @@ Run the following command：
 | PREFER_HOST_MODE              | Whether hostname are supported         | hostname/ip default **ip**             |
 | NACOS_SERVER_PORT             | nacos server port                      | default **8848**                       |
 | SPRING_DATASOURCE_PLATFORM    | standalone support mysql               | mysql / empty default empty            |
+| NACOS_SERVER_IP               | specify IP                             |             |
 | MYSQL_MASTER_SERVICE_HOST     | mysql master host                      |                                        |
 | MYSQL_MASTER_SERVICE_PORT     | mysql master database port             | default : **3306**                     |
 | MYSQL_MASTER_SERVICE_DB_NAME  | mysql master database name             |                                        |
