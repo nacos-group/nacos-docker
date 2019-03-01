@@ -16,7 +16,6 @@ export DEFAULT_SEARCH_LOCATIONS="classpath:/,classpath:/config/,file:./,file:./c
 export CUSTOM_SEARCH_LOCATIONS=${DEFAULT_SEARCH_LOCATIONS},file:${BASE_DIR}/conf/,${BASE_DIR}/init.d/
 export CUSTOM_SEARCH_NAMES="application,custom"
 PLUGINS_DIRPLUGINS_DIR="/home/nacos/plugins/peer-finder"
-
 function print_servers(){
    if [[ ! -d "${PLUGINS_DIR}" ]]; then
     echo "" > "$CLUSTER_CONF"
@@ -44,6 +43,36 @@ else
   print_servers
 fi
 
+#===========================================================================================
+# Setting system properties
+#===========================================================================================
+# set  mode that Nacos Server function of split
+if [[ "${FUNCTION_MODE}" == "config" ]]; then
+    JAVA_OPT="${JAVA_OPT} -Dnacos.functionMode=config"
+elif [[ "${FUNCTION_MODE}" == "naming" ]]; then
+    JAVA_OPT="${JAVA_OPT} -Dnacos.functionMode=naming"
+fi
+# set nacos server ip
+if [[ ! -z "${NACOS_SERVER_IP}" ]]; then
+    JAVA_OPT="${JAVA_OPT} -Dnacos.server.ip=${NACOS_SERVER_IP}"
+fi
+
+if [[ ! -z "${USE_ONLY_SITE_INTERFACES}" ]]; then
+    JAVA_OPT="${JAVA_OPT} -Dnacos.inetutils.use-only-site-local-interfaces=${USE_ONLY_SITE_INTERFACES}"
+fi
+
+if [[ ! -z "${PREFERRED_NETWORKS}" ]]; then
+    JAVA_OPT="${JAVA_OPT} -Dnacos.inetutils.preferred-networks=${PREFERRED_NETWORKS}"
+fi
+
+if [[ ! -z "${IGNORED_INTERFACES}" ]]; then
+    JAVA_OPT="${JAVA_OPT} -Dnacos.inetutils.ignored-interfaces=${IGNORED_INTERFACES}"
+fi
+
+if [[ "${PREFER_HOST_MODE}" == "hostname" ]]; then
+    JAVA_OPT="${JAVA_OPT} -Dnacos.preferHostnameOverIp=true"
+fi
+
 JAVA_MAJOR_VERSION=$($JAVA -version 2>&1 | sed -E -n 's/.* version "([0-9]*).*$/\1/p')
 if [[ "$JAVA_MAJOR_VERSION" -ge "9" ]] ; then
   JAVA_OPT="${JAVA_OPT} -Xlog:gc*:file=${BASE_DIR}/logs/nacos_gc.log:time,tags:filecount=10,filesize=102400"
@@ -52,9 +81,7 @@ else
   JAVA_OPT="${JAVA_OPT} -Xloggc:${BASE_DIR}/logs/nacos_gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M"
 fi
 
-if [[ "${PREFER_HOST_MODE}" == "hostname" ]]; then
-    JAVA_OPT="${JAVA_OPT} -Dnacos.preferHostnameOverIp=true"
-fi
+
 
 JAVA_OPT="${JAVA_OPT} -Dnacos.home=${BASE_DIR}"
 JAVA_OPT="${JAVA_OPT} -jar ${BASE_DIR}/target/nacos-server.jar"
