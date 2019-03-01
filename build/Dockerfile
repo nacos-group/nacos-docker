@@ -7,12 +7,13 @@ ENV MODE="cluster" \
     BASE_DIR="/home/nacos" \
     CLASSPATH=".:/home/nacos/conf:$CLASSPATH" \
     CLUSTER_CONF="/home/nacos/conf/cluster.conf" \
+    FUNCTION_MODE="all" \
     JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk" \
     NACOS_USER="nacos" \
     JAVA="/usr/lib/jvm/java-1.8.0-openjdk/bin/java" \
     TIME_ZONE="Asia/Shanghai"
 
-ARG NACOS_VERSION=0.8.0
+ARG NACOS_VERSION=0.9.0
 
 WORKDIR /$BASE_DIR
 
