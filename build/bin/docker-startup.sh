@@ -16,6 +16,7 @@ export DEFAULT_SEARCH_LOCATIONS="classpath:/,classpath:/config/,file:./,file:./c
 export CUSTOM_SEARCH_LOCATIONS=${DEFAULT_SEARCH_LOCATIONS},file:${BASE_DIR}/conf/,${BASE_DIR}/init.d/
 export CUSTOM_SEARCH_NAMES="application,custom"
 PLUGINS_DIR="/home/nacos/plugins/peer-finder"
+
 function print_servers(){
    if [[ ! -d "${PLUGINS_DIR}" ]]; then
     echo "" > "$CLUSTER_CONF"
