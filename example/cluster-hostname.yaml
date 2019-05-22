@@ -1,0 +1,89 @@
+version: "3"
+services:
+  nacos1:
+    hostname: nacos1
+    container_name: nacos1
+    image: nacos/nacos-server:latest
+    volumes:
+      - ./cluster-logs/nacos1:/home/nacos/logs
+      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
+    ports:
+      - "8848:8848"
+      - "9555:9555"
+    env_file:
+      - ../env/nacos-hostname.env
+    restart: on-failure
+    depends_on:
+      - mysql-master
+      - mysql-slave
+
+  nacos2:
+    hostname: nacos2
+    image: nacos/nacos-server:latest
+    container_name: nacos2
+    volumes:
+      - ./cluster-logs/nacos2:/home/nacos/logs
+      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
+    ports:
+      - "8849:8848"
+    env_file:
+      - ../env/nacos-hostname.env
+    restart: on-failure
+    depends_on:
+      - mysql-master
+      - mysql-slave
+  nacos3:
+    hostname: nacos3
+    image: nacos/nacos-server:latest
+    container_name: nacos3
+    volumes:
+      - ./cluster-logs/nacos3:/home/nacos/logs
+      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
+    ports:
+      - "8850:8848"
+    env_file:
+      - ../env/nacos-hostname.env
+    restart: on-failure
+    depends_on:
+      - mysql-master
+      - mysql-slave
+  mysql-master:
+    container_name: mysql-master
+    image: nacos/nacos-mysql-master:latest
+    env_file:
+      - ../env/mysql-common.env
+      - ../env/mysql-master.env
+    volumes:
+      - ./mysql-master:/var/lib/mysql
+    ports:
+      - "3306:3306"
+  mysql-slave:
+    container_name: mysql-slave
+    image: nacos/nacos-mysql-slave:latest
+    env_file:
+      - ../env/mysql-common.env
+      - ../env/mysql-slave.env
+    volumes:
+      - ./mysql-slave:/var/lib/mysql
+    ports:
+      - "3305:3306"
+    depends_on:
+      - mysql-master
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus-cluster.yaml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - nacos1
+      - nacos2
+      - nacos3
+    restart: on-failure
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+        - 3000:3000
+    restart: on-failure

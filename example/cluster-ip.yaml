@@ -1,0 +1,87 @@
+version: "2"
+services:
+  nacos1:
+    image: nacos/nacos-server:latest
+    container_name: nacos1
+    networks:
+      nacos_net:
+        ipv4_address: 172.16.238.10
+    volumes:
+      - ./cluster-logs/nacos1:/home/nacos/logs
+    ports:
+      - "8848:8848"
+      - "9555:9555"
+    env_file:
+      - ../env/nacos-ip.env
+    restart: on-failure
+    depends_on:
+      - mysql-master
+      - mysql-slave
+
+  nacos2:
+    image: nacos/nacos-server:latest
+    container_name: nacos2
+    networks:
+      nacos_net:
+        ipv4_address: 172.16.238.11
+    volumes:
+      - ./cluster-logs/nacos2:/home/nacos/logs
+    ports:
+      - "8849:8848"
+    env_file:
+      - ../env/nacos-ip.env
+    restart: always
+    depends_on:
+      - mysql-master
+      - mysql-slave
+  nacos3:
+    image: nacos/nacos-server:latest
+    container_name: nacos3
+    networks:
+      nacos_net:
+        ipv4_address: 172.16.238.12
+    volumes:
+      - ./cluster-logs/nacos2:/home/nacos/logs
+    ports:
+      - "8850:8848"
+    env_file:
+      - ../env/nacos-ip.env
+    restart: always
+    depends_on:
+      - mysql-master
+      - mysql-slave
+  mysql-master:
+    container_name: mysql-master
+    image: nacos/nacos-mysql-master:latest
+    networks:
+      nacos_net:
+        ipv4_address: 172.16.238.13
+    env_file:
+      - ../env/mysql-common.env
+      - ../env/mysql-master.env
+    volumes:
+      - ./mysql-master:/var/lib/mysql
+    ports:
+      - "3306:3306"
+  mysql-slave:
+    container_name: mysql-slave
+    image: nacos/nacos-mysql-slave:latest
+    networks:
+      nacos_net:
+        ipv4_address: 172.16.238.14
+    env_file:
+      - ../env/mysql-common.env
+      - ../env/mysql-slave.env
+    volumes:
+      - ./mysql-slave:/var/lib/mysql
+    ports:
+      - "3305:3306"
+    depends_on:
+      - mysql-master
+networks:
+  nacos_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.238.0/24
