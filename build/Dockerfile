@@ -13,7 +13,7 @@ ENV MODE="cluster" \
     JAVA="/usr/lib/jvm/java-1.8.0-openjdk/bin/java" \
     TIME_ZONE="Asia/Shanghai"
 
-ARG NACOS_VERSION=1.0.0
+ARG NACOS_VERSION=1.0.1
 
 WORKDIR /$BASE_DIR
 
