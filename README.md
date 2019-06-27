@@ -19,7 +19,7 @@ Run the following command：
 * Clone project
 
   ```powershell
-  git clone https://github.com/nacos-group/nacos-docker.git
+  git clone --depth 1 https://github.com/nacos-group/nacos-docker.git
   cd nacos-docker
   ```
 
