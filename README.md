@@ -91,7 +91,7 @@ Run the following command：
 | MYSQL_MASTER_SERVICE_PASSWORD | password of master database            |                                        |
 | MYSQL_SLAVE_SERVICE_HOST      | mysql slave host                       |                                        |
 | MYSQL_SLAVE_SERVICE_PORT      | mysql slave database port              | default :3306                          |
-
+| MYSQL_DATABASE_NUM      | It indicates the number of database             | default :2                          |
 ## Nacos + Grafana + Prometheus
 Usage reference：[Nacos monitor-guide](https://nacos.io/zh-cn/docs/monitor-guide.html)
 
