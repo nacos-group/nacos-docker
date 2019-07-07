@@ -92,6 +92,12 @@ Run the following command：
 | MYSQL_SLAVE_SERVICE_HOST      | mysql slave host                       |                                        |
 | MYSQL_SLAVE_SERVICE_PORT      | mysql slave database port              | default :3306                          |
 | MYSQL_DATABASE_NUM      | It indicates the number of database             | default :2                          |
+| JVM_XMS      |  -Xms             | default :2g                          |
+| JVM_XMX      |  -Xmx            | default :2g                          |
+| JVM_XMN      |  -Xmn           | default :1g                          |
+| JVM_MS      |  -XX:MetaspaceSize          | default :128m                          |
+| JVM_MMS      |  -XX:MaxMetaspaceSize          | default :320m                          |
+| NACOS_DEBUG      |  enable remote debug          | y/n default :n                          |
 ## Nacos + Grafana + Prometheus
 Usage reference：[Nacos monitor-guide](https://nacos.io/zh-cn/docs/monitor-guide.html)
 

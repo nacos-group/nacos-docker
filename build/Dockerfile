@@ -11,9 +11,16 @@ ENV MODE="cluster" \
     JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk" \
     NACOS_USER="nacos" \
     JAVA="/usr/lib/jvm/java-1.8.0-openjdk/bin/java" \
+    JVM_XMS="2g" \
+    JVM_XMX="2g" \
+    JVM_XMN="1g" \
+    JVM_XMN="2g" \
+    JVM_MS="128m" \
+    JVM_MMS="320m" \
+    NACOS_DEBUG="n" \
     TIME_ZONE="Asia/Shanghai"
 
-ARG NACOS_VERSION=1.0.1
+ARG NACOS_VERSION=1.1.0
 
 WORKDIR /$BASE_DIR
 
