@@ -17,6 +17,7 @@ ENV MODE="cluster" \
     JVM_MS="128m" \
     JVM_MMS="320m" \
     NACOS_DEBUG="n" \
+    TOMCAT_ACCESSLOG_ENABLED="false" \
     TIME_ZONE="Asia/Shanghai"
 
 ARG NACOS_VERSION=1.1.0

@@ -98,6 +98,7 @@ Run the following command：
 | JVM_MS      |  -XX:MetaspaceSize          | default :128m                          |
 | JVM_MMS      |  -XX:MaxMetaspaceSize          | default :320m                          |
 | NACOS_DEBUG      |  enable remote debug          | y/n default :n                          |
+| TOMCAT_ACCESSLOG_ENABLED      |  server.tomcat.accesslog.enabled         | default :false                          |
 ## Nacos + Grafana + Prometheus
 Usage reference：[Nacos monitor-guide](https://nacos.io/zh-cn/docs/monitor-guide.html)
 
