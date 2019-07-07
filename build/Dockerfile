@@ -14,7 +14,6 @@ ENV MODE="cluster" \
     JVM_XMS="2g" \
     JVM_XMX="2g" \
     JVM_XMN="1g" \
-    JVM_XMN="2g" \
     JVM_MS="128m" \
     JVM_MMS="320m" \
     NACOS_DEBUG="n" \
