@@ -80,6 +80,7 @@ Run the following command：
 | name                          | description                            | option                                 |
 | ----------------------------- | -------------------------------------- | -------------------------------------- |
 | MODE                          | cluster/standalone                     | cluster/standalone default **cluster** |
+| NACOS_SERVERS                 | nacos cluster address        | eg. ip1,ip2,ip3             |
 | PREFER_HOST_MODE              | Whether hostname are supported         | hostname/ip default **ip**             |
 | NACOS_SERVER_PORT             | nacos server port                      | default **8848**                       |
 | NACOS_SERVER_IP             | custom nacos server ip when network was mutil-network                      |                         |
