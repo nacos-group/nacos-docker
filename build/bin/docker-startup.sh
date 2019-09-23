@@ -62,7 +62,7 @@ fi
 if [[ ! -z "${USE_ONLY_SITE_INTERFACES}" ]]; then
     JAVA_OPT="${JAVA_OPT} -Dnacos.inetutils.use-only-site-local-interfaces=${USE_ONLY_SITE_INTERFACES}"
 fi
-idx=0
+
 if [[ ! -z "${PREFERRED_NETWORKS}" ]]; then
     idx=0
     #JAVA_OPT="${JAVA_OPT} -Dnacos.inetutils.preferred-networks=${PREFERRED_NETWORKS}"
@@ -80,6 +80,7 @@ if [[ ! -z "${IGNORED_INTERFACES}" ]]; then
      idx=$(( $idx + 1 ))
     done
 fi
+
 
 if [[ "${PREFER_HOST_MODE}" == "hostname" ]]; then
     JAVA_OPT="${JAVA_OPT} -Dnacos.preferHostnameOverIp=true"

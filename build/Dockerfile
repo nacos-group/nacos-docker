@@ -18,7 +18,8 @@ ENV MODE="cluster" \
     JVM_MMS="320m" \
     NACOS_DEBUG="n" \
     TOMCAT_ACCESSLOG_ENABLED="false" \
-    TIME_ZONE="Asia/Shanghai"
+    TIME_ZONE="Asia/Shanghai" \
+    NACOS_SERVER_PORT=8848
 
 ARG NACOS_VERSION=1.1.3
 
@@ -50,5 +51,5 @@ RUN mkdir -p logs \
 	&& ln -sf /dev/stderr start.out
 RUN chmod +x bin/docker-startup.sh
 
-EXPOSE 8848
+EXPOSE $NACOS_SERVER_PORT
 ENTRYPOINT ["bin/docker-startup.sh"]
