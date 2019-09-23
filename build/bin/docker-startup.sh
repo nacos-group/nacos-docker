@@ -62,13 +62,23 @@ fi
 if [[ ! -z "${USE_ONLY_SITE_INTERFACES}" ]]; then
     JAVA_OPT="${JAVA_OPT} -Dnacos.inetutils.use-only-site-local-interfaces=${USE_ONLY_SITE_INTERFACES}"
 fi
-
+idx=0
 if [[ ! -z "${PREFERRED_NETWORKS}" ]]; then
-    JAVA_OPT="${JAVA_OPT} -Dnacos.inetutils.preferred-networks=${PREFERRED_NETWORKS}"
+    idx=0
+    #JAVA_OPT="${JAVA_OPT} -Dnacos.inetutils.preferred-networks=${PREFERRED_NETWORKS}"
+    echo ${PREFERRED_NETWORKS} | sed -n 1'p' | tr ',' '\n' | while read ip; do
+     echo "nacos.inetutils.preferred-networks[${idx}]=$ip" >> ${BASE_DIR}/conf/application.properties
+     idx=$(( $idx + 1 ))
+    done
 fi
 
 if [[ ! -z "${IGNORED_INTERFACES}" ]]; then
-    JAVA_OPT="${JAVA_OPT} -Dnacos.inetutils.ignored-interfaces=${IGNORED_INTERFACES}"
+#    JAVA_OPT="${JAVA_OPT} -Dnacos.inetutils.ignored-interfaces=${IGNORED_INTERFACES}"
+    idx=0
+    echo ${IGNORED_INTERFACES} | sed -n 1'p' | tr ',' '\n' | while read ip; do
+     echo "nacos.inetutils.ignored-interfaces[${idx}]=$ip" >> ${BASE_DIR}/conf/application.properties
+     idx=$(( $idx + 1 ))
+    done
 fi
 
 if [[ "${PREFER_HOST_MODE}" == "hostname" ]]; then
