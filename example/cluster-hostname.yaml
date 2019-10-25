@@ -12,7 +12,7 @@ services:
       - "9555:9555"
     env_file:
       - ../env/nacos-hostname.env
-    restart: on-failure
+    restart: always
     depends_on:
       - mysql-master
       - mysql-slave
@@ -28,7 +28,7 @@ services:
       - "8849:8848"
     env_file:
       - ../env/nacos-hostname.env
-    restart: on-failure
+    restart: always
     depends_on:
       - mysql-master
       - mysql-slave
@@ -43,7 +43,7 @@ services:
       - "8850:8848"
     env_file:
       - ../env/nacos-hostname.env
-    restart: on-failure
+    restart: always
     depends_on:
       - mysql-master
       - mysql-slave
@@ -69,21 +69,4 @@ services:
       - "3305:3306"
     depends_on:
       - mysql-master
-  prometheus:
-    container_name: prometheus
-    image: prom/prometheus:latest
-    volumes:
-      - ./prometheus/prometheus-cluster.yaml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
-    depends_on:
-      - nacos1
-      - nacos2
-      - nacos3
-    restart: on-failure
-  grafana:
-    container_name: grafana
-    image: grafana/grafana:latest
-    ports:
-        - 3000:3000
-    restart: on-failure
+
