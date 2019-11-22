@@ -95,5 +95,5 @@ JAVA_OPT="${JAVA_OPT} --logging.config=${BASE_DIR}/conf/nacos-logback.xml"
 JAVA_OPT="${JAVA_OPT} --server.max-http-header-size=524288"
 
 echo "nacos is starting,you can check the ${BASE_DIR}/logs/start.out"
-echo "$JAVA ${JAVA_OPT}" > ${BASE_DIR}/logs/start.out 2>&1 &
-nohup $JAVA ${JAVA_OPT} > ${BASE_DIR}/logs/start.out 2>&1 < /dev/null
+echo "${JAVA:-java} ${JAVA_OPT}" > ${BASE_DIR}/logs/start.out 2>&1 &
+nohup ${JAVA:-java} ${JAVA_OPT} > ${BASE_DIR}/logs/start.out 2>&1 < /dev/null
