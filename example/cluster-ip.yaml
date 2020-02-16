@@ -49,14 +49,13 @@ services:
       - mysql
   mysql:
     container_name: mysql
-    image: mysql:5.7
+    image: nacos/nacos-mysql:5.7
     networks:
       nacos_net:
         ipv4_address: 172.16.238.13
     env_file:
       - ../env/mysql.env
     volumes:
-      - ./init-db:/docker-entrypoint-initdb.d
       - ./mysql:/var/lib/mysql
     ports:
       - "3306:3306"
