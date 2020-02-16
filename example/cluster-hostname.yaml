@@ -14,8 +14,7 @@ services:
       - ../env/nacos-hostname.env
     restart: always
     depends_on:
-      - mysql-master
-      - mysql-slave
+      - mysql
 
   nacos2:
     hostname: nacos2
@@ -30,8 +29,7 @@ services:
       - ../env/nacos-hostname.env
     restart: always
     depends_on:
-      - mysql-master
-      - mysql-slave
+      - mysql
   nacos3:
     hostname: nacos3
     image: nacos/nacos-server:latest
@@ -45,28 +43,15 @@ services:
       - ../env/nacos-hostname.env
     restart: always
     depends_on:
-      - mysql-master
-      - mysql-slave
-  mysql-master:
-    container_name: mysql-master
-    image: nacos/nacos-mysql-master:latest
+      - mysql
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
     env_file:
-      - ../env/mysql-common.env
-      - ../env/mysql-master.env
+      - ../env/mysql.env
     volumes:
-      - ./mysql-master:/var/lib/mysql
+      - ./init-db:/docker-entrypoint-initdb.d
+      - ./mysql:/var/lib/mysql
     ports:
       - "3306:3306"
-  mysql-slave:
-    container_name: mysql-slave
-    image: nacos/nacos-mysql-slave:latest
-    env_file:
-      - ../env/mysql-common.env
-      - ../env/mysql-slave.env
-    volumes:
-      - ./mysql-slave:/var/lib/mysql
-    ports:
-      - "3305:3306"
-    depends_on:
-      - mysql-master
 

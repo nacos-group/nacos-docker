@@ -3,17 +3,8 @@ services:
   nacos:
     image: nacos/nacos-server:latest
     container_name: nacos-standalone-mysql
-    environment:
-      - PREFER_HOST_MODE=hostname
-      - MODE=standalone
-      - SPRING_DATASOURCE_PLATFORM=mysql
-      - MYSQL_MASTER_SERVICE_HOST=mysql-master
-      - MYSQL_MASTER_SERVICE_DB_NAME=nacos_devtest
-      - MYSQL_MASTER_SERVICE_PORT=3306
-      - MYSQL_SLAVE_SERVICE_HOST=mysql-slave
-      - MYSQL_SLAVE_SERVICE_PORT=3305
-      - MYSQL_MASTER_SERVICE_USER=nacos
-      - MYSQL_MASTER_SERVICE_PASSWORD=nacos
+    env_file:
+      - ../env/nacos-standlone-mysql.env
     volumes:
       - ./standalone-logs/:/home/nacos/logs
       - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
@@ -21,30 +12,18 @@ services:
       - "8848:8848"
       - "9555:9555"
     depends_on:
-      - mysql-slave
+      - mysql
     restart: on-failure
-  mysql-master:
-    container_name: mysql-master
-    image: nacos/nacos-mysql-master:latest
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
     env_file:
-      - ../env/mysql-common.env
-      - ../env/mysql-master.env
+      - ../env/mysql.env
     volumes:
-      - ./mysql-master:/var/lib/mysql
+      - ./init-db:/docker-entrypoint-initdb.d
+      - ./mysql:/var/lib/mysql
     ports:
       - "3306:3306"
-  mysql-slave:
-    container_name: mysql-slave
-    image: nacos/nacos-mysql-slave:latest
-    env_file:
-      - ../env/mysql-common.env
-      - ../env/mysql-slave.env
-    volumes:
-      - ./mysql-slave:/var/lib/mysql
-    ports:
-      - "3305:3306"
-    depends_on:
-      - mysql-master
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
