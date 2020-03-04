@@ -114,6 +114,11 @@
 | JVM_MMS                           | -XX:MaxMetaspaceSize                                         | 默认 :320m                     |
 | NACOS_DEBUG                       | enable remote debug                                          | y/n 默认 :n                      |
 | TOMCAT_ACCESSLOG_ENABLED          | server.tomcat.accesslog.enabled                              | 默认 :false                      |
+| NACOS_AUTH_SYSTEM_TYPE      |  权限系统类型选择,目前只支持nacos类型       | 默认 :nacos                          |
+| NACOS_AUTH_ENABLE      |  是否开启权限系统       | 默认 :false                          |
+| NACOS_AUTH_TOKEN_EXPIRE_SECONDS      |  token 失效时间        | 默认 :18000                          |
+| NACOS_AUTH_TOKEN      |  token       | 默认 :SecretKey012345678901234567890123456789012345678901234567890123456789                          |
+| NACOS_AUTH_CACHE_ENABLE      |  权限缓存开关 ,开启后权限缓存的更新默认有15秒的延迟      | 默认 : false                          |
 
 
 

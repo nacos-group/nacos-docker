@@ -114,6 +114,11 @@ Run the following command：
 | JVM_MMS      |  -XX:MaxMetaspaceSize          | default :320m                          |
 | NACOS_DEBUG      |  enable remote debug          | y/n default :n                          |
 | TOMCAT_ACCESSLOG_ENABLED      |  server.tomcat.accesslog.enabled         | default :false                          |
+| NACOS_AUTH_SYSTEM_TYPE      |  The auth system to use, currently only 'nacos' is supported        | default :nacos                          |
+| NACOS_AUTH_ENABLE      |  If turn on auth system        | default :false                          |
+| NACOS_AUTH_TOKEN_EXPIRE_SECONDS      |  The token expiration in seconds        | default :18000                          |
+| NACOS_AUTH_TOKEN      |  The default token        | default :SecretKey012345678901234567890123456789012345678901234567890123456789                          |
+| NACOS_AUTH_CACHE_ENABLE      |  Turn on/off caching of auth information. By turning on this switch, the update of auth information would have a 15 seconds delay.        | default : false                          |
 
 
 
