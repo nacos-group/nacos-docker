@@ -1,5 +1,5 @@
 FROM centos:7.5.1804
-MAINTAINER pader "huangmnlove@163.com"
+MAINTAINER pader "richard.ma@msn.cn"
 
 # set environment
 ENV MODE="cluster" \
@@ -20,14 +20,14 @@ ENV MODE="cluster" \
     TOMCAT_ACCESSLOG_ENABLED="false" \
     TIME_ZONE="Asia/Shanghai"
 
-ARG NACOS_VERSION=1.1.3
+ARG NACOS_VERSION=1.2.0
 
 WORKDIR /$BASE_DIR
 
 RUN set -x \
     && yum update -y \
     && yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel wget iputils nc  vim libcurl\
-    && wget  https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}/nacos-server-${NACOS_VERSION}.tar.gz -P /home \
+    && wget  https://github.com/moxm/nacos/releases/download/${NACOS_VERSION}/nacos-server-${NACOS_VERSION}.tar.gz -P /home \
     && tar -xzvf /home/nacos-server-${NACOS_VERSION}.tar.gz -C /home \
     && rm -rf /home/nacos-server-${NACOS_VERSION}.tar.gz /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql \
     && yum autoremove -y wget \
