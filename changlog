@@ -1,3 +1,2 @@
-version:1.2.0
-1.构建nacos 1.2.0 最新镜像
-2.增加权限相关属性配置
+version:1.2.1
+修改环境参数变量 修改NACOS_SERVER_PORT  ->   NACOS_APPLICATION_PORT,原因:Kubernetes 中如果出现服务名为NACOS_SERVER,会导致获取端口出现问题.
