@@ -91,7 +91,7 @@ Run the following command：
 | MODE                          | cluster/standalone                     | cluster/standalone default **cluster** |
 | NACOS_SERVERS                 | nacos cluster address        | eg. ip1:port1 ip2:port2 ip3:port3             |
 | PREFER_HOST_MODE              | Whether hostname are supported         | hostname/ip default **ip**             |
-| NACOS_SERVER_PORT             | nacos server port                      | default **8848**                       |
+| NACOS_APPLICATION_PORT             | nacos server port                      | default **8848**                       |
 | NACOS_SERVER_IP             | custom nacos server ip when network was mutil-network                      |                         |
 | SPRING_DATASOURCE_PLATFORM    | standalone support mysql               | mysql / empty default empty            |
 | MYSQL_SERVICE_HOST | mysql  host |  |
