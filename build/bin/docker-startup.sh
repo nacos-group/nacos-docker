@@ -15,6 +15,7 @@ set -x
 export DEFAULT_SEARCH_LOCATIONS="classpath:/,classpath:/config/,file:./,file:./config/"
 export CUSTOM_SEARCH_LOCATIONS=${DEFAULT_SEARCH_LOCATIONS},file:${BASE_DIR}/conf/,${BASE_DIR}/init.d/
 export CUSTOM_SEARCH_NAMES="application,custom"
+export MEMBER_LIST=""
 PLUGINS_DIR="/home/nacos/plugins/peer-finder"
 function print_servers(){
    if [[ ! -d "${PLUGINS_DIR}" ]]; then
@@ -35,7 +36,9 @@ if [[ "${MODE}" == "standalone" ]]; then
     JAVA_OPT="${JAVA_OPT} -Xms512m -Xmx512m -Xmn256m"
     JAVA_OPT="${JAVA_OPT} -Dnacos.standalone=true"
 else
-
+  if [[ "${EMBEDDED_STORAGE}" == "embedded" ]]; then
+        JAVA_OPT="${JAVA_OPT} -DembeddedStorage=true"
+    fi
   JAVA_OPT="${JAVA_OPT} -server -Xms${JVM_XMS} -Xmx${JVM_XMX} -Xmn${JVM_XMN} -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
   if [[ "${NACOS_DEBUG}" == "y" ]]; then
     JAVA_OPT="${JAVA_OPT} -Xdebug -Xrunjdwp:transport=dt_socket,address=9555,server=y,suspend=n"
@@ -79,6 +82,8 @@ fi
 if [[ "${PREFER_HOST_MODE}" == "hostname" ]]; then
     JAVA_OPT="${JAVA_OPT} -Dnacos.preferHostnameOverIp=true"
 fi
+
+JAVA_OPT="${JAVA_OPT} -Dnacos.member.list=${MEMBER_LIST}"
 
 JAVA_MAJOR_VERSION=$($JAVA -version 2>&1 | sed -E -n 's/.* version "([0-9]*).*$/\1/p')
 if [[ "$JAVA_MAJOR_VERSION" -ge "9" ]] ; then

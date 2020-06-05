@@ -1,0 +1,42 @@
+version: "3"
+services:
+  nacos1:
+    hostname: nacos1
+    container_name: nacos1
+    image: nacos/nacos-server:1.3.0
+    volumes:
+      - ./cluster-logs/nacos1:/home/nacos/logs
+      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
+    ports:
+      - "8848:8848"
+      - "9555:9555"
+    env_file:
+      - ../env/nacos-embedded.env
+    restart: always
+
+  nacos2:
+    hostname: nacos2
+    image: nacos/nacos-server:1.3.0
+    container_name: nacos2
+    volumes:
+      - ./cluster-logs/nacos2:/home/nacos/logs
+      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
+    ports:
+      - "8849:8848"
+    env_file:
+      - ../env/nacos-embedded.env
+    restart: always
+  nacos3:
+    hostname: nacos3
+    image: nacos/nacos-server:1.3.0
+    container_name: nacos3
+    volumes:
+      - ./cluster-logs/nacos3:/home/nacos/logs
+      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
+    ports:
+      - "8850:8848"
+    env_file:
+      - ../env/nacos-embedded.env
+    restart: always
+
+
