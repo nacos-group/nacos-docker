@@ -33,7 +33,7 @@ function print_servers(){
 #===========================================================================================
 if [[ "${MODE}" == "standalone" ]]; then
 
-    JAVA_OPT="${JAVA_OPT} -Xms512m -Xmx512m -Xmn256m"
+    JAVA_OPT="${JAVA_OPT} -Xms${JVM_XMS} -Xmx${JVM_XMX} -Xmn${JVM_XMN}"
     JAVA_OPT="${JAVA_OPT} -Dnacos.standalone=true"
 else
   if [[ "${EMBEDDED_STORAGE}" == "embedded" ]]; then

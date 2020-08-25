@@ -16,7 +16,8 @@ This project contains a Docker image meant to facilitate the deployment of [Naco
 
 ## Precautions
 
-After the latest `nacos/nacos-server:latest` image, the **database master-slave image** has been removed. For specific reasons, refer to [Removing the Master-Slave Image Configuration](https://github.com/nacos-group/nacos-docker/wiki/%E7%A7%BB%E9%99%A4%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%BB%E4%BB%8E%E9%95%9C%E5%83%8F%E9%85%8D%E7%BD%AE)
+* The **database master-slave image** has been removed, after the latest `nacos/nacos-server:latest` image. For specific reasons, refer to [Removing the Master-Slave Image Configuration](https://github.com/nacos-group/nacos-docker/wiki/%E7%A7%BB%E9%99%A4%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%BB%E4%BB%8E%E9%95%9C%E5%83%8F%E9%85%8D%E7%BD%AE)
+* Since Nacos 1.3.1 version, the database storage has been upgraded to 8.0, and it is backward compatible 
 
 
 
