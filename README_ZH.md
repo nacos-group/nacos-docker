@@ -99,6 +99,7 @@
 | MYSQL_SERVICE_DB_NAME             | mysql  database name                                         |                                     |
 | MYSQL_SERVICE_USER                | username of  database                                        |                                     |
 | MYSQL_SERVICE_PASSWORD            | password of  database                                        |                                     |
+| MYSQL_SSL_ENABLE | use ssl | 默认 : false |
 | ~~MYSQL_MASTER_SERVICE_HOST~~     | **latest(目前latest 是1.1.4)以后**版本镜像移除, 使用 MYSQL_SERVICE_HOST |                                     |
 | ~~MYSQL_MASTER_SERVICE_PORT~~     | **latest(目前latest 是1.1.4)以后**版本镜像移除, 使用 using MYSQL_SERVICE_PORT | 默认 : **3306**                  |
 | ~~MYSQL_MASTER_SERVICE_DB_NAME~~  | **latest(目前latest 是1.1.4)以后**版本镜像移除, 使用 MYSQL_SERVICE_DB_NAME |                                     |
