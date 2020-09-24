@@ -18,7 +18,8 @@ ENV MODE="cluster" \
     JVM_MMS="320m" \
     NACOS_DEBUG="n" \
     TOMCAT_ACCESSLOG_ENABLED="false" \
-    TIME_ZONE="Asia/Shanghai"
+    TIME_ZONE="Asia/Shanghai" \
+	MYSQL_SSL_ENABLE="false"
 
 ARG NACOS_VERSION=1.3.2
 
