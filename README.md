@@ -100,6 +100,7 @@ Run the following command：
 | MYSQL_SERVICE_DB_NAME | mysql  database name |  |
 | MYSQL_SERVICE_USER | username of  database |  |
 | MYSQL_SERVICE_PASSWORD | password of  database |  |
+| MYSQL_SSL_ENABLE | use ssl | default : false |
 | ~~MYSQL_MASTER_SERVICE_HOST~~     | The **latest** version of the image removes this attribute, using MYSQL_SERVICE_HOST |                                        |
 | ~~MYSQL_MASTER_SERVICE_PORT~~     | The **latest** version of the image removes this attribute, using MYSQL_SERVICE_PORT | default : **3306**                     |
 | ~~MYSQL_MASTER_SERVICE_DB_NAME~~  | The **latest** version of the image removes this attribute, using MYSQL_SERVICE_DB_NAME |                                        |
