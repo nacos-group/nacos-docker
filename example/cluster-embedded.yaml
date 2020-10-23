@@ -3,7 +3,7 @@ services:
   nacos1:
     hostname: nacos1
     container_name: nacos1
-    image: nacos/nacos-server:1.3.0
+    image: nacos/nacos-server:1.3.2
     volumes:
       - ./cluster-logs/nacos1:/home/nacos/logs
       - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
@@ -16,7 +16,7 @@ services:
 
   nacos2:
     hostname: nacos2
-    image: nacos/nacos-server:1.3.0
+    image: nacos/nacos-server:1.3.2
     container_name: nacos2
     volumes:
       - ./cluster-logs/nacos2:/home/nacos/logs
@@ -28,7 +28,7 @@ services:
     restart: always
   nacos3:
     hostname: nacos3
-    image: nacos/nacos-server:1.3.0
+    image: nacos/nacos-server:1.3.2
     container_name: nacos3
     volumes:
       - ./cluster-logs/nacos3:/home/nacos/logs
