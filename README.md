@@ -43,7 +43,11 @@ Run the following command：
 * Standalone Mysql
 
   ```powershell
-  docker-compose -f example/standalone-mysql.yaml up
+  # Using mysql 5.7
+  docker-compose -f example/standalone-mysql-5.7.yaml up
+
+  # Using mysql 8
+  docker-compose -f example/standalone-mysql-8.yaml up
   ```
 
 * Cluster
