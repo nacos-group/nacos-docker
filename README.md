@@ -104,15 +104,8 @@ Run the following command：
 | MYSQL_SERVICE_DB_NAME | mysql  database name |  |
 | MYSQL_SERVICE_USER | username of  database |  |
 | MYSQL_SERVICE_PASSWORD | password of  database |  |
-| MYSQL_SSL_ENABLE | use ssl | default : false |
-| ~~MYSQL_MASTER_SERVICE_HOST~~     | The **latest** version of the image removes this attribute, using MYSQL_SERVICE_HOST |                                        |
-| ~~MYSQL_MASTER_SERVICE_PORT~~     | The **latest** version of the image removes this attribute, using MYSQL_SERVICE_PORT | default : **3306**                     |
-| ~~MYSQL_MASTER_SERVICE_DB_NAME~~  | The **latest** version of the image removes this attribute, using MYSQL_SERVICE_DB_NAME |                                        |
-| ~~MYSQL_MASTER_SERVICE_USER~~     | The **latest** version of the image removes this attribute, using MYSQL_SERVICE_USER |                                        |
-| ~~MYSQL_MASTER_SERVICE_PASSWORD~~ | The **latest** version of the image removes this attribute, using MYSQL_SERVICE_PASSWORD |                                        |
-| ~~MYSQL_SLAVE_SERVICE_HOST~~      | The **latest** version of the image removes this attribute   |                                        |
-| ~~MYSQL_SLAVE_SERVICE_PORT~~      | The **latest** version of the image removes this attribute   | default :3306                          |
 | MYSQL_DATABASE_NUM      | It indicates the number of database             | default :**1**                      |
+| MYSQL_SERVICE_DB_PARAM      | Database url parameter             | default : **characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true**                      |
 | JVM_XMS      |  -Xms             | default :2g                          |
 | JVM_XMX      |  -Xmx            | default :2g                          |
 | JVM_XMN      |  -Xmn           | default :1g                          |
@@ -128,9 +121,10 @@ Run the following command：
 | MEMBER_LIST      |  Set the cluster list with a configuration file or command-line argument        | eg:192.168.16.101:8847?raft_port=8807,192.168.16.101?raft_port=8808,192.168.16.101:8849?raft_port=8809                          |
 | EMBEDDED_STORAGE      |    Use embedded storage in cluster mode without mysql      | `embedded` default : none                          |
 
+## Advanced configuration
+If the above property configuration list does not meet your requirements, you can mount the `custom.properties` file into the `/home/nacos/init.d/` directory of the container, where the spring properties can be configured, and the priority is higher than `application.properties` file
 
-
-
+Reference example: [cluster-hostname.yaml](/example/cluster-hostname.yaml)
 ## Nacos + Grafana + Prometheus
 
 Usage reference：[Nacos monitor-guide](https://nacos.io/zh-cn/docs/monitor-guide.html)
