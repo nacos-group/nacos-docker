@@ -24,17 +24,72 @@
 * 从Nacos 1.3.1版本开始,数据库存储已经升级到8.0,并且它向下兼容
 
 
+
+
 ## 快速开始
 
 打开命令窗口执行：
 
-``` powershell
- docker run --name nacos-standalone -e MODE=standalone -p 8848:8848 -d nacos/nacos-server:latest
-```
+* Clone project
+
+  ```powershell
+  git clone --depth 1 https://github.com/nacos-group/nacos-docker.git
+  cd nacos-docker
+  ```
 
 
+* Standalone Derby
+
+  ```powershell
+  docker-compose -f example/standalone-derby.yaml up
+  ```
+
+* Standalone Mysql
+
+  ```powershell
+  # Using mysql 5.7
+  docker-compose -f example/standalone-mysql-5.7.yaml up
+  
+  # Using mysql 8
+  docker-compose -f example/standalone-mysql-8.yaml up
+  ```
+
+* 集群模式
+
+  ```powershell
+  docker-compose -f example/cluster-hostname.yaml up 
+  ```
 
 
+* 服务注册示例
+
+  ```powershell
+  curl -X PUT 'http://127.0.0.1:8848/nacos/v1/ns/instance?serviceName=nacos.naming.serviceName&ip=20.18.7.10&port=8080'
+  ```
+
+* 服务发现示例
+
+  ```powershell
+  curl -X GET 'http://127.0.0.1:8848/nacos/v1/ns/instances?serviceName=nacos.naming.serviceName'
+  ```
+
+* 推送配置示例
+
+  ```powershell
+  curl -X POST "http://127.0.0.1:8848/nacos/v1/cs/configs?dataId=nacos.cfg.dataId&group=test&content=helloWorld"
+  ```
+
+* 获取配置示例
+
+  ```powershell
+    curl -X GET "http://127.0.0.1:8848/nacos/v1/cs/configs?dataId=nacos.cfg.dataId&group=test"
+  ```
+
+  
+
+* 打开浏览器
+
+  link：http://127.0.0.1:8848/nacos/
 
 ## 其他使用方式
 
@@ -89,37 +144,42 @@
 | 属性名称                          | 描述                                                         | 选项                              |
 | --------------------------------- | ------------------------------------------------------------ | ----------------------------------- |
 | MODE                              | 系统启动方式: 集群/单机                                      | cluster/standalone默认 **cluster**  |
-| NACOS_SERVERS                     | nacos cluster address                                        | p1:port1空格ip2:port2 空格ip3:port3 |
+| NACOS_SERVERS                     | 集群地址                                   | p1:port1空格ip2:port2 空格ip3:port3 |
 | PREFER_HOST_MODE                  | 支持IP还是域名模式                                           | hostname/ip 默认 **ip**             |
 | NACOS_SERVER_PORT                 | Nacos 运行端口                                               | 默认 **8848**                       |
 | NACOS_SERVER_IP                   | 多网卡模式下可以指定IP                                       |                                     |
-| SPRING_DATASOURCE_PLATFORM        | standalone support mysql                                     | mysql / 空 默认:空                 |
-| MYSQL_SERVICE_HOST                | mysql  host                                                  |                                     |
-| MYSQL_SERVICE_PORT                | mysql  database port                                         | 默认 : **3306**                  |
-| MYSQL_SERVICE_DB_NAME             | mysql  database name                                         |                                     |
-| MYSQL_SERVICE_USER                | username of  database                                        |                                     |
-| MYSQL_SERVICE_PASSWORD            | password of  database                                        |                                     |
-| MYSQL_SSL_ENABLE | use ssl | 默认 : false |
-| ~~MYSQL_MASTER_SERVICE_HOST~~     | **latest(目前latest 是1.1.4)以后**版本镜像移除, 使用 MYSQL_SERVICE_HOST |                                     |
-| ~~MYSQL_MASTER_SERVICE_PORT~~     | **latest(目前latest 是1.1.4)以后**版本镜像移除, 使用 using MYSQL_SERVICE_PORT | 默认 : **3306**                  |
-| ~~MYSQL_MASTER_SERVICE_DB_NAME~~  | **latest(目前latest 是1.1.4)以后**版本镜像移除, 使用 MYSQL_SERVICE_DB_NAME |                                     |
-| ~~MYSQL_MASTER_SERVICE_USER~~     | **latest(目前latest 是1.1.4)以后**版本镜像移除, 使用 MYSQL_SERVICE_USER |                                     |
-| ~~MYSQL_MASTER_SERVICE_PASSWORD~~ | **latest(目前latest 是1.1.4)以后**版本镜像移除, 使用, using MYSQL_SERVICE_PASSWORD |                                     |
-| ~~MYSQL_SLAVE_SERVICE_HOST~~      | **latest(目前latest 是1.1.4)以后**版本镜像移除 |                                     |
-| ~~MYSQL_SLAVE_SERVICE_PORT~~      | **latest(目前latest 是1.1.4)以后**版本镜像移除 | 默认 :3306                     |
+| SPRING_DATASOURCE_PLATFORM        | 单机模式下支持MYSQL数据库                        | mysql / 空 默认:空                 |
+| MYSQL_SERVICE_HOST                | 数据库  连接地址                                                |                                     |
+| MYSQL_SERVICE_PORT                | 数据库端口                                       | 默认 : **3306**                  |
+| MYSQL_SERVICE_DB_NAME             | 数据库库名                                     |                                     |
+| MYSQL_SERVICE_USER                | 数据库用户名                                  |                                     |
+| MYSQL_SERVICE_PASSWORD            | 数据库用户密码                                    |                                     |
+| MYSQL_SERVICE_DB_PARAM          | 数据库连接参数                                     | default : **characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true** |
 | MYSQL_DATABASE_NUM                | It indicates the number of database                          | 默认 :**1**                    |
 | JVM_XMS                           | -Xms                                                         | 默认 :2g                       |
 | JVM_XMX                           | -Xmx                                                         | 默认 :2g                       |
 | JVM_XMN                           | -Xmn                                                         | 默认 :1g                       |
 | JVM_MS                            | -XX:MetaspaceSize                                            | 默认 :128m                     |
 | JVM_MMS                           | -XX:MaxMetaspaceSize                                         | 默认 :320m                     |
-| NACOS_DEBUG                       | enable remote debug                                          | y/n 默认 :n                      |
+| NACOS_DEBUG                       | 是否开启远程DEBUG                                 | y/n 默认 :n                      |
 | TOMCAT_ACCESSLOG_ENABLED          | server.tomcat.accesslog.enabled                              | 默认 :false                      |
 | NACOS_AUTH_SYSTEM_TYPE      |  权限系统类型选择,目前只支持nacos类型       | 默认 :nacos                          |
 | NACOS_AUTH_ENABLE      |  是否开启权限系统       | 默认 :false                          |
 | NACOS_AUTH_TOKEN_EXPIRE_SECONDS      |  token 失效时间        | 默认 :18000                          |
 | NACOS_AUTH_TOKEN      |  token       | 默认 :SecretKey012345678901234567890123456789012345678901234567890123456789                          |
 | NACOS_AUTH_CACHE_ENABLE      |  权限缓存开关 ,开启后权限缓存的更新默认有15秒的延迟      | 默认 : false                          |
+| MEMBER_LIST | 通过环境变量的方式设置集群地址 | 例子:192.168.16.101:8847?raft_port=8807,192.168.16.101?raft_port=8808,192.168.16.101:8849?raft_port=8809 |
+| EMBEDDED_STORAGE | 是否开启集群嵌入式存储模式 | `embedded`  默认 : none |
+
+
+
+
+
+## 高级配置
+
+如果上面的属性列表无法满足你的需求时,可以挂载`custom.properties`到`/home/nacos/init.d/` 目录,然后在里面像使用Spring Boot的`application.properties`文件一样配置属性, 并且这个文件配置的属性**优先级高于application.properties**
+
+参考例子: [cluster-hostname.yaml](/example/cluster-hostname)
 
 
 

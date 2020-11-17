@@ -121,7 +121,10 @@ Run the following command：
 | MEMBER_LIST      |  Set the cluster list with a configuration file or command-line argument        | eg:192.168.16.101:8847?raft_port=8807,192.168.16.101?raft_port=8808,192.168.16.101:8849?raft_port=8809                          |
 | EMBEDDED_STORAGE      |    Use embedded storage in cluster mode without mysql      | `embedded` default : none                          |
 
+
+
 ## Advanced configuration
+
 If the above property configuration list does not meet your requirements, you can mount the `custom.properties` file into the `/home/nacos/init.d/` directory of the container, where the spring properties can be configured, and the priority is higher than `application.properties` file
 
 Reference example: [cluster-hostname.yaml](/example/cluster-hostname.yaml)
