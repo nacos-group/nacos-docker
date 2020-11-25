@@ -13,7 +13,7 @@
 # limitations under the License.
 set -x
 export DEFAULT_SEARCH_LOCATIONS="classpath:/,classpath:/config/,file:./,file:./config/"
-export CUSTOM_SEARCH_LOCATIONS=${DEFAULT_SEARCH_LOCATIONS},file:${BASE_DIR}/conf/,${BASE_DIR}/init.d/
+export CUSTOM_SEARCH_LOCATIONS=${BASE_DIR}/init.d/,file:${BASE_DIR}/conf/,${DEFAULT_SEARCH_LOCATIONS}
 export CUSTOM_SEARCH_NAMES="application,custom"
 export MEMBER_LIST=""
 PLUGINS_DIR="/home/nacos/plugins/peer-finder"
