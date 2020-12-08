@@ -107,3 +107,5 @@ JAVA_OPT="${JAVA_OPT} --server.max-http-header-size=524288"
 echo "nacos is starting,you can check the ${BASE_DIR}/logs/start.out"
 echo "$JAVA ${JAVA_OPT}" > ${BASE_DIR}/logs/start.out 2>&1 &
 nohup $JAVA ${JAVA_OPT} > ${BASE_DIR}/logs/start.out 2>&1 < /dev/null
+#你好，我想问下这jvm的启动参数要在哪里配置啊，我的是单节节点，默认就是2g我的服务器顶不住，谢谢大佬
+
