@@ -1,7 +1,7 @@
 version: "2"
 services:
   nacos:
-    image: nacos/nacos-server:1.4.0-BETA
+    image: nacos/nacos-server:1.4.1
     container_name: nacos-standalone-mysql
     env_file:
       - ../env/nacos-standlone-mysql.env
