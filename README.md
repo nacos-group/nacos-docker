@@ -106,9 +106,9 @@ Run the following command：
 | MYSQL_SERVICE_PASSWORD | password of  database |  |
 | MYSQL_DATABASE_NUM      | It indicates the number of database             | default :**1**                      |
 | MYSQL_SERVICE_DB_PARAM      | Database url parameter             | default : **characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true**                      |
-| JVM_XMS      |  -Xms             | default :2g                          |
-| JVM_XMX      |  -Xmx            | default :2g                          |
-| JVM_XMN      |  -Xmn           | default :1g                          |
+| JVM_XMS      |  -Xms             | default :1g                          |
+| JVM_XMX      |  -Xmx            | default :1g                          |
+| JVM_XMN      |  -Xmn           | default :512m                          |
 | JVM_MS      |  -XX:MetaspaceSize          | default :128m                          |
 | JVM_MMS      |  -XX:MaxMetaspaceSize          | default :320m                          |
 | NACOS_DEBUG      |  enable remote debug          | y/n default :n                          |

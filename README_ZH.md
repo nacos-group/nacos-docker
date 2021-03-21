@@ -156,9 +156,9 @@
 | MYSQL_SERVICE_PASSWORD            | 数据库用户密码                                    |                                     |
 | MYSQL_SERVICE_DB_PARAM          | 数据库连接参数                                     | default : **characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true** |
 | MYSQL_DATABASE_NUM                | It indicates the number of database                          | 默认 :**1**                    |
-| JVM_XMS                           | -Xms                                                         | 默认 :2g                       |
-| JVM_XMX                           | -Xmx                                                         | 默认 :2g                       |
-| JVM_XMN                           | -Xmn                                                         | 默认 :1g                       |
+| JVM_XMS                           | -Xms                                                         | 默认 :1g                       |
+| JVM_XMX                           | -Xmx                                                         | 默认 :1g                       |
+| JVM_XMN                           | -Xmn                                                         | 默认 :512m                       |
 | JVM_MS                            | -XX:MetaspaceSize                                            | 默认 :128m                     |
 | JVM_MMS                           | -XX:MaxMetaspaceSize                                         | 默认 :320m                     |
 | NACOS_DEBUG                       | 是否开启远程DEBUG                                 | y/n 默认 :n                      |
