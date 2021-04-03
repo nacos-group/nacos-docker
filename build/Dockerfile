@@ -22,7 +22,7 @@ ENV MODE="cluster" \
 
 ARG NACOS_VERSION=1.4.1
 
-WORKDIR /$BASE_DIR
+WORKDIR $BASE_DIR
 
 RUN set -x \
     && yum update -y \
