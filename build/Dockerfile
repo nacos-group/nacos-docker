@@ -20,7 +20,7 @@ ENV MODE="cluster" \
     TOMCAT_ACCESSLOG_ENABLED="false" \
     TIME_ZONE="Asia/Shanghai"
 
-ARG NACOS_VERSION=2.0.0
+ARG NACOS_VERSION=2.0.0-bugfix
 
 WORKDIR $BASE_DIR
 
