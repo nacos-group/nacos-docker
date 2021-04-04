@@ -34,6 +34,12 @@ Run the following command：
   cd nacos-docker
   ```
 
+* Export NACOS_VERSION
+
+  ```powershell
+  # Nacos Verison you want install
+  export NACOS_VERSION=2.0.0-bugfix
+  ```
 
 * Standalone Derby
 
