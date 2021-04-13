@@ -9,6 +9,7 @@ services:
       - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8848:8848"
+      - "9848:9848"
       - "9555:9555"
     env_file:
       - ../env/nacos-hostname.env
@@ -25,6 +26,7 @@ services:
       - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8849:8848"
+      - "9849:9848"
     env_file:
       - ../env/nacos-hostname.env
     restart: always
@@ -39,6 +41,7 @@ services:
       - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8850:8848"
+      - "9850:9848"
     env_file:
       - ../env/nacos-hostname.env
     restart: always

@@ -11,6 +11,7 @@ services:
     - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
     - "8848:8848"
+    - "9848:9848"
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
