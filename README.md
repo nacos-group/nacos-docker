@@ -20,10 +20,20 @@ This project contains a Docker image meant to facilitate the deployment of [Naco
 * Since Nacos 1.3.1 version, the database storage has been upgraded to 8.0, and it is backward compatible 
 
 
-
-
-
 ## Quick Start
+
+```shell
+docker run --name nacos-quick -e MODE=standalone -p 8849:8848 -d nacos/nacos-server:2.0-bugfix
+```
+
+
+## Advanced Usage
+
+* Tips: You can change the version of the Nacos image in the compose file from the following configuration.
+`example/.env`
+```dotenv
+NACOS_VERSION=2.0.0-bugfix
+```
 
 Run the following command：
 
