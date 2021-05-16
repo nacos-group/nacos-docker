@@ -154,7 +154,7 @@
 | MYSQL_SERVICE_DB_NAME             | 数据库库名                                     |                                     |
 | MYSQL_SERVICE_USER                | 数据库用户名                                  |                                     |
 | MYSQL_SERVICE_PASSWORD            | 数据库用户密码                                    |                                     |
-| MYSQL_SERVICE_DB_PARAM          | 数据库连接参数                                     | default : **characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true** |
+| MYSQL_SERVICE_DB_PARAM          | 数据库连接参数                                     | default : **characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false** |
 | MYSQL_DATABASE_NUM                | It indicates the number of database                          | 默认 :**1**                    |
 | JVM_XMS                           | -Xms                                                         | 默认 :1g                       |
 | JVM_XMX                           | -Xmx                                                         | 默认 :1g                       |
