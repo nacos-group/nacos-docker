@@ -20,10 +20,20 @@ This project contains a Docker image meant to facilitate the deployment of [Naco
 * Since Nacos 1.3.1 version, the database storage has been upgraded to 8.0, and it is backward compatible 
 
 
-
-
-
 ## Quick Start
+
+```shell
+docker run --name nacos-quick -e MODE=standalone -p 8849:8848 -d nacos/nacos-server:2.0.2
+```
+
+
+## Advanced Usage
+
+* Tips: You can change the version of the Nacos image in the compose file from the following configuration.
+`example/.env`
+```dotenv
+NACOS_VERSION=2.0.2
+```
 
 Run the following command：
 
@@ -43,7 +53,11 @@ Run the following command：
 * Standalone Mysql
 
   ```powershell
-  docker-compose -f example/standalone-mysql.yaml up
+  # Using mysql 5.7
+  docker-compose -f example/standalone-mysql-5.7.yaml up
+
+  # Using mysql 8
+  docker-compose -f example/standalone-mysql-8.yaml up
   ```
 
 * Cluster
@@ -100,17 +114,11 @@ Run the following command：
 | MYSQL_SERVICE_DB_NAME | mysql  database name |  |
 | MYSQL_SERVICE_USER | username of  database |  |
 | MYSQL_SERVICE_PASSWORD | password of  database |  |
-| ~~MYSQL_MASTER_SERVICE_HOST~~     | The **latest** version of the image removes this attribute, using MYSQL_SERVICE_HOST |                                        |
-| ~~MYSQL_MASTER_SERVICE_PORT~~     | The **latest** version of the image removes this attribute, using MYSQL_SERVICE_PORT | default : **3306**                     |
-| ~~MYSQL_MASTER_SERVICE_DB_NAME~~  | The **latest** version of the image removes this attribute, using MYSQL_SERVICE_DB_NAME |                                        |
-| ~~MYSQL_MASTER_SERVICE_USER~~     | The **latest** version of the image removes this attribute, using MYSQL_SERVICE_USER |                                        |
-| ~~MYSQL_MASTER_SERVICE_PASSWORD~~ | The **latest** version of the image removes this attribute, using MYSQL_SERVICE_PASSWORD |                                        |
-| ~~MYSQL_SLAVE_SERVICE_HOST~~      | The **latest** version of the image removes this attribute   |                                        |
-| ~~MYSQL_SLAVE_SERVICE_PORT~~      | The **latest** version of the image removes this attribute   | default :3306                          |
 | MYSQL_DATABASE_NUM      | It indicates the number of database             | default :**1**                      |
-| JVM_XMS      |  -Xms             | default :2g                          |
-| JVM_XMX      |  -Xmx            | default :2g                          |
-| JVM_XMN      |  -Xmn           | default :1g                          |
+| MYSQL_SERVICE_DB_PARAM      | Database url parameter             | default : **characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false**                      |
+| JVM_XMS      |  -Xms             | default :1g                          |
+| JVM_XMX      |  -Xmx            | default :1g                          |
+| JVM_XMN      |  -Xmn           | default :512m                          |
 | JVM_MS      |  -XX:MetaspaceSize          | default :128m                          |
 | JVM_MMS      |  -XX:MaxMetaspaceSize          | default :320m                          |
 | NACOS_DEBUG      |  enable remote debug          | y/n default :n                          |
@@ -122,10 +130,19 @@ Run the following command：
 | NACOS_AUTH_CACHE_ENABLE      |  Turn on/off caching of auth information. By turning on this switch, the update of auth information would have a 15 seconds delay.        | default : false                          |
 | MEMBER_LIST      |  Set the cluster list with a configuration file or command-line argument        | eg:192.168.16.101:8847?raft_port=8807,192.168.16.101?raft_port=8808,192.168.16.101:8849?raft_port=8809                          |
 | EMBEDDED_STORAGE      |    Use embedded storage in cluster mode without mysql      | `embedded` default : none                          |
+| NACOS_AUTH_CACHE_ENABLE      |    nacos.core.auth.caching.enabled      |  default : false                          |
+| NACOS_AUTH_USER_AGENT_AUTH_WHITE_ENABLE      |    nacos.core.auth.enable.userAgentAuthWhite      |  default : false                          |
+| NACOS_AUTH_IDENTITY_KEY      |    nacos.core.auth.server.identity.key      |  default : serverIdentity                          |
+| NACOS_AUTH_IDENTITY_VALUE      |    nacos.core.auth.server.identity.value      |  default : security                          |
+| NACOS_SECURITY_IGNORE_URLS      |    nacos.security.ignore.urls      |  default : `/,/error,/**/*.css,/**/*.js,/**/*.html,/**/*.map,/**/*.svg,/**/*.png,/**/*.ico,/console-fe/public/**,/v1/auth/**,/v1/console/health/**,/actuator/**,/v1/console/server/**`                          |
 
 
 
+## Advanced configuration
 
+If the above property configuration list does not meet your requirements, you can mount the `custom.properties` file into the `/home/nacos/init.d/` directory of the container, where the spring properties can be configured, and the priority is higher than `application.properties` file
+
+Reference example: [cluster-hostname.yaml](/example/cluster-hostname.yaml)
 ## Nacos + Grafana + Prometheus
 
 Usage reference：[Nacos monitor-guide](https://nacos.io/zh-cn/docs/monitor-guide.html)

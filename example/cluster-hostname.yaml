@@ -3,12 +3,13 @@ services:
   nacos1:
     hostname: nacos1
     container_name: nacos1
-    image: nacos/nacos-server:latest
+    image: nacos/nacos-server:${NACOS_VERSION}
     volumes:
       - ./cluster-logs/nacos1:/home/nacos/logs
       - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8848:8848"
+      - "9848:9848"
       - "9555:9555"
     env_file:
       - ../env/nacos-hostname.env
@@ -18,13 +19,14 @@ services:
 
   nacos2:
     hostname: nacos2
-    image: nacos/nacos-server:latest
+    image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos2
     volumes:
       - ./cluster-logs/nacos2:/home/nacos/logs
       - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8849:8848"
+      - "9849:9848"
     env_file:
       - ../env/nacos-hostname.env
     restart: always
@@ -32,13 +34,14 @@ services:
       - mysql
   nacos3:
     hostname: nacos3
-    image: nacos/nacos-server:latest
+    image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos3
     volumes:
       - ./cluster-logs/nacos3:/home/nacos/logs
       - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8850:8848"
+      - "9850:9848"
     env_file:
       - ../env/nacos-hostname.env
     restart: always

@@ -1,7 +1,7 @@
 version: "2"
 services:
   nacos:
-    image: nacos/nacos-server:latest
+    image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos-standalone
     environment:
     - PREFER_HOST_MODE=hostname
@@ -11,6 +11,7 @@ services:
     - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
     - "8848:8848"
+    - "9848:9848"
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
