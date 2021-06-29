@@ -80,7 +80,7 @@ fi
 
 if [[ "${PREFER_HOST_MODE}" == "hostname" ]]; then
   JAVA_OPT="${JAVA_OPT} -Dnacos.preferHostnameOverIp=true"
-f
+fi
 JAVA_OPT="${JAVA_OPT} -Dnacos.member.list=${MEMBER_LIST}"
 
 JAVA_MAJOR_VERSION=$($JAVA -version 2>&1 | sed -E -n 's/.* version "([0-9]*).*$/\1/p')
