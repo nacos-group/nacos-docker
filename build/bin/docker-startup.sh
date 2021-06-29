@@ -14,7 +14,6 @@
 set -x
 export CUSTOM_SEARCH_NAMES="application,custom"
 export CUSTOM_SEARCH_LOCATIONS=${BASE_DIR}/init.d/,file:${BASE_DIR}/conf/
-
 export MEMBER_LIST=""
 PLUGINS_DIR="/home/nacos/plugins/peer-finder"
 function print_servers() {
@@ -81,8 +80,7 @@ fi
 
 if [[ "${PREFER_HOST_MODE}" == "hostname" ]]; then
   JAVA_OPT="${JAVA_OPT} -Dnacos.preferHostnameOverIp=true"
-fi
-
+f
 JAVA_OPT="${JAVA_OPT} -Dnacos.member.list=${MEMBER_LIST}"
 
 JAVA_MAJOR_VERSION=$($JAVA -version 2>&1 | sed -E -n 's/.* version "([0-9]*).*$/\1/p')
@@ -102,6 +100,5 @@ JAVA_OPT="${JAVA_OPT} --spring.config.name=${CUSTOM_SEARCH_NAMES}"
 JAVA_OPT="${JAVA_OPT} --logging.config=${BASE_DIR}/conf/nacos-logback.xml"
 JAVA_OPT="${JAVA_OPT} --server.max-http-header-size=524288"
 
-echo "nacos is starting,you can check the ${BASE_DIR}/logs/start.out"
-echo "$JAVA ${JAVA_OPT}" >${BASE_DIR}/logs/start.out 2>&1 &
-nohup $JAVA ${JAVA_OPT} >${BASE_DIR}/logs/start.out 2>&1 </dev/null
+echo "Nacos is starting, you can docker logs your container"
+exec $JAVA ${JAVA_OPT}
