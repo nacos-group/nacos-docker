@@ -1,15 +1,4 @@
-FROM amd64/buildpack-deps:buster-curl as installer
-
-ARG NACOS_VERSION=2.0.2
-ARG HOT_FIX_FLAG=""
-
-RUN set -x \
-    && curl -SL --output /var/tmp/nacos-server.tar.gz https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz \
-    && tar -xzvf /var/tmp/nacos-server.tar.gz -C /home \
-    && rm -rf /var/tmp/nacos-server.tar.gz /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql
-
-FROM openjdk:8-jre-slim
-
+FROM centos:7.5.1804
 MAINTAINER pader "huangmnlove@163.com"
 
 # set environment
@@ -19,8 +8,9 @@ ENV MODE="cluster" \
     CLASSPATH=".:/home/nacos/conf:$CLASSPATH" \
     CLUSTER_CONF="/home/nacos/conf/cluster.conf" \
     FUNCTION_MODE="all" \
+    JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk" \
     NACOS_USER="nacos" \
-    JAVA="/usr/local/openjdk-8/bin/java" \
+    JAVA="/usr/lib/jvm/java-1.8.0-openjdk/bin/java" \
     JVM_XMS="1g" \
     JVM_XMX="1g" \
     JVM_XMN="512m" \
@@ -28,23 +18,37 @@ ENV MODE="cluster" \
     JVM_MMS="320m" \
     NACOS_DEBUG="n" \
     TOMCAT_ACCESSLOG_ENABLED="false" \
-    TZ="Asia/Shanghai"
+    TIME_ZONE="Asia/Shanghai"
+
+ARG NACOS_VERSION=2.0.2
+ARG HOT_FIX_FLAG=""
 
 WORKDIR $BASE_DIR
 
-# copy nacos bin
-COPY --from=installer ["/home/nacos", "/home/nacos"]
+RUN set -x \
+    && yum update -y \
+    && yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel wget iputils nc  vim libcurl
+RUN wget  https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz -P /home
+RUN tar -xzvf /home/nacos-server-${NACOS_VERSION}.tar.gz -C /home \
+    && rm -rf /home/nacos-server-${NACOS_VERSION}.tar.gz /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql
+RUN yum autoremove -y wget \
+    && ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone \
+    && yum clean all
+
+
+
 
 ADD bin/docker-startup.sh bin/docker-startup.sh
 ADD conf/application.properties conf/application.properties
 ADD init.d/custom.properties init.d/custom.properties
 
+
 # set startup log dir
 RUN mkdir -p logs \
-    && cd logs \
-    && touch start.out \
-    && ln -sf /dev/stdout start.out \
-    && ln -sf /dev/stderr start.out
+	&& cd logs \
+	&& touch start.out \
+	&& ln -sf /dev/stdout start.out \
+	&& ln -sf /dev/stderr start.out
 RUN chmod +x bin/docker-startup.sh
 
 EXPOSE 8848
