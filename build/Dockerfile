@@ -40,7 +40,6 @@ RUN yum autoremove -y wget \
 
 ADD bin/docker-startup.sh bin/docker-startup.sh
 ADD conf/application.properties conf/application.properties
-ADD init.d/custom.properties init.d/custom.properties
 
 
 # set startup log dir
