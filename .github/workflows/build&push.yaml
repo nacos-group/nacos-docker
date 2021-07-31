@@ -19,10 +19,12 @@ jobs:
         id: version_step
         run: |
           echo "##[set-output name=version;]NACOS_VERSION=${GITHUB_REF#$"refs/tags/v"}"
+
       - name: Check out the repo
         uses: actions/checkout@v2
         with:
           fetch-depth: 1
+          
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
