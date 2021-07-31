@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 1
-          
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
@@ -49,7 +49,6 @@ jobs:
           context: build
           file: build/Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{steps.version_step.outputs.version}}
