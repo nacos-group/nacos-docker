@@ -52,6 +52,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{steps.version_step.outputs.version}}
+
   push_to_multi_platforms_registry:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
@@ -83,6 +84,10 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: nacos/nacos-server
+          flavor: |
+            latest=false
+          tags: |
+            - type=semver,pattern={{version}}-slim
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2.3.0
@@ -91,6 +96,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           file: build/Dockerfile.Slim
           push: true
-          tags: ${{ steps.meta.outputs.tags }}-slim
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{steps.version_step.outputs.version}}
