@@ -87,7 +87,7 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            - type=semver,pattern={{version}}-slim
+            type=semver,pattern={{version}}-slim
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2.3.0
