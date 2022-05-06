@@ -34,7 +34,7 @@ docker run --name nacos-quick -e MODE=standalone -p 8848:8848 -p 9848:9848 -d na
   `example/.env`
 
 ```dotenv
-NACOS_VERSION=2.0.2
+NACOS_VERSION=2.1.0
 ```
 
 Run the following command：
@@ -115,7 +115,8 @@ Run the following command：
 | MYSQL_SERVICE_USER | username of  database |  |
 | MYSQL_SERVICE_PASSWORD | password of  database |  |
 | MYSQL_DATABASE_NUM      | It indicates the number of database             | default :**1**                      |
-| MYSQL_SERVICE_DB_PARAM      | Database url parameter             |default:**characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false**                      |
+| MYSQL_SERVICE_DB_PARAM      | Database url parameter             |default:**
+characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false**                      |
 | JVM_XMS      |  -Xms             | default :1g                          |
 | JVM_XMX      |  -Xmx            | default :1g                          |
 | JVM_XMN      |  -Xmn           | default :512m                          |
