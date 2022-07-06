@@ -106,7 +106,7 @@
 * 集群
 
   ```powershell
-  docker-compose -f cluster.yaml up 
+  docker-compose -f cluster-hostname.yaml up 
   ```
 
 
