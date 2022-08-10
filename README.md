@@ -34,7 +34,7 @@ docker run --name nacos-quick -e MODE=standalone -p 8848:8848 -p 9848:9848 -d na
   `example/.env`
 
 ```dotenv
-NACOS_VERSION=v1.4.4
+NACOS_VERSION=v2.1.1
 ```
 
 Run the following command：
