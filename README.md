@@ -137,11 +137,20 @@ characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true
 | NACOS_AUTH_IDENTITY_VALUE      |    nacos.core.auth.server.identity.value      |  default : security                          |
 | NACOS_SECURITY_IGNORE_URLS      |    nacos.security.ignore.urls      |  default : `/,/error,/**/*.css,/**/*.js,/**/*.html,/**/*.map,/**/*.svg,/**/*.png,/**/*.ico,/console-fe/public/**,/v1/auth/**,/v1/console/health/**,/actuator/**,/v1/console/server/**`                          |
 
-~~# Advanced configuration~~
+## Advanced configuration
 
 ~~If the above property configuration list does not meet your requirements, you can mount the `custom.properties` file
 into the `/home/nacos/init.d/` directory of the container, where the spring properties can be configured, and the
 priority is higher than `application.properties` file~~
+
+If you have a lot of custom configuration needs, It is highly recommended to mount `application.properties` in
+production environment.
+
+For example:
+
+```docker
+docker run --name nacos-standalone -e MODE=standalone -v /path/application.properties:/home/nacos/conf/application.properties -p 8848:8848 -d -p 9848:9848  nacos/nacos-server:2.1.1
+```
 
 ## Nacos + Grafana + Prometheus
 
