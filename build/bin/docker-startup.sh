@@ -17,7 +17,7 @@ export CUSTOM_SEARCH_LOCATIONS=file:${BASE_DIR}/conf/
 export MEMBER_LIST=""
 PLUGINS_DIR="/home/nacos/plugins/peer-finder"
 function print_servers() {
-  if [[ ! -d "${PLUGINS_DIR}" ]]; then
+  if [[ ! -f "${CLUSTER_CONF}" ]]; then
     echo "" >"$CLUSTER_CONF"
     for server in ${NACOS_SERVERS}; do
       echo "$server" >>"$CLUSTER_CONF"
