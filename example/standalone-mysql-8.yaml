@@ -1,4 +1,4 @@
-version: "2"
+version: "3.8"
 services:
   nacos:
     image: nacos/nacos-server:${NACOS_VERSION}
@@ -7,22 +7,32 @@ services:
       - ../env/nacos-standlone-mysql.env
     volumes:
       - ./standalone-logs/:/home/nacos/logs
-      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8848:8848"
       - "9848:9848"
       - "9555:9555"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     restart: always
   mysql:
     container_name: mysql
-    image: nacos/nacos-mysql:8.0.16
+    build:
+      context: .
+      dockerfile: ./image/mysql/8/Dockerfile
+      tags:
+        - "example/mysql:8.0.30"
+    image: example/mysql:8.0.30
     env_file:
       - ../env/mysql.env
     volumes:
       - ./mysql:/var/lib/mysql
     ports:
       - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
 
 
