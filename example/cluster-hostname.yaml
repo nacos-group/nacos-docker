@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 services:
   nacos1:
     hostname: nacos1
@@ -6,7 +6,6 @@ services:
     image: nacos/nacos-server:${NACOS_VERSION}
     volumes:
       - ./cluster-logs/nacos1:/home/nacos/logs
-      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8848:8848"
       - "9848:9848"
@@ -15,7 +14,8 @@ services:
       - ../env/nacos-hostname.env
     restart: always
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
   nacos2:
     hostname: nacos2
@@ -23,7 +23,6 @@ services:
     container_name: nacos2
     volumes:
       - ./cluster-logs/nacos2:/home/nacos/logs
-      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8849:8848"
       - "9849:9848"
@@ -31,14 +30,14 @@ services:
       - ../env/nacos-hostname.env
     restart: always
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
   nacos3:
     hostname: nacos3
     image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos3
     volumes:
       - ./cluster-logs/nacos3:/home/nacos/logs
-      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8850:8848"
       - "9850:9848"
@@ -46,14 +45,25 @@ services:
       - ../env/nacos-hostname.env
     restart: always
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
   mysql:
     container_name: mysql
-    image: nacos/nacos-mysql:5.7
+    build:
+      context: .
+      dockerfile: ./image/mysql/5.7/Dockerfile
+      tags:
+        - "example/mysql:5.7"
+    image: example/mysql:5.7
     env_file:
       - ../env/mysql.env
     volumes:
       - ./mysql:/var/lib/mysql
     ports:
       - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
 

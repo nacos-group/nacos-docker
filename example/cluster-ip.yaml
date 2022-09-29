@@ -1,4 +1,4 @@
-version: "2"
+version: "3.8"
 services:
   nacos1:
     image: nacos/nacos-server:${NACOS_VERSION}
@@ -16,7 +16,8 @@ services:
       - ../env/nacos-ip.env
     restart: on-failure
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
   nacos2:
     image: nacos/nacos-server:${NACOS_VERSION}
@@ -33,7 +34,8 @@ services:
       - ../env/nacos-ip.env
     restart: always
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
   nacos3:
     image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos3
@@ -49,10 +51,16 @@ services:
       - ../env/nacos-ip.env
     restart: always
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
   mysql:
     container_name: mysql
-    image: nacos/nacos-mysql:5.7
+    build:
+      context: .
+      dockerfile: ./image/mysql/5.7/Dockerfile
+      tags:
+        - "example/mysql:5.7"
+    image: example/mysql:5.7
     networks:
       nacos_net:
         ipv4_address: 172.16.238.13
@@ -62,6 +70,11 @@ services:
       - ./mysql:/var/lib/mysql
     ports:
       - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
 networks:
   nacos_net:
     driver: bridge

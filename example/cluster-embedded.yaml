@@ -6,7 +6,6 @@ services:
     image: nacos/nacos-server:${NACOS_VERSION}
     volumes:
       - ./cluster-logs/nacos1:/home/nacos/logs
-      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8848:8848"
       - "9848:9848"
@@ -21,7 +20,6 @@ services:
     container_name: nacos2
     volumes:
       - ./cluster-logs/nacos2:/home/nacos/logs
-      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8849:8848"
       - "9849:9848"
@@ -34,7 +32,6 @@ services:
     container_name: nacos3
     volumes:
       - ./cluster-logs/nacos3:/home/nacos/logs
-      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8850:8848"
       - "9850:9848"
