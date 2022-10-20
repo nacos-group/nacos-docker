@@ -149,7 +149,7 @@ production environment.
 For example:
 
 ```docker
-docker run --name nacos-standalone -e MODE=standalone -v /path/application.properties:/home/nacos/conf/application.properties -p 8848:8848 -d -p 9848:9848  nacos/nacos-server:2.1.1
+docker-compose -f example/custom-application-config.yaml up -d
 ```
 
 ## Nacos + Grafana + Prometheus

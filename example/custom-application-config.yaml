@@ -4,10 +4,9 @@ services:
     image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos-standalone-mysql
     env_file:
-      - ../env/custom-application-config.env
+      - ../env/nacos-standlone-mysql.env
     volumes:
       - ./standalone-logs/:/home/nacos/logs
-      - ./init.d/application.properties:/home/nacos/conf/application.properties
     ports:
       - "8848:8848"
       - "9848:9848"
@@ -36,4 +35,20 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
+#  prometheus:
+#    container_name: prometheus
+#    image: prom/prometheus:latest
+#    volumes:
+#      - ./prometheus/prometheus-standalone.yaml:/etc/prometheus/prometheus.yml
+#    ports:
+#      - "9090:9090"
+#    depends_on:
+#      - nacos
+#    restart: on-failure
+#  grafana:
+#    container_name: grafana
+#    image: grafana/grafana:latest
+#    ports:
+#      - 3000:3000
+#    restart: on-failure
 
