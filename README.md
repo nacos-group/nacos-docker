@@ -6,6 +6,10 @@ This project contains a Docker image meant to facilitate the deployment of [Naco
 
 [**中文**](README_ZH.md)
 
+## Quick start
+
+* Just run: `docker pull nacos/nacos-server:latest` to get the latest version of nacos-server image to use.
+
 ## Project directory
 
 * build：Nacos makes the source code of the docker image
