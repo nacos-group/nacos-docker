@@ -2,6 +2,10 @@
 
 本项目是 [Nacos](https://github.com/alibaba/nacos) Server的docker镜像的build源码,以及Nacos server 在docker的单机和集群的运行例子.
 
+## 快速开始
+
+* 在环境中运行: `docker pull nacos/nacos-server:latest` 来获取最新的 nacos-server 镜像并使用。
+
 ## 项目目录
 
 * build：nacos 镜像制作的源码
