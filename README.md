@@ -25,7 +25,7 @@ This project contains a Docker image meant to facilitate the deployment of [Naco
 ## Quick Start
 
 ```shell
-docker run --name nacos-quick -e MODE=standalone -p 8848:8848 -p 9848:9848 -d nacos/nacos-server:2.0.2
+docker run --name nacos-quick -e MODE=standalone -p 8848:8848 -p 9848:9848 -d nacos/nacos-server:v2.2.0
 ```
 
 ## Advanced Usage
@@ -34,7 +34,7 @@ docker run --name nacos-quick -e MODE=standalone -p 8848:8848 -p 9848:9848 -d na
   `example/.env`
 
 ```dotenv
-NACOS_VERSION=v2.1.1
+NACOS_VERSION=v2.2.0
 ```
 
 Run the following command：
