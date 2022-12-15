@@ -1,4 +1,4 @@
-FROM mysql:8.0.30
+FROM mysql:8.0.31
 ADD https://raw.githubusercontent.com/alibaba/nacos/develop/distribution/conf/mysql-schema.sql /docker-entrypoint-initdb.d/nacos-mysql.sql
 RUN chown -R mysql:mysql /docker-entrypoint-initdb.d/nacos-mysql.sql
 EXPOSE 3306
