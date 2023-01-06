@@ -21,8 +21,6 @@ services:
     build:
       context: .
       dockerfile: ./image/mysql/5.7/Dockerfile
-      tags:
-        - "example/mysql:5.7"
     image: example/mysql:5.7
     env_file:
       - ../env/mysql.env

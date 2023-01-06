@@ -20,8 +20,6 @@ services:
     build:
       context: .
       dockerfile: ./image/mysql/8/Dockerfile
-      tags:
-        - "example/mysql:8.0.30"
     image: example/mysql:8.0.30
     env_file:
       - ../env/mysql.env
