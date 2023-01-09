@@ -19,8 +19,7 @@
 * 从Nacos 1.3.1版本开始,数据库存储已经升级到8.0, 并且它向下兼容
 * 例子演示中使用的数据库是为了方便定制了官方Mysql镜像, 自动初始化的数据库脚本.
 * 如果你使用自定义数据库,
-  第一次启动Nacos前需要手动初始化 [数据库脚本](https://github.com/alibaba/nacos/blob/develop/distribution/conf/nacos-mysql.sql)
-  .
+  第一次启动Nacos前需要手动初始化 [数据库脚本](https://github.com/alibaba/nacos/blob/master/distribution/conf/mysql-schema.sql)
 
 ## 快速开始
 

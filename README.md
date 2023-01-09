@@ -18,9 +18,7 @@ This project contains a Docker image meant to facilitate the deployment of [Naco
   reasons, refer
   to [Removing the Master-Slave Image Configuration](https://github.com/nacos-group/nacos-docker/wiki/%E7%A7%BB%E9%99%A4%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%BB%E4%BB%8E%E9%95%9C%E5%83%8F%E9%85%8D%E7%BD%AE)
 * Since Nacos 1.3.1 version, the database storage has been upgraded to 8.0, and it is backward compatible
-* If you use a custom database, you need to initialize
-  the [database script](https://github.com/alibaba/nacos/blob/develop/distribution/conf/nacos-mysql.sql) yourself for
-  the first time.
+* If you use a custom database, you need to initialize the [database script](https://github.com/alibaba/nacos/blob/master/distribution/conf/mysql-schema.sql) yourself for the first time.
 
 ## Quick Start
 
