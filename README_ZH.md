@@ -49,7 +49,7 @@
   docker-compose -f example/standalone-mysql-8.yaml up
   ```
 
-* 集群模式
+* docker单节点部署集群模式
 
   ```powershell
   docker-compose -f example/cluster-hostname.yaml up 
