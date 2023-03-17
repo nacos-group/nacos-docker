@@ -1,1 +1,4 @@
-version: 2.2.0.1
+version: 2.2.1
+移除 NACOS_AUTH_TOKEN 默认值
+移除 NACOS_AUTH_IDENTITY_KEY 默认值
+移除 NACOS_AUTH_IDENTITY_VALUE 默认值
