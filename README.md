@@ -60,7 +60,7 @@ Run the following command：
   docker-compose -f example/standalone-mysql-8.yaml up
   ```
 
-* Cluster
+* Standalone Nacos Cluster
 
   ```powershell
   docker-compose -f example/cluster-hostname.yaml up 
