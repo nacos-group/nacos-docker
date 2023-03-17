@@ -11,7 +11,6 @@ services:
     ports:
       - "8848:8848"
       - "9848:9848"
-      - "9555:9555"
     env_file:
       - ../env/nacos-ip.env
     restart: on-failure
@@ -43,7 +42,7 @@ services:
       nacos_net:
         ipv4_address: 172.16.238.12
     volumes:
-      - ./cluster-logs/nacos2:/home/nacos/logs
+      - ./cluster-logs/nacos3:/home/nacos/logs
     ports:
       - "8850:8848"
       - "9850:9848"
