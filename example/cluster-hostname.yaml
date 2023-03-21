@@ -9,8 +9,8 @@ services:
     ports:
       - "7848:7848"
       - "8848:8848"
-      - "9848:9848"
-      - "9849:9849"
+      - "9868:9848"
+      - "9850:9849"
     env_file:
       - ../env/nacos-hostname.env
     restart: always
@@ -27,8 +27,8 @@ services:
     ports:
       - "7849:7848"
       - "8849:8848"
-      - "9849:9848"
-      - "9850:9849"
+      - "9869:9848"
+      - "9851:9849"
     env_file:
       - ../env/nacos-hostname.env
     restart: always
@@ -44,8 +44,8 @@ services:
     ports:
       - "7850:7848"
       - "8850:8848"
-      - "9850:9848"
-      - "9851:9849"
+      - "9870:9848"
+      - "9852:9849"
     env_file:
       - ../env/nacos-hostname.env
     restart: always

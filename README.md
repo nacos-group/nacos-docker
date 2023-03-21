@@ -6,6 +6,16 @@ This project contains a Docker image meant to facilitate the deployment of [Naco
 
 [**中文**](README_ZH.md)
 
+## Note
+
+The following environment variables have been **removed** from the default values in the new version(**Nacos 2.2.1**)
+for the sake of **system security**, please add them yourself when starting up, otherwise an error will be reported at
+startup.
+
+1. ~~NACOS_AUTH_IDENTITY_KEY~~
+2. ~~NACOS_AUTH_IDENTITY_VALUE~~
+3. ~~NACOS_AUTH_TOKEN~~
+
 ## Project directory
 
 * build：Nacos makes the source code of the docker image
