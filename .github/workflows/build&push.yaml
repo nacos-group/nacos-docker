@@ -54,7 +54,7 @@ jobs:
           build-args: ${{steps.version_step.outputs.version}}
 
   push_to_multi_platforms_registry:
-    name: Push Docker image to Docker Hub
+    name: Push Docker slim image to Docker Hub
     runs-on: ubuntu-latest
     steps:
       - name: Extract Version
