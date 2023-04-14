@@ -13,7 +13,7 @@
 # limitations under the License.
 set -x
 export CUSTOM_SEARCH_NAMES="application,custom"
-export CUSTOM_SEARCH_LOCATIONS=${BASE_DIR}/init.d/,file:${BASE_DIR}/conf/
+export CUSTOM_SEARCH_LOCATIONS=file:${BASE_DIR}/conf/
 export MEMBER_LIST=""
 PLUGINS_DIR="/home/nacos/plugins/peer-finder"
 function print_servers() {
