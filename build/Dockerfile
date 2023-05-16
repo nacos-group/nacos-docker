@@ -25,10 +25,7 @@ ARG HOT_FIX_FLAG=""
 
 WORKDIR $BASE_DIR
 RUN ls
-RUN ls container
-RUN c1d609e7de2e
-RUN intermediate
-RUN Removing
+RUN ls /home/nacos
 RUN ls /home
 RUN ls \
     && mv ./* /home/ \
