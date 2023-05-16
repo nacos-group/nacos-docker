@@ -25,7 +25,7 @@ ARG HOT_FIX_FLAG=""
 
 WORKDIR $BASE_DIR
 RUN mkdir /home/nacos \
-    && mv /home/runner/work/nacos/nacos/* /home/nacos \
+    && mv /home/runner/work/nacos/nacos /home/ \
     && rm -rf /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql
 
 RUN set -x \
