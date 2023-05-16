@@ -24,7 +24,8 @@ ENV MODE="cluster" \
 ARG HOT_FIX_FLAG=""
 
 WORKDIR $BASE_DIR
-RUN mv /home/runner/work/nacos/nacos /home/ \
+RUN ls \
+    && mv ./nacos /home/ \
     && rm -rf /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql
 
 RUN set -x \
