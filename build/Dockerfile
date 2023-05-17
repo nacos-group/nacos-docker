@@ -27,7 +27,7 @@ ARG HOT_FIX_FLAG=""
 WORKDIR $BASE_DIR
 COPY ./nacos-server-2.3.0-SNAPSHOT.tar.gz /home/
 RUN ls /home \
-    && ls /home/nacos
+    && ls /home/nacos \
     && rm -rf /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql
 
 RUN set -x \
