@@ -20,6 +20,7 @@ ENV MODE="cluster" \
     TOMCAT_ACCESSLOG_ENABLED="false" \
     TIME_ZONE="Asia/Shanghai"
 
+COPY /home/runner/work/nacos/nacos/* /home/nacos/
 #ARG NACOS_VERSION=2.2.2
 ARG HOT_FIX_FLAG=""
 
