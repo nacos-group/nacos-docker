@@ -27,7 +27,7 @@ WORKDIR $BASE_DIR
 RUN ls
 RUN ls /home/nacos
 RUN ls /home
-ADD /home/runner/work/nacos/nacos/* /home/nacos/
+ADD /home/runner/work/nacos/nacos/NOTICE /home/nacos/
 RUN ls \
     && rm -rf /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql
 
