@@ -25,8 +25,8 @@ ENV MODE="cluster" \
 ARG HOT_FIX_FLAG=""
 
 WORKDIR $BASE_DIR
-COPY ./* /home/nacos/
-RUN ls \
+COPY ./nacos-server-2.3.0-SNAPSHOT.tar.gz /home/
+RUN ls /home \
     && ls /home/nacos
     && rm -rf /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql
 
