@@ -1,7 +1,7 @@
 FROM centos:7.9.2009
 MAINTAINER pader "huangmnlove@163.com"
 
-RUN pwd && ls && ls run  && ls run/work
+RUN pwd && ls && ls run
 COPY /home/runner/work/nacos/nacos/* /home/nacos/
 
 # set environment
