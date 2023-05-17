@@ -1,9 +1,6 @@
 FROM centos:7.9.2009
 MAINTAINER pader "huangmnlove@163.com"
 
-RUN pwd && ls
-COPY ./* /home/nacos/
-
 # set environment
 ENV MODE="cluster" \
     PREFER_HOST_MODE="ip"\
@@ -28,11 +25,9 @@ ENV MODE="cluster" \
 ARG HOT_FIX_FLAG=""
 
 WORKDIR $BASE_DIR
-RUN ls
-RUN ls /home/nacos
-RUN ls /home
-ADD /home/runner/work/nacos/nacos/NOTICE /home/nacos/
+COPY ./* /home/nacos/
 RUN ls \
+    && ls /home/nacos
     && rm -rf /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql
 
 RUN set -x \
