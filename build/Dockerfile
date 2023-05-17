@@ -2,7 +2,7 @@ FROM centos:7.9.2009
 MAINTAINER pader "huangmnlove@163.com"
 
 RUN pwd && ls
-COPY /home/runner/work/nacos/nacos/* /home/nacos/
+COPY ./* /home/nacos/
 
 # set environment
 ENV MODE="cluster" \
