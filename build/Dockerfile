@@ -9,7 +9,7 @@ ENV MODE="cluster" \
     CLUSTER_CONF="/home/nacos/conf/cluster.conf" \
     FUNCTION_MODE="all" \
 #    JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk" \
-    JAVA_HOME="/usr/lib/jvm/java-11-openjdk"
+    JAVA_HOME="/usr/lib/jvm/java-11-openjdk" \
     NACOS_USER="nacos" \
 #    JAVA="/usr/lib/jvm/java-1.8.0-openjdk/bin/java" \
     JAVA="/usr/lib/jvm/java-11-openjdk/bin/java" \
@@ -35,7 +35,8 @@ RUN ls /home \
     && rm -rf /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql \
     && set -x \
     && yum update -y \
-    && yum install -y java-11-openjdk.x86_64 wget iputils nc vim libcurl
+    && yum install -y java-11-openjdk.x86_64 wget iputils nc vim libcurl \
+    && ls /usr/lib/jvm/
 #    && yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel wget iputils nc vim libcurl
 
 #RUN wget --no-check-certificate https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz -P /home
