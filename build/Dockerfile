@@ -1,4 +1,4 @@
-FROM centos
+FROM centos:latest
 #centos:7.9.2009
 MAINTAINER pader "huangmnlove@163.com"
 
