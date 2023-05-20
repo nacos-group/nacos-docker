@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM eclipse-temurin:8-jre
 
 MAINTAINER pader "huangmnlove@163.com"
 
