@@ -1,5 +1,4 @@
-FROM centos:latest
-#centos:7.9.2009
+FROM centos:7.9.2009
 MAINTAINER pader "huangmnlove@163.com"
 
 # set environment
