@@ -40,6 +40,9 @@ RUN ls /home \
     && rm -rf /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql \
     && set -x \
     && apt-get update -y \
+    && apt-get upgrade
+    && ls /usr/lib/jvm/ \
+    && java -version \
     && apt-get install -y wget iputils nc vim libcurl \
 #    && apt-get install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel wget iputils nc vim libcurl \
 #    && yum install -y java-1.8.0-openjdk-headless.aarch64 wget iputils nc vim libcurl \
