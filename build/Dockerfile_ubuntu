@@ -43,7 +43,7 @@ RUN ls /home \
     && apt-get upgrade -y \
 #    && ls /usr/lib/jvm/ \
     && java -version \
-    && apt-get install -y wget iputils nc vim libcurl \
+    && apt-get install -y wget inetutils-ping nc vim libcurl \
 #    && apt-get install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel wget iputils nc vim libcurl \
 #    && yum install -y java-1.8.0-openjdk-headless.aarch64 wget iputils nc vim libcurl \
     && ls /usr/lib/jvm/ \
