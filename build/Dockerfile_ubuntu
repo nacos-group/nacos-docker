@@ -41,7 +41,7 @@ RUN ls /home \
     && set -x \
     && apt-get update -y \
     && apt-get upgrade -y \
-    && ls /usr/lib/jvm/ \
+#    && ls /usr/lib/jvm/ \
     && java -version \
     && apt-get install -y wget iputils nc vim libcurl \
 #    && apt-get install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel wget iputils nc vim libcurl \
