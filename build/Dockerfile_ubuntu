@@ -43,6 +43,7 @@ RUN ls /home \
     && apt-get upgrade -y \
 #    && ls /usr/lib/jvm/ \
     && java -version \
+    && which java \
 #    && apt-get install -y wget vim \
     && apt-get install -y wget inetutils-ping netcat-traditional vim libcurl4-openssl-dev \
 #    && apt-get install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel wget iputils nc vim libcurl \
