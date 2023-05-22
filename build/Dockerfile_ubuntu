@@ -46,7 +46,7 @@ RUN ls /home \
 #    && ls /usr/lib/jvm/ \
     && java -version \
     && which java \
-    && ls ls /opt/java/openjdk/bin/java \
+    && ls /opt/java/openjdk/bin/java \
     && ls /opt/java/openjdk/bin/java/bin/java \
 #    && apt-get install -y wget vim \
     && apt-get install -y wget inetutils-ping netcat-traditional vim libcurl4-openssl-dev \
