@@ -9,13 +9,13 @@ ENV MODE="cluster" \
     CLASSPATH=".:/home/nacos/conf:$CLASSPATH" \
     CLUSTER_CONF="/home/nacos/conf/cluster.conf" \
     FUNCTION_MODE="all" \
-    JAVA_HOME="/opt/java/openjdk/bin/java" \
+    JAVA_HOME="/opt/java/openjdk" \
 #    JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk" \
 #    JAVA_HOME="/usr/lib/jvm/java-11-openjdk" \
 #    JAVA_HOME="/usr/lib/jvm/java-11-openjdk-11.0.19.0.7-1.el7_9.x86_64" \
 #    JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk-headless.aarch64" \
     NACOS_USER="nacos" \
-    JAVA="/opt/java/openjdk/bin/java/bin/java" \
+    JAVA="/opt/java/openjdk/bin/java" \
 #    JAVA="/usr/lib/jvm/java-1.8.0-openjdk/bin/java" \
 #    JAVA="/usr/lib/jvm/java-1.8.0-openjdk-headless.aarch64/bin/java" \
 #    JAVA="/usr/lib/jvm/java-11-openjdk/bin/java" \
@@ -47,7 +47,6 @@ RUN ls /home \
     && java -version \
     && which java \
     && ls /opt/java/openjdk/bin/java \
-    && ls /opt/java/openjdk/bin/java/bin/java \
 #    && apt-get install -y wget vim \
     && apt-get install -y wget inetutils-ping netcat-traditional vim libcurl4-openssl-dev \
 #    && apt-get install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel wget iputils nc vim libcurl \
