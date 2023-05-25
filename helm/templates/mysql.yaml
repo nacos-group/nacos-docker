@@ -36,7 +36,7 @@ spec:
             - name: MYSQL_PASSWORD
               value: {{ .Values.nacos.storage.db.password }}
             - name: MYSQL_PARAM
-              value: {{ Value.nacos.storage.db.param | default "characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false" }}
+              value: {{ Values.nacos.storage.db.param | default "characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false" }}
       volumes:
         - name: mysql-data
           hostPath:
