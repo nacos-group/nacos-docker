@@ -1,0 +1,56 @@
+{{- if eq .Values.nacos.storage.type "mysql"}}
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: mysql
+  namespace: {{ .Values.namespace }}
+  labels:
+    name: mysql
+
+spec:
+  replicas: 1
+  selector:
+    name: mysql
+  template:
+    metadata:
+      labels:
+        name: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: nacos/nacos-mysql:5.7
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: {{ .Values.nacos.storage.db.password }}
+            - name: MYSQL_DATABASE
+              value: {{ .Values.nacos.storage.db.name }}
+            - name: MYSQL_HOST
+              value: {{ .Values.nacos.storage.db.host }}
+            - name: MYSQL_USER
+              value: {{ .Values.nacos.storage.db.username }}
+            - name: MYSQL_PASSWORD
+              value: {{ .Values.nacos.storage.db.password }}
+            - name: MYSQL_PARAM
+              value: {{ Value.nacos.storage.db.param | default "characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false" }}
+      volumes:
+        - name: mysql-data
+          hostPath:
+            path: /var/lib/mysql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  labels:
+    name: mysql
+spec:
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    name: mysql
