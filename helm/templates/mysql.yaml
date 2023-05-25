@@ -52,3 +52,4 @@ spec:
       targetPort: 3306
   selector:
     name: mysql 
+---
