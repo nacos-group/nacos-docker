@@ -36,7 +36,7 @@ spec:
       volumes:
       - name: mysql-data
         hostPath:
-          path: /var/lib/mysql
+          path: /data/mysql
 
 
 ---
