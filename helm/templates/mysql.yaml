@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: mysql
+  name: {{ .Values.nacos.storage.db.host }}
   namespace: {{ .Values.namespace }}
   labels:
     name: mysql
@@ -17,7 +17,7 @@ spec:
         name: mysql
     spec:
       containers:
-      - name: mysql
+      - name: {{ .Values.nacos.storage.db.host }}
         image: nacos/nacos-mysql:5.7
         ports:
         - containerPort: 3306
@@ -30,9 +30,9 @@ spec:
         - name: MYSQL_DATABASE
           value: "nacos_devtest"
         - name: MYSQL_USER
-          value: "nacos"
+          value: {{ .Values.nacos.storage.db.username }}
         - name: MYSQL_PASSWORD
-          value: "nacos"
+          value: {{ .Values.nacos.storage.db.password }}
       volumes:
       - name: mysql-data
 {{/*        hostPath:*/}}
