@@ -30,7 +30,7 @@ nacos:
 #    type: embedded
     type: mysql
     db:
-      host: localhost
+      host: host.docker.interna
       name: nacos
       port: 3306
       username: usernmae
