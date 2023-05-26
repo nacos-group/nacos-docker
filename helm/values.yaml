@@ -30,11 +30,11 @@ nacos:
 #    type: embedded
     type: mysql
     db:
-      host: host.docker.interna
-      name: nacos
-      port: 3306
-      username: usernmae
-      password: password
+      host: "mysql"
+      name: "nacos_devtest"
+      port: "3306"
+      username: "nacos"
+      password: "nacos"
       param: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false
 
 persistence:
