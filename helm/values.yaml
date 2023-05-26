@@ -32,7 +32,7 @@ nacos:
     db:
       host: "mysql"
       name: "nacos_devtest"
-      port: "3306"
+      port: 3306
       username: "nacos"
       password: "nacos"
       param: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false
