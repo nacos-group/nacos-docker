@@ -33,10 +33,10 @@ spec:
               value: "nacos"
             - name: MYSQL_PASSWORD
               value: "nacos"
-      volumes:
-        - name: mysql-data
-          hostPath:
-            path: /var/lib/mysql
+{{/*      volumes:*/}}
+{{/*      - name: mysql-data*/}}
+{{/*        hostPath:*/}}
+{{/*          path: /var/lib/mysql*/}}
 ---
 apiVersion: v1
 kind: Service
