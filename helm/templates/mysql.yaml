@@ -35,8 +35,8 @@ spec:
           value: "nacos"
       volumes:
       - name: mysql-data
-        hostPath:
-          path: /var/lib/mysql
+{{/*        hostPath:*/}}
+{{/*          path: /var/lib/mysql*/}}
  {{- end }}
 
 ---
