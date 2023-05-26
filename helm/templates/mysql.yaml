@@ -17,26 +17,26 @@ spec:
         name: mysql
     spec:
       containers:
-      - name: mysql
-        image: nacos/nacos-mysql:5.7
-        ports:
-        - containerPort: 3306
-        volumeMounts:
-        - name: mysql-data
-          mountPath: /var/lib/mysql
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: root
-        - name: MYSQL_DATABASE
-          value: nacos_devtest
-        - name: MYSQL_USER
-          value: nacos
-        - name: MYSQL_PASSWORD
-          value: nacos
+        - name: mysql
+          image: nacos/nacos-mysql:5.7
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "root"
+            - name: MYSQL_DATABASE
+              value: "nacos_devtest"
+            - name: MYSQL_USER
+              value: "nacos"
+            - name: MYSQL_PASSWORD
+              value: "nacos"
       volumes:
-      - name: mysql-data
-        hostPath:
-          path: /var/lib/mysql
+        - name: mysql-data
+          hostPath:
+            path: /var/lib/mysql
 ---
 apiVersion: v1
 kind: Service
