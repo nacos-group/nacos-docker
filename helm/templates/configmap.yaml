@@ -1,4 +1,4 @@
-{{- if eq .Values.nacos.storage.type "mysql"}}
+{{- if eq .Values.nacos.storage.type "mysql1"}}
 apiVersion: v1
 kind: ConfigMap
 metadata:

@@ -1,6 +1,6 @@
 {{- if eq .Values.nacos.storage.type "mysql"}}
 apiVersion: v1
-kind: ReplicationController
+kind: Deployment
 metadata:
   name: mysql
   namespace: {{ .Values.namespace }}
@@ -44,6 +44,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mysql
+  namespace: {{ .Values.namespace }}
   labels:
     name: mysql
 spec:
@@ -52,4 +53,4 @@ spec:
       targetPort: 3306
   selector:
     name: mysql
-  {{- end }}
+      {{- end }}
