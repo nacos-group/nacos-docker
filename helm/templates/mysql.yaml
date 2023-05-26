@@ -26,13 +26,13 @@ spec:
           mountPath: /var/lib/mysql
         env:
         - name: MYSQL_ROOT_PASSWORD
-          value: "root"
+          value: root
         - name: MYSQL_DATABASE
-          value: "nacos_devtest"
+          value: nacos_devtest
         - name: MYSQL_USER
-          value: "nacos"
+          value: nacos
         - name: MYSQL_PASSWORD
-          value: "nacos"
+          value: nacos
       volumes:
       - name: mysql-data
         hostPath:
