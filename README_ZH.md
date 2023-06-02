@@ -187,6 +187,10 @@ docker run --name nacos-standalone -e MODE=standalone -v /path/application.prope
 
 ## Nacos + Grafana + Prometheus
 
+| 属性名称                                    | 描述                                        | 选项                                                                                                                                                                                    |
+|-----------------------------------------|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|PROM_METRICS_ENABLE                        | 暴露 Nacos 所有监控指标数据 |默认 : false            |
+
 使用参考：[Nacos monitor-guide](https://nacos.io/zh-cn/docs/monitor-guide.html)
 
 **Note**:  当使用Grafana创建数据源的时候地址必须是: **http://prometheus:9090**
