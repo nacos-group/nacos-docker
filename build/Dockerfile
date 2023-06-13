@@ -9,14 +9,8 @@ ENV MODE="cluster" \
     CLUSTER_CONF="/home/nacos/conf/cluster.conf" \
     FUNCTION_MODE="all" \
     JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk" \
-#    JAVA_HOME="/usr/lib/jvm/java-11-openjdk" \
-#    JAVA_HOME="/usr/lib/jvm/java-11-openjdk-11.0.19.0.7-1.el7_9.x86_64" \
-#    JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk-headless.aarch64" \
     NACOS_USER="nacos" \
     JAVA="/usr/lib/jvm/java-1.8.0-openjdk/bin/java" \
-#    JAVA="/usr/lib/jvm/java-1.8.0-openjdk-headless.aarch64/bin/java" \
-#    JAVA="/usr/lib/jvm/java-11-openjdk/bin/java" \
-#    JAVA="/usr/lib/jvm/java-11-openjdk-11.0.19.0.7-1.el7_9.x86_64/bin/java" \
     JVM_XMS="1g" \
     JVM_XMX="1g" \
     JVM_XMN="512m" \
@@ -34,20 +28,12 @@ WORKDIR $BASE_DIR
     
 ADD ./nacos-server-*.tar.gz /home/
 
-RUN ls /home \
-    && ls /home/nacos \
-    && rm -rf /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql \
+RUN rm -rf /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql \
     && set -x \
     && yum update -y \
     && yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel wget iputils nc vim libcurl \
-#    && yum install -y java-1.8.0-openjdk-headless.aarch64 wget iputils nc vim libcurl \
-    && ls /usr/lib/jvm/ \
     && java -version
-#    && yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel wget iputils nc vim libcurl
 
-#RUN wget --no-check-certificate https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz -P /home
-#RUN tar -xzvf /home/nacos-server-${NACOS_VERSION}.tar.gz -C /home \
-#    && rm -rf /home/nacos-server-${NACOS_VERSION}.tar.gz /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql
 RUN yum autoremove -y wget \
     && ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone \
     && yum clean all
