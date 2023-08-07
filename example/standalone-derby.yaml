@@ -1,16 +1,19 @@
 version: "2"
 services:
   nacos:
-    image: nacos/nacos-server:latest
+    image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos-standalone
     environment:
-    - PREFER_HOST_MODE=hostname
-    - MODE=standalone
+      - PREFER_HOST_MODE=hostname
+      - MODE=standalone
+      - NACOS_AUTH_IDENTITY_KEY=serverIdentity
+      - NACOS_AUTH_IDENTITY_VALUE=security
+      - NACOS_AUTH_TOKEN=SecretKey012345678901234567890123456789012345678901234567890123456789
     volumes:
-    - ./standalone-logs/:/home/nacos/logs
-    - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
+      - ./standalone-logs/:/home/nacos/logs
     ports:
-    - "8848:8848"
+      - "8848:8848"
+      - "9848:9848"
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest

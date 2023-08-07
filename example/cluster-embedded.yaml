@@ -3,38 +3,43 @@ services:
   nacos1:
     hostname: nacos1
     container_name: nacos1
-    image: nacos/nacos-server:1.4.1
+    image: nacos/nacos-server:${NACOS_VERSION}
     volumes:
       - ./cluster-logs/nacos1:/home/nacos/logs
-      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
+      - "7848:7848"
       - "8848:8848"
-      - "9555:9555"
+      - "9868:9848"
+      - "9850:9849"
     env_file:
       - ../env/nacos-embedded.env
     restart: always
 
   nacos2:
     hostname: nacos2
-    image: nacos/nacos-server:1.4.1
+    image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos2
     volumes:
       - ./cluster-logs/nacos2:/home/nacos/logs
-      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
+      - "7849:7848"
       - "8849:8848"
+      - "9869:9848"
+      - "9851:9849"
     env_file:
       - ../env/nacos-embedded.env
     restart: always
   nacos3:
     hostname: nacos3
-    image: nacos/nacos-server:1.4.1
+    image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos3
     volumes:
       - ./cluster-logs/nacos3:/home/nacos/logs
-      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
+      - "7850:7848"
       - "8850:8848"
+      - "9870:9848"
+      - "9852:9849"
     env_file:
       - ../env/nacos-embedded.env
     restart: always

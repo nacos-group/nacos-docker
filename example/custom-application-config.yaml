@@ -10,16 +10,18 @@ services:
     ports:
       - "8848:8848"
       - "9848:9848"
+      - "9849:9849"
     depends_on:
       mysql:
         condition: service_healthy
-    restart: always
+
+    restart: on-failure
   mysql:
     container_name: mysql
     build:
       context: .
-      dockerfile: ./image/mysql/8/Dockerfile
-    image: example/mysql:8.0.30
+      dockerfile: ./image/mysql/5.7/Dockerfile
+    image: example/mysql:5.7
     env_file:
       - ../env/mysql.env
     volumes:
@@ -31,5 +33,20 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
-
+#  prometheus:
+#    container_name: prometheus
+#    image: prom/prometheus:latest
+#    volumes:
+#      - ./prometheus/prometheus-standalone.yaml:/etc/prometheus/prometheus.yml
+#    ports:
+#      - "9090:9090"
+#    depends_on:
+#      - nacos
+#    restart: on-failure
+#  grafana:
+#    container_name: grafana
+#    image: grafana/grafana:latest
+#    ports:
+#      - 3000:3000
+#    restart: on-failure
 
