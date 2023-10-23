@@ -145,6 +145,7 @@ Run the following command：
 | NACOS_AUTH_IDENTITY_KEY                  | nacos.core.auth.server.identity.key                                                                                               | `Note: It is removed from Nacos 2.2.1`                                                                                                                                                |
 | NACOS_AUTH_IDENTITY_VALUE                | nacos.core.auth.server.identity.value                                                                                             | `Note: It is removed from Nacos 2.2.1`                                                                                                                                                |
 | NACOS_SECURITY_IGNORE_URLS               | nacos.security.ignore.urls                                                                                                        | default : `/,/error,/**/*.css,/**/*.js,/**/*.html,/**/*.map,/**/*.svg,/**/*.png,/**/*.ico,/console-fe/public/**,/v1/auth/**,/v1/console/health/**,/actuator/**,/v1/console/server/**` |
+| DB_POOL_CONNECTION_TIMEOUT               | Database connection pool timeout in milliseconds                                                                                 | default : **30000**                                                                                                                                                                   |
 
 ## Advanced configuration
 
