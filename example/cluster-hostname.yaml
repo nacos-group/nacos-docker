@@ -7,10 +7,8 @@ services:
     volumes:
       - ./cluster-logs/nacos1:/home/nacos/logs
     ports:
-      - "7848:7848"
       - "8848:8848"
-      - "9868:9848"
-      - "9850:9849"
+      - "9848:9848"
     env_file:
       - ../env/nacos-hostname.env
     restart: always
@@ -25,10 +23,8 @@ services:
     volumes:
       - ./cluster-logs/nacos2:/home/nacos/logs
     ports:
-      - "7849:7848"
       - "8849:8848"
-      - "9869:9848"
-      - "9851:9849"
+      - "9849:9848"
     env_file:
       - ../env/nacos-hostname.env
     restart: always
@@ -42,10 +38,8 @@ services:
     volumes:
       - ./cluster-logs/nacos3:/home/nacos/logs
     ports:
-      - "7850:7848"
       - "8850:8848"
-      - "9870:9848"
-      - "9852:9849"
+      - "9850:9848"
     env_file:
       - ../env/nacos-hostname.env
     restart: always
