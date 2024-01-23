@@ -42,7 +42,8 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: nacos/nacos-server
-
+        flavor: |
+          latest=false
       - name: Build and push Docker image
         uses: docker/build-push-action@v2.3.0
         with:
