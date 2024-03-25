@@ -40,11 +40,15 @@ docker run --name nacos-quick -e MODE=standalone -p 8848:8848 -p 9848:9848 -d na
 
 ## Advanced Usage
 
-* Tips: You can change the version of the Nacos image in the compose file from the following configuration.
+* Tips: You can change [the version of the Nacos image](https://hub.docker.com/r/nacos/nacos-server/tags) in the compose file from the following configuration.
   `example/.env`
 
 ```dotenv
-NACOS_VERSION=v2.2.0
+NACOS_VERSION=v2.3.1
+```
+For Mac user with Arm Chip (like M1/M2/M3 series) , you need to add `-slim` after version which support `arm` arch. 
+```dotenv
+NACOS_VERSION=v2.3.1-slim
 ```
 
 Run the following command：
