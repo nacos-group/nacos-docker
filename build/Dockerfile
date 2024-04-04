@@ -45,8 +45,10 @@ ADD conf/application.properties conf/application.properties
 RUN mkdir -p logs \
 	&& touch logs/start.out \
 	&& ln -sf /dev/stdout start.out \
-	&& ln -sf /dev/stderr start.out
-RUN chmod +x bin/docker-startup.sh
+	&& ln -sf /dev/stderr start.out \
+	&& chmod +x bin/docker-startup.sh \
+	&& chgrp -R 0 /home/nacos \
+	&& chmod -R g=u /home/nacos
 
 EXPOSE 8848
 ENTRYPOINT ["bin/docker-startup.sh"]
