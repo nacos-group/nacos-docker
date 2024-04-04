@@ -4,7 +4,7 @@ services:
     image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos-standalone-mysql
     env_file:
-      - ../env/nacos-standlone-mysql.env
+      - ../env/nacos-standalone-mysql.env
     volumes:
       - ./standalone-logs/:/home/nacos/logs
     ports:
