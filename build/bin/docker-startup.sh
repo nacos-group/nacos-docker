@@ -73,6 +73,11 @@ if [[ ! -z "${IGNORED_INTERFACES}" ]]; then
   JAVA_OPT="${JAVA_OPT} -Dnacos.inetutils.ignored-interfaces=${IGNORED_INTERFACES}"
 fi
 
+### set Metrics for prometheus
+if [[ "${PROM_METRICS_ENABLE}" == "true" ]]; then
+  JAVA_OPT="${JAVA_OPT} -Dmanagement.endpoints.web.exposure.include=*"
+fi
+
 ### If turn on auth system:
 if [[ ! -z "${NACOS_AUTH_ENABLE}" ]]; then
   JAVA_OPT="${JAVA_OPT} -Dnacos.core.auth.enabled=${NACOS_AUTH_ENABLE}"
