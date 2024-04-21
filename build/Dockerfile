@@ -1,5 +1,5 @@
 FROM centos:7.9.2009
-LABEL maintainer="pader <huangmnlove@163.com>"
+LABEL maintainer="herodotus <herodotus@aliyun.com>"
 
 # set environment
 ENV MODE="cluster" \
@@ -35,11 +35,10 @@ RUN curl -SL https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}
     && ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone
 
 
-
-
 ADD bin/docker-startup.sh bin/docker-startup.sh
 ADD conf/application.properties conf/application.properties
-
+ADD conf/application.properties /home/nacos/conf/nacos-postgresql.sql
+ADD plugins/nacos-postgresql.jar /home/nacos/plugins/nacos-postgresql.jar
 
 # set startup log dir
 RUN mkdir -p logs \
