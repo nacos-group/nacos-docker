@@ -1,16 +1,19 @@
-FROM centos:7.9.2009
+FROM alpine:latest
 LABEL maintainer="pader <huangmnlove@163.com>"
 
-# set environment
+# 安装依赖
+RUN apk add --no-cache openjdk8-jre-base curl iputils ncurses vim libcurl
+
+# 设置环境变量
 ENV MODE="cluster" \
     PREFER_HOST_MODE="ip"\
     BASE_DIR="/home/nacos" \
     CLASSPATH=".:/home/nacos/conf:$CLASSPATH" \
     CLUSTER_CONF="/home/nacos/conf/cluster.conf" \
     FUNCTION_MODE="all" \
-    JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk" \
+    JAVA_HOME="/usr/lib/jvm/java-1.8-openjdk" \
     NACOS_USER="nacos" \
-    JAVA="/usr/lib/jvm/java-1.8.0-openjdk/bin/java" \
+    JAVA="/usr/lib/jvm/java-1.8-openjdk/bin/java" \
     JVM_XMS="1g" \
     JVM_XMX="1g" \
     JVM_XMN="512m" \
@@ -25,28 +28,22 @@ ARG HOT_FIX_FLAG=""
 
 WORKDIR $BASE_DIR
 
+# 下载并安装 Nacos
 RUN set -x \
-    && yum update -y \
-    && yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel iputils nc vim libcurl \
-    && yum clean all
-RUN curl -SL https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz -o /home/nacos-server.tar.gz \
-    && tar -xzvf /home/nacos-server.tar.gz -C /home \
-    && rm -rf /home/nacos-server.tar.gz /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql \
+    && curl -SL "https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz" -o nacos-server.tar.gz \
+    && tar -xzvf nacos-server.tar.gz -C /home \
+    && rm -rf nacos-server.tar.gz /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql \
     && ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone
-
-
-
 
 ADD bin/docker-startup.sh bin/docker-startup.sh
 ADD conf/application.properties conf/application.properties
 
-
-# set startup log dir
+# 设置启动日志目录
 RUN mkdir -p logs \
 	&& touch logs/start.out \
-	&& ln -sf /dev/stdout start.out \
-	&& ln -sf /dev/stderr start.out
-RUN chmod +x bin/docker-startup.sh
+	&& ln -sf /dev/stdout logs/start.out \
+	&& ln -sf /dev/stderr logs/start.out \
+    && chmod +x bin/docker-startup.sh
 
 EXPOSE 8848
-ENTRYPOINT ["bin/docker-startup.sh"]
+ENTRYPOINT ["sh","bin/docker-startup.sh"]
