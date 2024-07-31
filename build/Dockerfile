@@ -2,7 +2,7 @@ FROM alpine:latest
 LABEL maintainer="pader <huangmnlove@163.com>"
 
 # 安装依赖
-RUN apk add --no-cache openjdk8-jre-base curl iputils ncurses vim libcurl
+RUN apk add --no-cache openjdk8-jre-base curl iputils ncurses vim libcurl bash
 
 # 设置环境变量
 ENV MODE="cluster" \
