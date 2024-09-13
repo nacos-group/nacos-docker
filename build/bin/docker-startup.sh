@@ -14,7 +14,7 @@
 set -x
 export CUSTOM_SEARCH_NAMES="application"
 export CUSTOM_SEARCH_LOCATIONS=file:${BASE_DIR}/conf/
-export MEMBER_LIST=""
+export MEMBER_LIST="$MEMBER_LIST"
 PLUGINS_DIR="/home/nacos/plugins/peer-finder"
 function print_servers() {
    if [[ ! -d "${PLUGINS_DIR}" ]]; then
