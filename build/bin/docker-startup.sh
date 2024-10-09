@@ -32,13 +32,13 @@ function print_servers() {
 #===========================================================================================
 JAVA_OPT="${JAVA_OPT} -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+CMSClassUnloadingEnabled -XX:SurvivorRatio=8 "
 if [[ "${MODE}" == "standalone" ]]; then
-  JAVA_OPT="${JAVA_OPT} -Xms${JVM_XMS} -Xmx${JVM_XMX} -Xmn${JVM_XMN}"
+  JAVA_OPT="${JAVA_OPT} -server -XX:+UseContainerSupport -XX:MaxMetaspaceSize=256m -XX:InitiatingHeapOccupancyPercent=45 -XX:MaxGCPauseMillis=200 -XX:+UseG1GC -XX:NewRatio=2 -XX:MaxRAMPercentage=70.0 -Xss512k"
   JAVA_OPT="${JAVA_OPT} -Dnacos.standalone=true"
 else
   if [[ "${EMBEDDED_STORAGE}" == "embedded" ]]; then
     JAVA_OPT="${JAVA_OPT} -DembeddedStorage=true"
   fi
-  JAVA_OPT="${JAVA_OPT} -server -Xms${JVM_XMS} -Xmx${JVM_XMX} -Xmn${JVM_XMN} -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+  JAVA_OPT="${JAVA_OPT} -server -XX:+UseContainerSupport -XX:MaxMetaspaceSize=256m -XX:InitiatingHeapOccupancyPercent=45 -XX:MaxGCPauseMillis=200 -XX:+UseG1GC -XX:NewRatio=2 -XX:MaxRAMPercentage=70.0 -Xss512k -XX:MetaspaceSize=128m"
   if [[ "${NACOS_DEBUG}" == "y" ]]; then
     JAVA_OPT="${JAVA_OPT} -Xdebug -Xrunjdwp:transport=dt_socket,address=9555,server=y,suspend=n"
   fi
