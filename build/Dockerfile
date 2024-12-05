@@ -38,12 +38,18 @@ RUN set -x \
 ADD bin/docker-startup.sh bin/docker-startup.sh
 ADD conf/application.properties conf/application.properties
 
+# add nonroot
+RUN useradd -r -u 1001 -g root nacos
+RUN find / -perm /6000 -type f -exec chmod a-s {} \; || true
+
 # 设置启动日志目录
 RUN mkdir -p logs \
-	&& touch logs/start.out \
-	&& ln -sf /dev/stdout logs/start.out \
-	&& ln -sf /dev/stderr logs/start.out \
+    && touch logs/start.out \
+    && ln -sf /dev/stdout logs/start.out \
+    && ln -sf /dev/stderr logs/start.out \
+    && chown -R nacos:root /home/nacos \
     && chmod +x bin/docker-startup.sh
 
+USER 1001
 EXPOSE 8848
 ENTRYPOINT ["sh","bin/docker-startup.sh"]
