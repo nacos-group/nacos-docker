@@ -1,6 +1,6 @@
 FROM bitnami/minideb:bookworm as installer
 RUN install_packages curl 
-ARG NACOS_VERSION=2.4.2.1
+ARG NACOS_VERSION=2.4.3
 ARG HOT_FIX_FLAG=""
 
 RUN set -x \
@@ -8,7 +8,7 @@ RUN set -x \
     && tar -xzvf /var/tmp/nacos-server.tar.gz -C /home \
     && rm -rf /var/tmp/nacos-server.tar.gz /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql
 
-FROM bitnami/java:1.8.422-6-debian-12-r6
+FROM bitnami/java:1.8-debian-12
 
 # set environment
 ENV MODE="cluster" \
