@@ -14,7 +14,7 @@
 set -x
 export CUSTOM_SEARCH_NAMES="application"
 export CUSTOM_SEARCH_LOCATIONS=file:${BASE_DIR}/conf/
-export MEMBER_LIST=""
+export MEMBER_LIST="$MEMBER_LIST"
 PLUGINS_DIR="/home/nacos/plugins/peer-finder"
 function print_servers() {
    if [[ ! -d "${PLUGINS_DIR}" ]]; then
@@ -27,9 +27,24 @@ function print_servers() {
     sleep 30
   fi
 }
+
+function join_if_exist() {
+    if [ -n "$2" ]; then
+        echo "$1$2"
+    else
+        echo ""
+    fi
+}
+
 #===========================================================================================
 # JVM Configuration
 #===========================================================================================
+Xms=$(join_if_exist "-Xms" ${JVM_XMS})
+Xmx=$(join_if_exist "-Xmx" ${JVM_XMX})
+Xmn=$(join_if_exist "-Xmn" ${JVM_XMN})
+XX_MS=$(join_if_exist "-XX:MetaspaceSize=" ${JVM_MS})
+XX_MMS=$(join_if_exist "-XX:MaxMetaspaceSize=" ${JVM_MMS})
+
 JAVA_OPT="${JAVA_OPT} -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+CMSClassUnloadingEnabled -XX:SurvivorRatio=8 "
 if [[ "${MODE}" == "standalone" ]]; then
   JAVA_OPT="${JAVA_OPT} -server -XX:+UseContainerSupport -XX:MaxMetaspaceSize=256m -XX:InitiatingHeapOccupancyPercent=45 -XX:MaxGCPauseMillis=200 -XX:+UseG1GC -XX:NewRatio=2 -XX:MaxRAMPercentage=70.0 -Xss512k"
