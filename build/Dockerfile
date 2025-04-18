@@ -23,8 +23,8 @@ ENV MODE="cluster" \
     TOMCAT_ACCESSLOG_ENABLED="false" \
     TZ="Asia/Shanghai"
 
-# build target version
-ARG NACOS_VERSION=2.4.3
+ARG NACOS_VERSION=2.5.1
+
 ARG HOT_FIX_FLAG=""
 
 WORKDIR $BASE_DIR
