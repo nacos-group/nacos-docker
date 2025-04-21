@@ -45,7 +45,7 @@ Xmn=$(join_if_exist "-Xmn" ${JVM_XMN})
 XX_MS=$(join_if_exist "-XX:MetaspaceSize=" ${JVM_MS})
 XX_MMS=$(join_if_exist "-XX:MaxMetaspaceSize=" ${JVM_MMS})
 
-JAVA_OPT="${JAVA_OPT} -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+CMSClassUnloadingEnabled -XX:SurvivorRatio=8 "
+JAVA_OPT="${JAVA_OPT} -XX:+UseG1GC -XX:G1HeapRegionSize=16m -XX:G1ReservePercent=25 -XX:InitiatingHeapOccupancyPercent=40 -XX:MaxGCPauseMillis=200 -XX:+ParallelRefProcEnabled -XX:SurvivorRatio=8 "
 if [[ "${MODE}" == "standalone" ]]; then
   JAVA_OPT="${JAVA_OPT} $Xms $Xmx $Xmn"
   JAVA_OPT="${JAVA_OPT} -Dnacos.standalone=true"
@@ -104,6 +104,12 @@ if [[ "$JAVA_MAJOR_VERSION" -ge "9" ]]; then
 else
   JAVA_OPT_EXT_FIX="-Djava.ext.dirs=${JAVA_HOME}/jre/lib/ext:${JAVA_HOME}/lib/ext"
   JAVA_OPT="${JAVA_OPT} -Xloggc:${BASE_DIR}/logs/nacos_gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M"
+fi
+
+# 验证 JAVA 变量是否正确
+if [[ ! -f "$JAVA" ]]; then
+  echo "Error: JAVA executable not found at $JAVA. Please check JAVA_HOME and JAVA environment variables."
+  exit 1
 fi
 
 JAVA_OPT="${JAVA_OPT} -Dloader.path=${BASE_DIR}/plugins,${BASE_DIR}/plugins/health,${BASE_DIR}/plugins/cmdb,${BASE_DIR}/plugins/selector"
