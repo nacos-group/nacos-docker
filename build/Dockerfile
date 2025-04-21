@@ -1,49 +1,67 @@
-FROM alpine:latest
-LABEL maintainer="pader <huangmnlove@163.com>"
+# 第一阶段：构建环境
+FROM ubuntu:22.04 as builder
+# 保留维护者信息
+LABEL maintainer="YuanJie <782353676@qq.com>"
 
-# 安装依赖
-RUN apk add --no-cache openjdk8-jre-base curl iputils ncurses vim libcurl bash
+# 安装构建依赖
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    ca-certificates \
+    wget \
+    tar \
+    && rm -rf /var/lib/apt/lists/*
 
-# 设置环境变量
-ENV MODE="cluster" \
-    PREFER_HOST_MODE="ip"\
-    BASE_DIR="/home/nacos" \
-    CLASSPATH=".:/home/nacos/conf:$CLASSPATH" \
-    CLUSTER_CONF="/home/nacos/conf/cluster.conf" \
-    FUNCTION_MODE="all" \
-    JAVA_HOME="/usr/lib/jvm/java-1.8-openjdk" \
-    NACOS_USER="nacos" \
-    JAVA="/usr/lib/jvm/java-1.8-openjdk/bin/java" \
-    JVM_XMS="1g" \
-    JVM_XMX="1g" \
-    JVM_XMN="512m" \
-    JVM_MS="128m" \
-    JVM_MMS="320m" \
-    NACOS_DEBUG="n" \
-    TOMCAT_ACCESSLOG_ENABLED="false" \
-    TIME_ZONE="Asia/Shanghai"
+# 安装 JDK
+ARG JDK_VERSION=11.0.27_6
+ADD OpenJDK11U-jdk_x64_linux_hotspot_11.0.27_6.tar.gz /usr/local/java/
+RUN mv /usr/local/java/jdk-11.0.27+6 /usr/local/java/jdk
 
-ARG NACOS_VERSION=2.5.1
-ARG HOT_FIX_FLAG=""
+# 安装 Nacos
+ARG NACOS_VERSION=2.3.2
+COPY nacos-server-${NACOS_VERSION}.tar.gz /tmp/
+RUN mkdir -p /app && \
+    tar -xzf /tmp/nacos-server-${NACOS_VERSION}.tar.gz -C /app && \
+    rm -rf /tmp/*
 
-WORKDIR $BASE_DIR
+# 第二阶段：运行时环境
+FROM ubuntu:22.04
 
-# 下载并安装 Nacos
-RUN set -x \
-    && curl -SL "https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz" -o nacos-server.tar.gz \
-    && tar -xzvf nacos-server.tar.gz -C /home \
-    && rm -rf nacos-server.tar.gz /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql \
-    && ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone
+# 保留维护者信息
+LABEL maintainer="YuanJie <782353676@qq.com>"
 
-ADD bin/docker-startup.sh bin/docker-startup.sh
-ADD conf/application.properties conf/application.properties
+# 安装运行时最小依赖
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    iputils-ping \
+    tzdata \
+    && rm -rf /var/lib/apt/lists/*
 
-# 设置启动日志目录
-RUN mkdir -p logs \
-	&& touch logs/start.out \
-	&& ln -sf /dev/stdout logs/start.out \
-	&& ln -sf /dev/stderr logs/start.out \
-    && chmod +x bin/docker-startup.sh
+# 从构建阶段复制必要文件
+COPY --from=builder /usr/local/java/jdk /usr/local/java/jdk
+COPY --from=builder /app/nacos /home/nacos
+
+# 设置环境变量（显式声明JAVA变量）
+ENV JAVA_HOME=/usr/local/java/jdk \
+    JAVA=/usr/local/java/jdk/bin/java \
+    PATH=$JAVA_HOME/bin:$PATH
+    BASE_DIR=/home/nacos \
+    MODE=cluster \
+    TIME_ZONE=Asia/Shanghai
+
+# 配置时区
+RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && \
+    echo $TIME_ZONE > /etc/timezone
+
+# 添加配置和启动脚本
+ADD bin/docker-startup.sh $BASE_DIR/bin/
+ADD conf/application.properties $BASE_DIR/conf/
+
+# 设置日志重定向
+RUN mkdir -p $BASE_DIR/logs && \
+    ln -sf /dev/stdout $BASE_DIR/logs/start.out && \
+    ln -sf /dev/stderr $BASE_DIR/logs/start.out && \
+    chmod +x $BASE_DIR/bin/docker-startup.sh
 
 EXPOSE 8848
-ENTRYPOINT ["sh","bin/docker-startup.sh"]
+WORKDIR $BASE_DIR
+ENTRYPOINT ["./bin/docker-startup.sh"]
