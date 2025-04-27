@@ -8,10 +8,11 @@ services:
       - MODE=standalone
       - NACOS_AUTH_IDENTITY_KEY=serverIdentity
       - NACOS_AUTH_IDENTITY_VALUE=security
-      - NACOS_AUTH_TOKEN=SecretKey012345678901234567890123456789012345678901234567890123456789
+      - NACOS_AUTH_TOKEN=VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg=
     volumes:
       - ./standalone-logs/:/home/nacos/logs
     ports:
+      - "8080:8080"
       - "8848:8848"
       - "9848:9848"
   prometheus:

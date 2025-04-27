@@ -2,7 +2,7 @@ FROM alpine:latest
 LABEL maintainer="pader <huangmnlove@163.com>"
 
 # 安装依赖
-RUN apk add --no-cache openjdk8-jre-base curl iputils ncurses vim libcurl bash
+RUN apk add --no-cache openjdk17-jre curl iputils ncurses vim libcurl bash
 
 # 设置环境变量
 ENV MODE="cluster" \
@@ -11,9 +11,9 @@ ENV MODE="cluster" \
     CLASSPATH=".:/home/nacos/conf:$CLASSPATH" \
     CLUSTER_CONF="/home/nacos/conf/cluster.conf" \
     FUNCTION_MODE="all" \
-    JAVA_HOME="/usr/lib/jvm/java-1.8-openjdk" \
+    JAVA_HOME="/usr/lib/jvm/java-17-openjdk" \
     NACOS_USER="nacos" \
-    JAVA="/usr/lib/jvm/java-1.8-openjdk/bin/java" \
+    JAVA="/usr/lib/jvm/java-17-openjdk/bin/java" \
     JVM_XMS="1g" \
     JVM_XMX="1g" \
     JVM_XMN="512m" \
@@ -23,7 +23,7 @@ ENV MODE="cluster" \
     TOMCAT_ACCESSLOG_ENABLED="false" \
     TIME_ZONE="Asia/Shanghai"
 
-ARG NACOS_VERSION=2.5.1
+ARG NACOS_VERSION=3.0.0
 ARG HOT_FIX_FLAG=""
 
 WORKDIR $BASE_DIR
