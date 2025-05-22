@@ -2,7 +2,7 @@ FROM alpine:latest
 LABEL maintainer="pader <huangmnlove@163.com>"
 
 # 安装依赖
-RUN apk add --no-cache openjdk17-jre curl iputils ncurses vim libcurl bash
+RUN apk add --no-cache openjdk17-jre curl iputils ncurses vim libcurl bash libstdc++
 
 # 设置环境变量
 ENV MODE="cluster" \
@@ -23,7 +23,7 @@ ENV MODE="cluster" \
     TOMCAT_ACCESSLOG_ENABLED="false" \
     TIME_ZONE="Asia/Shanghai"
 
-ARG NACOS_VERSION=3.0.0
+ARG NACOS_VERSION=3.0.1
 ARG HOT_FIX_FLAG=""
 
 WORKDIR $BASE_DIR
