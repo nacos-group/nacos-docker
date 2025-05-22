@@ -92,6 +92,14 @@ if [[ ! -z "${NACOS_AUTH_ENABLE}" ]]; then
   JAVA_OPT="${JAVA_OPT} -Dnacos.core.auth.enabled=${NACOS_AUTH_ENABLE}"
 fi
 
+if [[ ! -z "${NACOS_AUTH_ADMIN_ENABLE}" ]]; then
+  JAVA_OPT="${JAVA_OPT} -Dnacos.core.auth.admin.enabled=${NACOS_AUTH_ADMIN_ENABLE}"
+fi
+
+if [[ ! -z "${NACOS_AUTH_CONSOLE_ENABLE}" ]]; then
+  JAVA_OPT="${JAVA_OPT} -Dnacos.core.auth.console.enabled=${NACOS_AUTH_CONSOLE_ENABLE}"
+fi
+
 if [[ -z "${NACOS_AUTH_TOKEN}" ]]; then
   echo "env NACOS_AUTH_TOKEN must be set with Base64 String."
   exit 255
