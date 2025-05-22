@@ -40,13 +40,16 @@ docker run --name nacos-quick -e MODE=standalone -p 8848:8848 -p 9848:9848 -d na
 
 ## Advanced Usage
 
-* Tips: You can change [the version of the Nacos image](https://hub.docker.com/r/nacos/nacos-server/tags) in the compose file from the following configuration.
+* Tips: You can change [the version of the Nacos image](https://hub.docker.com/r/nacos/nacos-server/tags) in the compose
+  file from the following configuration.
   `example/.env`
 
 ```dotenv
 NACOS_VERSION=v2.3.1
 ```
-For Mac user with Arm Chip (like M1/M2/M3 series) , you need to add `-slim` after version which support `arm` arch. 
+
+For Mac user with Arm Chip (like M1/M2/M3 series) , you need to add `-slim` after version which support `arm` arch.
+
 ```dotenv
 NACOS_VERSION=v2.3.1-slim
 ```
@@ -151,8 +154,13 @@ Run the following command：
 | NACOS_SECURITY_IGNORE_URLS              | nacos.security.ignore.urls                                                                                                        | default : `/,/error,/**/*.css,/**/*.js,/**/*.html,/**/*.map,/**/*.svg,/**/*.png,/**/*.ico,/console-fe/public/**,/v1/auth/**,/v1/console/health/**,/actuator/**,/v1/console/server/**` |
 | NACOS_CONSOLE_UI_ENABLED                | nacos.console.ui.enabled                                                                                                          | default : `true`                                                                                                                                                                      |
 | NACOS_CORE_PARAM_CHECK_ENABLED          | nacos.core.param.check.enabled                                                                                                    | default : `true`                                                                                                                                                                      |
-| DB_POOL_CONNECTION_TIMEOUT               | Database connection pool timeout in milliseconds                                                                                 | default : **30000**                                                                                                                                                                   |
-
+| DB_POOL_CONNECTION_TIMEOUT              | Database connection pool timeout in milliseconds                                                                                  | default : **30000**                                                                                                                                                                   |
+| NACOS_CONSOLE_UI_ENABLED                | nacos.console.ui.enabled                                                                                                          | default : `true`                                                                                                                                                                      |
+| NACOS_CORE_PARAM_CHECK_ENABLED          | nacos.core.param.check.enabled                                                                                                    | default : `true`                                                                                                                                                                      |
+| NACOS_AUTH_ADMIN_ENABLE                 | nacos.core.auth.admin.enable                                                                                                      | default : `true`                                                                                                                                                                      |
+| NACOS_AUTH_CONSOLE_ENABLE               | nacos.core.auth.console.enable                                                                                                    | default : `true`                                                                                                                                                                      |                                                                                                                                                                                       |
+| NACOS_CONSOLE_PORT                      | nacos.console.port                                                                                                                | default : `8080`                                                                                                                                                                      |
+| NACOS_CONSOLE_CONTEXTPATH               | nacos.console.contextPath                                                                                                         | default : ``                                                                                                                                                                          |
 
 ## Advanced configuration
 
