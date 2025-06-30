@@ -46,6 +46,5 @@ RUN mkdir -p logs \
     && chmod +x bin/docker-startup.sh
 
 EXPOSE 8848
-EXPOSE 9848
-EXPOSE 9849
+EXPOSE 9848 9849
 ENTRYPOINT ["sh","bin/docker-startup.sh"]
