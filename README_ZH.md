@@ -39,9 +39,9 @@
 ```shell
 docker run --name nacos-standalone-derby \
     -e MODE=standalone \
-    -e NACOS_AUTH_TOKEN="VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg=" \
-    -e NACOS_AUTH_IDENTITY_KEY=serverIdentity \
-    -e NACOS_AUTH_IDENTITY_VALUE=security \
+    -e NACOS_AUTH_TOKEN=${your_nacos_auth_secret_token} \
+    -e NACOS_AUTH_IDENTITY_KEY=${your_nacos_server_identity_key} \
+    -e NACOS_AUTH_IDENTITY_VALUE=${your_nacos_server_identity_value} \
     -p 8080:8080 \
     -p 8848:8848 \
     -p 9848:9848 \
@@ -54,9 +54,9 @@ docker run --name nacos-standalone-derby \
 docker run --name nacos-standalone-derby-v2.5.1 \
     -e MODE=standalone \
     -e NACOS_AUTH_ENABLE=true \
-    -e NACOS_AUTH_TOKEN="VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg=" \
-    -e NACOS_AUTH_IDENTITY_KEY=serverIdentity \
-    -e NACOS_AUTH_IDENTITY_VALUE=security \
+    -e NACOS_AUTH_TOKEN=${your_nacos_auth_secret_token} \
+    -e NACOS_AUTH_IDENTITY_KEY=${your_nacos_server_identity_key} \
+    -e NACOS_AUTH_IDENTITY_VALUE=${your_nacos_server_identity_value} \
     -p 8848:8848 \
     -p 9848:9848 \
     -d nacos/nacos-server:v2.5.1
