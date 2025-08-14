@@ -98,7 +98,7 @@ Run the following command：
   ./mysql-init.sh && docker-compose -f standalone-mysql.yaml up
   ```
 
-* Standalone Independent Mysql
+* Standalone Independent Mysql（Only Nacos 3.x is supported）
 
   ```powershell
   cd example
