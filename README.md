@@ -34,24 +34,46 @@ startup.
 
 ## Quick Start
 
+### Nacos v3.x
+
 ```shell
-docker run --name nacos-quick -e MODE=standalone -p 8848:8848 -p 9848:9848 -d nacos/nacos-server:v2.2.0
+docker run --name nacos-standalone-derby \
+    -e MODE=standalone \
+    -e NACOS_AUTH_TOKEN=${your_nacos_auth_secret_token} \
+    -e NACOS_AUTH_IDENTITY_KEY=${your_nacos_server_identity_key} \
+    -e NACOS_AUTH_IDENTITY_VALUE=${your_nacos_server_identity_value} \
+    -p 8080:8080 \
+    -p 8848:8848 \
+    -p 9848:9848 \
+    -d nacos/nacos-server:latest
+```
+
+### Nacos v2.x
+
+```shell
+docker run --name nacos-standalone-derby-v2.5.1 \
+    -e MODE=standalone \
+    -e NACOS_AUTH_ENABLE=true \
+    -e NACOS_AUTH_TOKEN=${your_nacos_auth_secret_token} \
+    -e NACOS_AUTH_IDENTITY_KEY=${your_nacos_server_identity_key} \
+    -e NACOS_AUTH_IDENTITY_VALUE=${your_nacos_server_identity_value} \
+    -p 8848:8848 \
+    -p 9848:9848 \
+    -d nacos/nacos-server:v2.5.1
 ```
 
 ## Advanced Usage
 
-* Tips: You can change [the version of the Nacos image](https://hub.docker.com/r/nacos/nacos-server/tags) in the compose
-  file from the following configuration.
-  `example/.env`
+* Tips: You can change [the version of the Nacos image](https://hub.docker.com/r/nacos/nacos-server/tags) in the compose file from the following configuration. `example/.env`
 
 ```dotenv
-NACOS_VERSION=v2.3.1
+NACOS_VERSION=v3.0.2
 ```
 
 For Mac user with Arm Chip (like M1/M2/M3 series) , you need to add `-slim` after version which support `arm` arch.
 
 ```dotenv
-NACOS_VERSION=v2.3.1-slim
+NACOS_VERSION=v3.0.2-slim
 ```
 
 Run the following command：
@@ -63,17 +85,24 @@ Run the following command：
   cd nacos-docker
   ```
 
-
 * Standalone Derby
 
   ```powershell
   docker-compose -f example/standalone-derby.yaml up
   ```
+  
 * Standalone Mysql
 
   ```powershell
   cd example
   ./mysql-init.sh && docker-compose -f standalone-mysql.yaml up
+  ```
+
+* Standalone Independent Mysql（Only Nacos 3.x is supported）
+
+  ```powershell
+  cd example
+  ./mysql-init.sh && docker-compose -f standalone-independent-mysql.yaml up
   ```
 
 * Standalone Nacos Cluster
@@ -82,36 +111,34 @@ Run the following command：
   docker-compose -f example/cluster-hostname.yaml up 
   ```
 
-
 * Service registration
 
   ```powershell
-  curl -X POST 'http://127.0.0.1:8848/nacos/v1/ns/instance?serviceName=nacos.naming.serviceName&ip=20.18.7.10&port=8080'
-
+  curl -X POST 'http://127.0.0.1:8848/nacos/v3/client/ns/instance?serviceName=quickstart.test.service&ip=127.0.0.1&port=8080
   ```
 
 * Service discovery
 
     ```powershell
-    curl -X GET 'http://127.0.0.1:8848/nacos/v1/ns/instance/list?serviceName=nacos.naming.serviceName'
+    curl -X GET 'http://127.0.0.1:8848/nacos/v3/client/ns/instance/list?serviceName=quickstart.test.service'
     ```
 
 * Publish config
 
   ```powershell
-  curl -X POST "http://127.0.0.1:8848/nacos/v1/cs/configs?dataId=nacos.cfg.dataId&group=test&content=helloWorld"
+  curl -X POST 'http://127.0.0.1:8848/nacos/v3/auth/user/login' -d 'username=nacos' -d 'password=${your_password}'
+  curl -X POST 'http://127.0.0.1:8848/nacos/v3/admin/cs/config?dataId=quickstart.test.config&groupName=test&content=HelloWorld' -H "accessToken:${your_access_token}"
   ```
 
 * Get config
 
   ```powershell
-    curl -X GET "http://127.0.0.1:8848/nacos/v1/cs/configs?dataId=nacos.cfg.dataId&group=test"
+    curl -X GET 'http://127.0.0.1:8848/nacos/v3/client/cs/config?dataId=quickstart.test.config&groupName=test'
   ```
-
 
 * Open the Nacos console in your browser
 
-  link：http://127.0.0.1:8848/nacos/
+  link：http://127.0.0.1:8080/index.html
 
 ## Common property configuration
 

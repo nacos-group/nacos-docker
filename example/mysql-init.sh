@@ -4,11 +4,13 @@ set -e
 # 加载 NACOS_VERSION
 source .env
 CLEAN_VERSION=${NACOS_VERSION#v}
+# deal -slim
+CLEAN_VERSION=${CLEAN_VERSION%-*}
 
 SCHEMA_URL="https://raw.githubusercontent.com/alibaba/nacos/${CLEAN_VERSION}/distribution/conf/mysql-schema.sql"
 
 TARGET_DIR="./mysql-init"
-VERSIONED_FILE="${TARGET_DIR}/${NACOS_VERSION}-mysql-schema.sql"
+VERSIONED_FILE="${TARGET_DIR}/${CLEAN_VERSION}-mysql-schema.sql"
 FINAL_FILE="${TARGET_DIR}/mysql-schema.sql"
 
 # 创建目录

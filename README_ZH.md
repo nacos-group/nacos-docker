@@ -1,6 +1,10 @@
 # Nacos Docker
 
+![Docker Pulls](https://img.shields.io/docker/pulls/nacos/nacos-server.svg?maxAge=60480)
+
 本项目是 [Nacos](https://github.com/alibaba/nacos) Server的docker镜像的build源码,以及Nacos server 在docker的单机和集群的运行例子.
+
+[**English**](README.md)
 
 ## 注意
 
@@ -26,10 +30,51 @@
   镜像以后,移除了数据库主从镜像,具体原因请参考[移除主从镜像配置](https://github.com/nacos-group/nacos-docker/wiki/%E7%A7%BB%E9%99%A4%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%BB%E4%BB%8E%E9%95%9C%E5%83%8F%E9%85%8D%E7%BD%AE)
 * 从Nacos 1.3.1版本开始,数据库存储已经升级到8.0, 并且它向下兼容
 * 例子演示中使用的数据库是为了方便定制了官方Mysql镜像, 自动初始化的数据库脚本.
-* 如果你使用自定义数据库,
-  第一次启动Nacos前需要手动初始化 [数据库脚本](https://github.com/alibaba/nacos/blob/master/distribution/conf/mysql-schema.sql)
+* 如果你使用自定义数据库, 第一次启动Nacos前需要手动初始化 [数据库脚本](https://github.com/alibaba/nacos/blob/master/distribution/conf/mysql-schema.sql)
 
 ## 快速开始
+
+### Nacos v3.x
+
+```shell
+docker run --name nacos-standalone-derby \
+    -e MODE=standalone \
+    -e NACOS_AUTH_TOKEN=${your_nacos_auth_secret_token} \
+    -e NACOS_AUTH_IDENTITY_KEY=${your_nacos_server_identity_key} \
+    -e NACOS_AUTH_IDENTITY_VALUE=${your_nacos_server_identity_value} \
+    -p 8080:8080 \
+    -p 8848:8848 \
+    -p 9848:9848 \
+    -d nacos/nacos-server:latest
+```
+
+### Nacos v2.x
+
+```shell
+docker run --name nacos-standalone-derby-v2.5.1 \
+    -e MODE=standalone \
+    -e NACOS_AUTH_ENABLE=true \
+    -e NACOS_AUTH_TOKEN=${your_nacos_auth_secret_token} \
+    -e NACOS_AUTH_IDENTITY_KEY=${your_nacos_server_identity_key} \
+    -e NACOS_AUTH_IDENTITY_VALUE=${your_nacos_server_identity_value} \
+    -p 8848:8848 \
+    -p 9848:9848 \
+    -d nacos/nacos-server:v2.5.1
+```
+
+## 其他使用方式
+
+* 提示: 你需要通过 `example/.env` 中的以下配置来更改 Compose 文件中 [Nacos 镜像版本](https://hub.docker.com/r/nacos/nacos-server/tags)。
+
+```dotenv
+NACOS_VERSION=v3.0.2
+```
+
+对于使用 Arm 芯片（如 M1/M2/M3 系列）的 Mac 用户，需要在支持 `arm` arch 的版本后添加 `-slim`。
+
+```dotenv
+NACOS_VERSION=v3.0.2-slim
+```
 
 打开命令窗口执行：
 
@@ -39,7 +84,6 @@
   git clone --depth 1 https://github.com/nacos-group/nacos-docker.git
   cd nacos-docker
   ```
-
 
 * Standalone Derby
 
@@ -53,6 +97,12 @@
   cd example
   ./mysql-init.sh && docker-compose -f standalone-mysql.yaml up
   ```
+* Standalone Independent Mysql（仅支持 Nacos 3.x 版本）
+
+  ```powershell
+  cd example
+  ./mysql-init.sh && docker-compose -f standalone-independent-mysql.yaml up
+  ```
 
 * docker单节点部署集群模式
 
@@ -60,76 +110,34 @@
   docker-compose -f example/cluster-hostname.yaml up 
   ```
 
-
 * 服务注册示例
 
   ```powershell
-  curl -X PUT 'http://127.0.0.1:8848/nacos/v1/ns/instance?serviceName=nacos.naming.serviceName&ip=20.18.7.10&port=8080'
+  curl -X POST 'http://127.0.0.1:8848/nacos/v3/client/ns/instance?serviceName=quickstart.test.service&ip=127.0.0.1&port=8080
   ```
 
 * 服务发现示例
 
   ```powershell
-  curl -X GET 'http://127.0.0.1:8848/nacos/v1/ns/instance/list?serviceName=nacos.naming.serviceName'
+  curl -X GET 'http://127.0.0.1:8848/nacos/v3/client/ns/instance/list?serviceName=quickstart.test.service'
   ```
 
 * 推送配置示例
 
   ```powershell
-  curl -X POST "http://127.0.0.1:8848/nacos/v1/cs/configs?dataId=nacos.cfg.dataId&group=test&content=helloWorld"
+  curl -X POST 'http://127.0.0.1:8848/nacos/v3/auth/user/login' -d 'username=nacos' -d 'password=${your_password}'
+  curl -X POST 'http://127.0.0.1:8848/nacos/v3/admin/cs/config?dataId=quickstart.test.config&groupName=test&content=HelloWorld' -H "accessToken:${your_access_token}"
   ```
 
 * 获取配置示例
 
   ```powershell
-    curl -X GET "http://127.0.0.1:8848/nacos/v1/cs/configs?dataId=nacos.cfg.dataId&group=test"
-  ```
-
-
-* 打开浏览器
-
-  link：http://127.0.0.1:8848/nacos/
-
-## 其他使用方式
-
-打开命令窗口执行：
-
-* Clone 项目 并且进入项目根目录
-
-  ```powershell
-  git clone https://github.com/paderlol/nacos-docker.git
-  cd nacos-docker
-  ```
-
-
-* 单机
-
-  ```powershell
-  docker-compose -f standalone.yaml up
-  ```
-
-* 集群
-
-  ```powershell
-  docker-compose -f cluster-hostname.yaml up 
-  ```
-
-
-* 注册服务
-
-  ```powershell
-  curl -X PUT 'http://127.0.0.1:8848/nacos/v1/ns/instance?serviceName=nacos.naming.serviceName&ip=20.18.7.10&port=8080'
-  ```
-
-* 注册配置
-
-  ```powershell
-  curl -X POST "http://127.0.0.1:8848/nacos/v1/cs/configs?dataId=nacos.cfg.dataId&group=test&content=helloWorld"
+    curl -X GET 'http://127.0.0.1:8848/nacos/v3/client/cs/config?dataId=quickstart.test.config&groupName=test'
   ```
 
 * 访问控制台
 
-  浏览器访问：http://127.0.0.1:8848/nacos/
+  浏览器访问：http://127.0.0.1:8080/index.html
 
 ## 属性配置列表
 
