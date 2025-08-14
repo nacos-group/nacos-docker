@@ -97,6 +97,12 @@ NACOS_VERSION=v3.0.2-slim
   cd example
   ./mysql-init.sh && docker-compose -f standalone-mysql.yaml up
   ```
+* Standalone Independent Mysql
+
+  ```powershell
+  cd example
+  ./mysql-init.sh && docker-compose -f standalone-independent-mysql.yaml up
+  ```
 
 * docker单节点部署集群模式
 

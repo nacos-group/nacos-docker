@@ -98,6 +98,13 @@ Run the following command：
   ./mysql-init.sh && docker-compose -f standalone-mysql.yaml up
   ```
 
+* Standalone Independent Mysql
+
+  ```powershell
+  cd example
+  ./mysql-init.sh && docker-compose -f standalone-independent-mysql.yaml up
+  ```
+
 * Standalone Nacos Cluster
 
   ```powershell
