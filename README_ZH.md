@@ -182,6 +182,7 @@ NACOS_VERSION=v3.0.2-slim
 | NACOS_AUTH_CONSOLE_ENABLE               | nacos.core.auth.console.enable            | default : `true`                                                                                                                                                                      |                                                                                                                                                                                       |
 | NACOS_CONSOLE_PORT                      | nacos.console.port                        | default : `8080`                                                                                                                                                                      |
 | NACOS_CONSOLE_CONTEXTPATH               | nacos.console.contextPath                 | default : ``                                                                                                                                                                          |
+| NACOS_DEPLOYMENT_TYPE                   | nacos.deployment.type                     | default : `merged` 支持配置 server console                                                                                                                                                |
 
 ## 高级配置
 
