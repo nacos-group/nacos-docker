@@ -54,7 +54,7 @@ else
   fi
   JAVA_OPT="${JAVA_OPT} -server $Xms $Xmx $Xmn $XX_MS $XX_MMS"
   if [[ "${NACOS_DEBUG}" == "y" ]]; then
-    JAVA_OPT="${JAVA_OPT} -Xdebug -Xrunjdwp:transport=dt_socket,address=9555,server=y,suspend=n"
+    JAVA_OPT="${JAVA_OPT} -Xdebug -Xrunjdwp:transport=dt_socket,address=*:9555,server=y,suspend=n"
   fi
   JAVA_OPT="${JAVA_OPT} -XX:-OmitStackTraceInFastThrow -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${BASE_DIR}/logs/java_heapdump.hprof"
   JAVA_OPT="${JAVA_OPT} -XX:-UseLargePages"
