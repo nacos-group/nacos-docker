@@ -24,7 +24,7 @@ ENV MODE="cluster" \
     TIME_ZONE="Asia/Shanghai"
 
 ARG NACOS_VERSION=3.1.0
-ARG HOT_FIX_FLAG=""
+ARG HOT_FIX_FLAG="-bugfix"
 
 WORKDIR $BASE_DIR
 
