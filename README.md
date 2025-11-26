@@ -67,13 +67,13 @@ docker run --name nacos-standalone-derby-v2.5.1 \
 * Tips: You can change [the version of the Nacos image](https://hub.docker.com/r/nacos/nacos-server/tags) in the compose file from the following configuration. `example/.env`
 
 ```dotenv
-NACOS_VERSION=v3.1.0
+NACOS_VERSION=v3.1.1
 ```
 
 For Mac user with Arm Chip (like M1/M2/M3 series) , you need to add `-slim` after version which support `arm` arch.
 
 ```dotenv
-NACOS_VERSION=v3.1.0-slim
+NACOS_VERSION=v3.1.1-slim
 ```
 
 Run the following command：

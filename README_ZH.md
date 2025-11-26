@@ -67,13 +67,13 @@ docker run --name nacos-standalone-derby-v2.5.1 \
 * 提示: 你需要通过 `example/.env` 中的以下配置来更改 Compose 文件中 [Nacos 镜像版本](https://hub.docker.com/r/nacos/nacos-server/tags)。
 
 ```dotenv
-NACOS_VERSION=v3.1.0
+NACOS_VERSION=v3.1.1
 ```
 
 对于使用 Arm 芯片（如 M1/M2/M3 系列）的 Mac 用户，需要在支持 `arm` arch 的版本后添加 `-slim`。
 
 ```dotenv
-NACOS_VERSION=v3.1.0-slim
+NACOS_VERSION=v3.1.1-slim
 ```
 
 打开命令窗口执行：
