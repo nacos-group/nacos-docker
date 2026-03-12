@@ -67,13 +67,13 @@ docker run --name nacos-standalone-derby-v2.5.1 \
 * Tips: You can change [the version of the Nacos image](https://hub.docker.com/r/nacos/nacos-server/tags) in the compose file from the following configuration. `example/.env`
 
 ```dotenv
-NACOS_VERSION=v3.1.1
+NACOS_VERSION=v3.2.0-BETA
 ```
 
 For Mac user with Arm Chip (like M1/M2/M3 series) , you need to add `-slim` after version which support `arm` arch.
 
 ```dotenv
-NACOS_VERSION=v3.1.1-slim
+NACOS_VERSION=v3.2.0-BETA-slim
 ```
 
 Run the following command：
@@ -90,7 +90,7 @@ Run the following command：
   ```powershell
   docker-compose -f example/standalone-derby.yaml up
   ```
-  
+
 * Standalone Mysql
 
   ```powershell
