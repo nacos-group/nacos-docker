@@ -57,7 +57,7 @@ ARG AGENTSPEC_DATA_URL="https://nacos-server.oss-cn-hongkong.aliyuncs.com/nacos-
 WORKDIR ${BASE_DIR}
 
 RUN set -x \
-    && curl -fSL --retry 3 --output nacos-server.tar.gz "https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz" \
+#    && curl -fSL --retry 3 --output nacos-server.tar.gz "https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz" \
     && tar -xzvf nacos-server.tar.gz -C /home \
     && mkdir -p /home/nacos/data \
     && curl -fSL --retry 3 --output /tmp/skills-data.zip "${SKILLS_DATA_URL}" \
