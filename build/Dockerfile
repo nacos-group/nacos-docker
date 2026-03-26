@@ -16,6 +16,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tzdata \
     unzip \
     libstdc++6 \
+    && mkdir -p /opt/java \
+    && ln -sfn "$(dirname "$(dirname "$(readlink -f "$(command -v java)")")")" /opt/java/openjdk \
     && rm -rf /var/lib/apt/lists/*
 
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -29,9 +31,8 @@ RUN uv pip install -p /home/nacos/.venv/bin/python cisco-ai-skill-scanner==2.0.4
 
 ENV PATH="/home/nacos/.venv/bin:${PATH}"
 
-# Ubuntu amd64 下 OpenJDK 17 常见路径（arm64 请改为 java-17-openjdk-arm64）
-ENV JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64" \
-    JAVA="/usr/lib/jvm/java-17-openjdk-amd64/bin/java"
+ENV JAVA_HOME="/opt/java/openjdk" \
+    JAVA="/opt/java/openjdk/bin/java"
 
 ENV MODE="cluster" \
     PREFER_HOST_MODE="ip" \
