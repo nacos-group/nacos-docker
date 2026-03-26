@@ -60,12 +60,9 @@ RUN set -x \
     && curl -fSL --retry 3 --output nacos-server.tar.gz "https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz" \
     && tar -xzvf nacos-server.tar.gz -C /home \
     && mkdir -p /home/nacos/data \
-    && curl -fSL --retry 3 --output /tmp/skills-data.zip "${SKILLS_DATA_URL}" \
-    && unzip -q /tmp/skills-data.zip -d /home/nacos/data \
-    && curl -fSL --retry 3 --output /tmp/agentspec-data.zip "${AGENTSPEC_DATA_URL}" \
-    && unzip -q /tmp/agentspec-data.zip -d /home/nacos/data \
+    && curl -fSL --retry 3 --output /home/nacos/data/skills-data.zip "${SKILLS_DATA_URL}" \
+    && curl -fSL --retry 3 --output /home/nacos/data/agentspec-data.zip "${AGENTSPEC_DATA_URL}" \
     && rm -rf nacos-server.tar.gz /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql \
-    && rm -f /tmp/skills-data.zip /tmp/agentspec-data.zip \
     && ln -snf /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime \
     && echo ${TIME_ZONE} > /etc/timezone
 
