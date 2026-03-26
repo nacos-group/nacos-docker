@@ -2,8 +2,8 @@ FROM amd64/buildpack-deps:buster-curl as installer
 
 ARG NACOS_VERSION=3.2.0-BETA
 ARG HOT_FIX_FLAG=""
-ARG SKILLS_DATA_URL="https://nacos-server.oss-cn-hongkong.aliyuncs.com/nacos-server-data/skills-data.zip"
-ARG AGENTSPEC_DATA_URL="https://nacos-server.oss-cn-hongkong.aliyuncs.com/nacos-server-data/agentspec-data.zip"
+ARG SKILLS_DATA_URL="https://download.nacos.io/nacos-server-data/skills-data.zip"
+ARG AGENTSPEC_DATA_URL="https://download.nacos.io/nacos-server-data/agentspec-data.zip"
 
 RUN set -x \
     && apt-get update \
