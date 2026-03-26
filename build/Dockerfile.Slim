@@ -2,11 +2,20 @@ FROM amd64/buildpack-deps:buster-curl as installer
 
 ARG NACOS_VERSION=3.2.0-BETA
 ARG HOT_FIX_FLAG=""
+ARG SKILLS_DATA_URL="https://nacos-server.oss-cn-hongkong.aliyuncs.com/nacos-server-data/skills-data.zip"
+ARG AGENTSPEC_DATA_URL="https://nacos-server.oss-cn-hongkong.aliyuncs.com/nacos-server-data/agentspec-data.zip"
 
 RUN set -x \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends unzip \
     && curl -SL --output /var/tmp/nacos-server.tar.gz https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz \
     && tar -xzvf /var/tmp/nacos-server.tar.gz -C /home \
-    && rm -rf /var/tmp/nacos-server.tar.gz /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql
+    && mkdir -p /home/nacos/data \
+    && curl -fSL --retry 3 --output /var/tmp/skills-data.zip "${SKILLS_DATA_URL}" \
+    && unzip -q /var/tmp/skills-data.zip -d /home/nacos/data \
+    && curl -fSL --retry 3 --output /var/tmp/agentspec-data.zip "${AGENTSPEC_DATA_URL}" \
+    && unzip -q /var/tmp/agentspec-data.zip -d /home/nacos/data \
+    && rm -rf /var/lib/apt/lists/* /var/tmp/nacos-server.tar.gz /var/tmp/skills-data.zip /var/tmp/agentspec-data.zip /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql
 
 FROM eclipse-temurin:17.0.15_6-jre
 
