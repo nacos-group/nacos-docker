@@ -51,13 +51,13 @@ ENV MODE="cluster" \
 
 ARG NACOS_VERSION=3.2.0-BETA
 ARG HOT_FIX_FLAG=""
-ARG SKILLS_DATA_URL="https://nacos-server.oss-cn-hongkong.aliyuncs.com/nacos-server-data/skills-data.zip"
-ARG AGENTSPEC_DATA_URL="https://nacos-server.oss-cn-hongkong.aliyuncs.com/nacos-server-data/agentspec-data.zip"
+ARG SKILLS_DATA_URL="https://download.nacos.io/nacos-server-data/skills-data.zip"
+ARG AGENTSPEC_DATA_URL="https://download.nacos.io/nacos-server-data/agentspec-data.zip"
 
 WORKDIR ${BASE_DIR}
 
 RUN set -x \
-#    && curl -fSL --retry 3 --output nacos-server.tar.gz "https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz" \
+    && curl -fSL --retry 3 --output nacos-server.tar.gz "https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz" \
     && tar -xzvf nacos-server.tar.gz -C /home \
     && mkdir -p /home/nacos/data \
     && curl -fSL --retry 3 --output /tmp/skills-data.zip "${SKILLS_DATA_URL}" \
