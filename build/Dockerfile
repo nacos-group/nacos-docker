@@ -50,7 +50,7 @@ ENV MODE="cluster" \
     TOMCAT_ACCESSLOG_ENABLED="false" \
     TIME_ZONE="Asia/Shanghai"
 
-ARG NACOS_VERSION=3.2.0-BETA
+ARG NACOS_VERSION=3.2.0
 ARG HOT_FIX_FLAG=""
 ARG SKILLS_DATA_URL="https://download.nacos.io/nacos-server-data/skills-data.zip"
 ARG AGENTSPEC_DATA_URL="https://download.nacos.io/nacos-server-data/agentspec-data.zip"
