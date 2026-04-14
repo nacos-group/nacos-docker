@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3"
 services:
   nacos1:
     hostname: nacos1
@@ -13,11 +13,8 @@ services:
       - "9868:9848"
       - "9850:9849"
     env_file:
-      - ../env/nacos-hostname.env
+      - ../env/nacos-embedded.env
     restart: always
-    depends_on:
-      mysql:
-        condition: service_healthy
 
   nacos2:
     hostname: nacos2
@@ -32,11 +29,8 @@ services:
       - "9869:9848"
       - "9851:9849"
     env_file:
-      - ../env/nacos-hostname.env
+      - ../env/nacos-embedded.env
     restart: always
-    depends_on:
-      mysql:
-        condition: service_healthy
   nacos3:
     hostname: nacos3
     image: nacos/nacos-server:${NACOS_VERSION}
@@ -50,26 +44,7 @@ services:
       - "9870:9848"
       - "9852:9849"
     env_file:
-      - ../env/nacos-hostname.env
+      - ../env/nacos-embedded.env
     restart: always
-    depends_on:
-      mysql:
-        condition: service_healthy
-  mysql:
-    container_name: mysql
-    build:
-      context: .
-      dockerfile: ./image/mysql/5.7/Dockerfile
-    image: example/mysql:5.7
-    env_file:
-      - ../env/mysql.env
-    volumes:
-      - ./mysql:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-      interval: 5s
-      timeout: 10s
-      retries: 10
+
 

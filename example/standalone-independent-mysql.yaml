@@ -1,14 +1,28 @@
 version: "3.8"
 services:
-  nacos:
+  nacos-console:
     image: nacos/nacos-server:${NACOS_VERSION}
-    container_name: nacos-standalone-mysql
+    container_name: nacos-standalone-console
+    environment:
+      - NACOS_DEPLOYMENT_TYPE=console
     env_file:
       - ../env/nacos-standalone-mysql.env
     volumes:
-      - ./standalone-logs/:/home/nacos/logs
+      - ./standalone-console-logs/:/home/nacos/logs
+      - ./cluster.conf:/home/nacos/conf/cluster.conf
     ports:
       - "8080:8080"
+    restart: always
+  nacos-server:
+    image: nacos/nacos-server:${NACOS_VERSION}
+    container_name: nacos-standalone-server
+    environment:
+      - NACOS_DEPLOYMENT_TYPE=server
+    env_file:
+      - ../env/nacos-standalone-mysql.env
+    volumes:
+      - ./standalone-server-logs/:/home/nacos/logs
+    ports:
       - "8848:8848"
       - "9848:9848"
     depends_on:
@@ -33,5 +47,3 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
-
-
