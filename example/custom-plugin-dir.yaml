@@ -1,0 +1,19 @@
+version: "2"
+services:
+  nacos:
+    image: nacos/nacos-server:${NACOS_VERSION}
+    container_name: nacos-standalone-plugin-dir
+    environment:
+      - MODE=standalone
+      - NACOS_AUTH_IDENTITY_KEY=serverIdentity
+      - NACOS_AUTH_IDENTITY_VALUE=security
+      - NACOS_AUTH_TOKEN=VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg=
+      - NACOS_EXT_PLUGIN_DIRS=/home/nacos/ext-plugins,/home/nacos/ext-libs
+    volumes:
+      - ./standalone-logs/:/home/nacos/logs
+      - ./plugins/:/home/nacos/ext-plugins
+      - ./libs/:/home/nacos/ext-libs
+    ports:
+      - "8080:8080"
+      - "8848:8848"
+      - "9848:9848"

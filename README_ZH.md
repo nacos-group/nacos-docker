@@ -183,6 +183,7 @@ NACOS_VERSION=v3.2.1-slim
 | NACOS_CONSOLE_PORT                      | nacos.console.port                        | default : `8080`                                                                                                                                                                      |
 | NACOS_CONSOLE_CONTEXTPATH               | nacos.console.contextPath                 | default : ``                                                                                                                                                                          |
 | NACOS_DEPLOYMENT_TYPE                   | nacos.deployment.type                     | default : `merged` 支持配置 `server` `console`                                                                                                                                            |
+| NACOS_EXT_PLUGIN_DIRS                   | 追加到 `loader.path` 的外挂插件或依赖目录                 | 使用逗号分隔目录，例如 `/home/nacos/ext-plugins,/home/nacos/ext-libs`                                                                                                                             |
 
 ## 高级配置
 
@@ -197,6 +198,33 @@ Boot的`application.properties`
 ```docker
 docker run --name nacos-standalone -e MODE=standalone -v /path/application.properties:/home/nacos/conf/application.properties -p 8848:8848 -d -p 9848:9848  nacos/nacos-server:2.1.1
 ```
+
+如果你需要在不重建镜像的情况下加载额外的插件 jar 或依赖 jar，可以把这些目录挂载到容器内，
+然后通过 `NACOS_EXT_PLUGIN_DIRS` 追加到 `loader.path`。
+
+举个例子:
+
+```docker
+docker-compose -f example/custom-plugin-dir.yaml up -d
+```
+
+```docker
+docker run --name nacos-standalone \
+  -e MODE=standalone \
+  -e NACOS_AUTH_TOKEN=${your_nacos_auth_secret_token} \
+  -e NACOS_AUTH_IDENTITY_KEY=${your_nacos_server_identity_key} \
+  -e NACOS_AUTH_IDENTITY_VALUE=${your_nacos_server_identity_value} \
+  -e NACOS_EXT_PLUGIN_DIRS=/home/nacos/ext-plugins,/home/nacos/ext-libs \
+  -v /path/to/plugins:/home/nacos/ext-plugins \
+  -v /path/to/libs:/home/nacos/ext-libs \
+  -p 8080:8080 \
+  -p 8848:8848 \
+  -p 9848:9848 \
+  -d nacos/nacos-server:latest
+```
+
+这个能力适合插件 jar 和运行时依赖 jar 需要分别挂载的场景。例如 LDAP 部署可以把 LDAP
+鉴权插件 jar 放在一个目录，把所需的 `spring-ldap-core` 依赖 jar 放在另一个目录。
 
 ## Nacos + Grafana + Prometheus
 

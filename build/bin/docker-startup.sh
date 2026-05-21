@@ -16,6 +16,7 @@ export CUSTOM_SEARCH_NAMES="application"
 export CUSTOM_SEARCH_LOCATIONS=file:${BASE_DIR}/conf/
 export MEMBER_LIST="$MEMBER_LIST"
 PLUGINS_DIR="/home/nacos/plugins/peer-finder"
+DEFAULT_LOADER_PATH="${BASE_DIR}/plugins,${BASE_DIR}/plugins/health,${BASE_DIR}/plugins/cmdb,${BASE_DIR}/plugins/selector"
 function print_servers() {
    if [[ ! -d "${PLUGINS_DIR}" ]]; then
     echo "" >"$CLUSTER_CONF"
@@ -136,7 +137,12 @@ else
   JAVA_OPT="${JAVA_OPT} -Xloggc:${BASE_DIR}/logs/nacos_gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M"
 fi
 
-JAVA_OPT="${JAVA_OPT} -Dloader.path=${BASE_DIR}/plugins,${BASE_DIR}/plugins/health,${BASE_DIR}/plugins/cmdb,${BASE_DIR}/plugins/selector"
+LOADER_PATH="${DEFAULT_LOADER_PATH}"
+if [[ -n "${NACOS_EXT_PLUGIN_DIRS}" ]]; then
+  LOADER_PATH="${LOADER_PATH},${NACOS_EXT_PLUGIN_DIRS}"
+fi
+
+JAVA_OPT="${JAVA_OPT} -Dloader.path=${LOADER_PATH}"
 JAVA_OPT="${JAVA_OPT} -Dnacos.home=${BASE_DIR}"
 JAVA_OPT="${JAVA_OPT} -jar ${BASE_DIR}/target/nacos-server.jar"
 JAVA_OPT="${JAVA_OPT} ${JAVA_OPT_EXT}"
