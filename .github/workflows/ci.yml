@@ -70,12 +70,12 @@ jobs:
           echo "| standard | ${STANDARD_MB} MB |" >> $GITHUB_STEP_SUMMARY
           echo "| slim | ${SLIM_MB} MB |" >> $GITHUB_STEP_SUMMARY
 
-          # Baseline: standard ≤ 400MB, slim ≤ 300MB
-          if [ "$STANDARD_MB" -gt 400 ]; then
-            echo "::warning::Standard image ${STANDARD_MB}MB exceeds 400MB baseline"
+          # Baseline (uncompressed): standard ≤ 600MB, slim ≤ 450MB
+          if [ "$STANDARD_MB" -gt 600 ]; then
+            echo "::warning::Standard image ${STANDARD_MB}MB exceeds 600MB baseline"
           fi
-          if [ "$SLIM_MB" -gt 300 ]; then
-            echo "::warning::Slim image ${SLIM_MB}MB exceeds 300MB baseline"
+          if [ "$SLIM_MB" -gt 450 ]; then
+            echo "::warning::Slim image ${SLIM_MB}MB exceeds 450MB baseline"
           fi
 
   smoke-test:
