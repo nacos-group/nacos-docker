@@ -1,0 +1,29 @@
+ARG NACOS_VERSION=3.2.1
+
+FROM nacos/nacos-server:v${NACOS_VERSION}
+
+ARG SKILLS_DATA_URL="https://download.nacos.io/nacos-server-data/skills-data.zip"
+ARG AGENTSPEC_DATA_URL="https://download.nacos.io/nacos-server-data/agentspec-data.zip"
+
+# 安装 Python 环境 + AI Skill Scanner
+RUN apt-get update && apt-get install -y --no-install-recommends unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+ENV PATH="/root/.local/bin:${PATH}"
+
+RUN uv python install 3.10 \
+    && uv venv -p 3.10 /home/nacos/.venv
+
+RUN uv pip install -p /home/nacos/.venv/bin/python cisco-ai-skill-scanner==2.0.4
+
+ENV PATH="/home/nacos/.venv/bin:${PATH}"
+
+# 下载 AI 数据包
+RUN mkdir -p /home/nacos/data \
+    && curl -fSL --retry 3 --output /home/nacos/data/skills-data.zip "${SKILLS_DATA_URL}" \
+    && curl -fSL --retry 3 --output /home/nacos/data/agentspec-data.zip "${AGENTSPEC_DATA_URL}"
+
+# 覆盖配置：开启 AI 功能
+ADD conf/application-ai.properties conf/application.properties
