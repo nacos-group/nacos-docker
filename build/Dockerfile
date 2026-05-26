@@ -69,7 +69,7 @@ FROM eclipse-temurin:21-jre-alpine AS slim
 
 LABEL maintainer="pader <huangmnlove@163.com>"
 
-RUN apk add --no-cache curl bash tzdata
+RUN apk add --no-cache curl bash tzdata libstdc++
 
 ENV MODE="cluster" \
     PREFER_HOST_MODE="ip" \
