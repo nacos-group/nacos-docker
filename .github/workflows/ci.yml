@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-test:
+    name: Build Images
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [standard, slim]
+        include:
+          - target: standard
+            file: build/Dockerfile
+          - target: slim
+            file: build/Dockerfile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: Build ${{ matrix.target }}
+        uses: docker/build-push-action@v6
+        with:
+          context: build
+          file: ${{ matrix.file }}
+          target: ${{ matrix.target }}
+          platforms: linux/amd64,linux/arm64
+          push: false
+          load: false
+
+  size-check:
+    name: Image Size Check
+    runs-on: ubuntu-latest
+    needs: []
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build standard (amd64 only for size check)
+        uses: docker/build-push-action@v6
+        with:
+          context: build
+          file: build/Dockerfile
+          target: standard
+          platforms: linux/amd64
+          push: false
+          load: true
+          tags: nacos-size-check:standard
+      - name: Build slim (amd64 only for size check)
+        uses: docker/build-push-action@v6
+        with:
+          context: build
+          file: build/Dockerfile
+          target: slim
+          platforms: linux/amd64
+          push: false
+          load: true
+          tags: nacos-size-check:slim
+      - name: Check image sizes
+        run: |
+          STANDARD_SIZE=$(docker image inspect nacos-size-check:standard --format '{{.Size}}')
+          SLIM_SIZE=$(docker image inspect nacos-size-check:slim --format '{{.Size}}')
+          STANDARD_MB=$((STANDARD_SIZE / 1024 / 1024))
+          SLIM_MB=$((SLIM_SIZE / 1024 / 1024))
+
+          echo "## Docker Image Size Report" >> $GITHUB_STEP_SUMMARY
+          echo "| Image | Size |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|------|" >> $GITHUB_STEP_SUMMARY
+          echo "| standard | ${STANDARD_MB} MB |" >> $GITHUB_STEP_SUMMARY
+          echo "| slim | ${SLIM_MB} MB |" >> $GITHUB_STEP_SUMMARY
+
+          # Baseline: standard ≤ 400MB, slim ≤ 300MB
+          if [ "$STANDARD_MB" -gt 400 ]; then
+            echo "::warning::Standard image ${STANDARD_MB}MB exceeds 400MB baseline"
+          fi
+          if [ "$SLIM_MB" -gt 300 ]; then
+            echo "::warning::Slim image ${SLIM_MB}MB exceeds 300MB baseline"
+          fi
+
+  smoke-test:
+    name: Smoke Test (${{ matrix.target }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [standard, slim]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build ${{ matrix.target }} image
+        uses: docker/build-push-action@v6
+        with:
+          context: build
+          file: build/Dockerfile
+          target: ${{ matrix.target }}
+          platforms: linux/amd64
+          push: false
+          load: true
+          tags: nacos-smoke:${{ matrix.target }}
+      - name: Run smoke test
+        run: |
+          docker run -d --name nacos-test \
+            -e MODE=standalone \
+            -e NACOS_AUTH_TOKEN=VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg= \
+            -e NACOS_AUTH_IDENTITY_KEY=test \
+            -e NACOS_AUTH_IDENTITY_VALUE=test \
+            -p 8848:8848 nacos-smoke:${{ matrix.target }}
+
+          echo "Waiting for Nacos (${{ matrix.target }}) to start..."
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:8848/nacos/ > /dev/null 2>&1; then
+              echo "Nacos is ready after ${i}s"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "::error::Nacos (${{ matrix.target }}) failed to start within 120s"
+          docker logs nacos-test
+          exit 1
+      - name: Cleanup
+        if: always()
+        run: docker rm -f nacos-test 2>/dev/null || true
