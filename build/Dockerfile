@@ -65,7 +65,7 @@ EXPOSE 8848 9848 8080
 ENTRYPOINT ["bash", "bin/docker-startup.sh"]
 
 # ==================== Slim 镜像 ====================
-FROM eclipse-temurin:17-jre-alpine AS slim
+FROM eclipse-temurin:21-jre-alpine AS slim
 
 LABEL maintainer="pader <huangmnlove@163.com>"
 
