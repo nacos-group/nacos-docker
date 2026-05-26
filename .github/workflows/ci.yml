@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-test:
+    name: Build Image
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: standard
+            file: build/Dockerfile
+          - name: slim
+            file: build/Dockerfile.Slim
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: Build ${{ matrix.name }}
+        uses: docker/build-push-action@v6
+        with:
+          context: build
+          file: ${{ matrix.file }}
+          platforms: linux/amd64,linux/arm64
+          push: false
+          load: false
+
+  smoke-test:
+    name: Smoke Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: build
+          file: build/Dockerfile
+          platforms: linux/amd64
+          push: false
+          load: true
+          tags: nacos-smoke:test
+      - name: Run smoke test
+        run: |
+          docker run -d --name nacos-test \
+            -e MODE=standalone \
+            -e NACOS_AUTH_TOKEN=VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg= \
+            -e NACOS_AUTH_IDENTITY_KEY=test \
+            -e NACOS_AUTH_IDENTITY_VALUE=test \
+            -p 8848:8848 nacos-smoke:test
+
+          echo "Waiting for Nacos to start..."
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:8848/nacos/ > /dev/null 2>&1; then
+              echo "Nacos is ready after $((i * 2))s"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "::error::Nacos failed to start within 120s"
+          docker logs nacos-test
+          exit 1
+      - name: Cleanup
+        if: always()
+        run: docker rm -f nacos-test 2>/dev/null || true
