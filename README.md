@@ -6,6 +6,29 @@ This project contains a Docker image meant to facilitate the deployment of [Naco
 
 [**中文**](README_ZH.md)
 
+## Image Variants
+
+| Tag | Base | Size | Use Case |
+|-----|------|------|----------|
+| `v3.2.x` / `latest` | eclipse-temurin:17-jre | ~300 MB | Production (recommended) |
+| `v3.2.x-slim` / `slim` | eclipse-temurin:17-jre-alpine | ~250 MB | Size-constrained environments |
+| `v3.2.x-ai` | Based on standard | ~550 MB | AI features (MCP registry, skill scanner) |
+
+### Migrating from v3.2.0
+
+If you were using AI features (skill scanner, MCP registry) with the default `v3.2.0` image, switch to the `-ai` tag:
+
+```yaml
+# Before
+image: nacos/nacos-server:v3.2.0
+
+# After (with AI features)
+image: nacos/nacos-server:v3.2.1-ai
+
+# After (no AI features, smaller image)
+image: nacos/nacos-server:v3.2.1
+```
+
 ## Note
 
 The following environment variables have been **removed** from the default values in the new version(**Nacos 2.2.1**)
@@ -70,9 +93,13 @@ docker run --name nacos-standalone-derby-v2.5.1 \
 NACOS_VERSION=v3.2.1
 ```
 
-For Mac user with Arm Chip (like M1/M2/M3 series) , you need to add `-slim` after version which support `arm` arch.
+All image variants (`latest`, `-slim`, `-ai`) support both `amd64` and `arm64` architectures. The `-slim` variant uses Alpine Linux for a smaller footprint.
 
 ```dotenv
+# Standard image (recommended)
+NACOS_VERSION=v3.2.1
+
+# Slim image (Alpine-based, smaller)
 NACOS_VERSION=v3.2.1-slim
 ```
 
