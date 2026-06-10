@@ -186,6 +186,7 @@ Run the following command：
 | NACOS_CONSOLE_PORT                      | nacos.console.port                                                                                                                | default : `8080`                                                                                                                                                                      |
 | NACOS_CONSOLE_CONTEXTPATH               | nacos.console.contextPath                                                                                                         | default : ``                                                                                                                                                                          |
 | NACOS_DEPLOYMENT_TYPE                   | nacos.deployment.type                                                                                                             | default : `merged` support config `server` `console`                                                                                                                                  |
+| NACOS_EXT_PLUGIN_DIRS                   | Additional mounted plugin or dependency directories appended to `loader.path`                                                    | comma-separated directories, for example `/home/nacos/ext-plugins,/home/nacos/ext-libs`                                                                                              |
 
 ## Advanced configuration
 
@@ -202,10 +203,37 @@ For example:
 docker-compose -f example/custom-application-config.yaml up -d
 ```
 
+If you need to load extra plugin jars or dependency jars without rebuilding the image, mount those
+directories into the container and append them through `NACOS_EXT_PLUGIN_DIRS`.
+
+For example:
+
+```docker
+docker-compose -f example/custom-plugin-dir.yaml up -d
+```
+
+```docker
+docker run --name nacos-standalone \
+  -e MODE=standalone \
+  -e NACOS_AUTH_TOKEN=${your_nacos_auth_secret_token} \
+  -e NACOS_AUTH_IDENTITY_KEY=${your_nacos_server_identity_key} \
+  -e NACOS_AUTH_IDENTITY_VALUE=${your_nacos_server_identity_value} \
+  -e NACOS_EXT_PLUGIN_DIRS=/home/nacos/ext-plugins,/home/nacos/ext-libs \
+  -v /path/to/plugins:/home/nacos/ext-plugins \
+  -v /path/to/libs:/home/nacos/ext-libs \
+  -p 8080:8080 \
+  -p 8848:8848 \
+  -p 9848:9848 \
+  -d nacos/nacos-server:latest
+```
+
+This is useful when a plugin jar and its runtime dependency jars need to be mounted separately. For
+example, an LDAP deployment can mount the LDAP auth plugin jar in one directory and the required
+`spring-ldap-core` dependency jars in another.
+
 ## Nacos + Grafana + Prometheus
 
 Usage reference：[Nacos monitor-guide](https://nacos.io/zh-cn/docs/monitor-guide.html)
 
 **Note**:  When Grafana creates a new data source, the data source address must be **http://prometheus:9090**
-
 
