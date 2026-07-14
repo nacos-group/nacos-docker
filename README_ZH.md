@@ -144,6 +144,7 @@ NACOS_VERSION=v3.2.2-slim
 | 属性名称                                    | 描述                                        | 选项                                                                                                                                                                                    |
 |-----------------------------------------|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | MODE                                    | 系统启动方式: 集群/单机                             | cluster/standalone 默认 **cluster**                                                                                                                                                     |
+| FUNCTION_MODE                           | 启动功能模式: all或留空 表示全部模块(lite镜像不支持ai功能)      | config/naming/microservice/ai/all 默认 **all**                                                                                                                                          |
 | NACOS_SERVERS                           | 集群地址                                      | p1:port1空格ip2:port2 空格ip3:port3                                                                                                                                                       |
 | PREFER_HOST_MODE                        | 支持IP还是域名模式                                | hostname/ip 默认**IP**                                                                                                                                                                  |
 | NACOS_SERVER_PORT                       | Nacos 运行端口                                | 默认**8848**                                                                                                                                                                            |
@@ -183,7 +184,7 @@ NACOS_VERSION=v3.2.2-slim
 | NACOS_CONSOLE_PORT                      | nacos.console.port                        | default : `8080`                                                                                                                                                                      |
 | NACOS_CONSOLE_CONTEXTPATH               | nacos.console.contextPath                 | default : ``                                                                                                                                                                          |
 | NACOS_DEPLOYMENT_TYPE                   | nacos.deployment.type                     | default : `merged` 支持配置 `server` `console`                                                                                                                                            |
-| NACOS_EXT_PLUGIN_DIRS                   | 追加到 `loader.path` 的外挂插件或依赖目录                 | 使用逗号分隔目录，例如 `/home/nacos/ext-plugins,/home/nacos/ext-libs`                                                                                                                             |
+| NACOS_EXT_PLUGIN_DIRS                   | 追加到 `loader.path` 的外挂插件或依赖目录              | 使用逗号分隔目录，例如 `/home/nacos/ext-plugins,/home/nacos/ext-libs`                                                                                                                            |
 
 ## 高级配置
 
