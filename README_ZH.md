@@ -14,6 +14,14 @@
 2. ~~NACOS_AUTH_IDENTITY_VALUE~~
 3. ~~NACOS_AUTH_TOKEN~~
 
+从 Nacos 3.3 开始，未设置 `NACOS_AUTH_ENABLE` 时，Client API 鉴权（`nacos.core.auth.enabled`）默认开启。
+显式设置 `NACOS_AUTH_ENABLE=true` 或 `NACOS_AUTH_ENABLE=false` 均会覆盖该默认值。应用客户端尚未完成凭据配置时，
+可以将显式 `false` 作为有时限的升级兼容选择；旧版本镜像仍遵循各自版本内置的默认值。
+
+Client API 鉴权与 Admin API、Console API 鉴权相互独立。本次默认值调整不会关闭或改变
+`NACOS_AUTH_ADMIN_ENABLE` 和 `NACOS_AUTH_CONSOLE_ENABLE`。生产环境必须使用唯一且足够强的 token secret 和
+server identity；仓库中提交的凭据仅用于本地示例，不得在生产环境复用。
+
 ## 项目目录
 
 * build：nacos 镜像制作的源码
@@ -110,29 +118,34 @@ NACOS_VERSION=v3.2.4-slim
   docker-compose -f example/cluster-hostname.yaml up 
   ```
 
+* 登录（Nacos 3.3 及以上版本默认要求 Client API 请求携带凭据）
+
+  ```powershell
+  curl -X POST 'http://127.0.0.1:8848/nacos/v3/auth/user/login' -d 'username=nacos' -d 'password=${your_password}'
+  ```
+
 * 服务注册示例
 
   ```powershell
-  curl -X POST 'http://127.0.0.1:8848/nacos/v3/client/ns/instance?serviceName=quickstart.test.service&ip=127.0.0.1&port=8080
+  curl -X POST 'http://127.0.0.1:8848/nacos/v3/client/ns/instance?serviceName=quickstart.test.service&ip=127.0.0.1&port=8080' -H "accessToken:${your_access_token}"
   ```
 
 * 服务发现示例
 
   ```powershell
-  curl -X GET 'http://127.0.0.1:8848/nacos/v3/client/ns/instance/list?serviceName=quickstart.test.service'
+  curl -X GET 'http://127.0.0.1:8848/nacos/v3/client/ns/instance/list?serviceName=quickstart.test.service' -H "accessToken:${your_access_token}"
   ```
 
 * 推送配置示例
 
   ```powershell
-  curl -X POST 'http://127.0.0.1:8848/nacos/v3/auth/user/login' -d 'username=nacos' -d 'password=${your_password}'
   curl -X POST 'http://127.0.0.1:8848/nacos/v3/admin/cs/config?dataId=quickstart.test.config&groupName=test&content=HelloWorld' -H "accessToken:${your_access_token}"
   ```
 
 * 获取配置示例
 
   ```powershell
-    curl -X GET 'http://127.0.0.1:8848/nacos/v3/client/cs/config?dataId=quickstart.test.config&groupName=test'
+    curl -X GET 'http://127.0.0.1:8848/nacos/v3/client/cs/config?dataId=quickstart.test.config&groupName=test' -H "accessToken:${your_access_token}"
   ```
 
 * 访问控制台
@@ -165,22 +178,22 @@ NACOS_VERSION=v3.2.4-slim
 | NACOS_DEBUG                             | 是否开启远程DEBUG                               | y/n 默认 :n                                                                                                                                                                             |
 | TOMCAT_ACCESSLOG_ENABLED                | server.tomcat.accesslog.enabled           | 默认 :false                                                                                                                                                                             |
 | NACOS_AUTH_SYSTEM_TYPE                  | 权限系统类型选择,目前只支持nacos类型                     | 默认 :nacos                                                                                                                                                                             |
-| NACOS_AUTH_ENABLE                       | 是否开启权限系统                                  | 默认 :false                                                                                                                                                                             |
+| NACOS_AUTH_ENABLE                       | 是否开启 Client API 鉴权；与 Admin、Console API 鉴权相互独立 | 未设置时使用镜像默认值（Nacos 3.3+ 为 `true`；旧镜像保留各自内置默认值）。显式 `true`/`false` 均可覆盖；`false` 仅建议作为有时限的升级兼容选择。                                                                                         |
 | NACOS_AUTH_TOKEN_EXPIRE_SECONDS         | token 失效时间                                | 默认 :18000                                                                                                                                                                             |
-| NACOS_AUTH_TOKEN                        | token                                     | `注意：该环境变量在Nacos 2.2.1版本中已移除`                                                                                                                                                          |
+| NACOS_AUTH_TOKEN                        | Base64 编码的 token secret；生产环境必须使用唯一值         | `注意：其默认值从 Nacos 2.2.1 起移除，必须显式设置。`                                                                                                                                                    |
 | NACOS_AUTH_CACHE_ENABLE                 | 权限缓存开关 ,开启后权限缓存的更新默认有15秒的延迟               | 默认 : false                                                                                                                                                                            |
 | MEMBER_LIST                             | 通过环境变量的方式设置集群地址                           | 例子:192.168.16.101:8847?raft_port=8807,192.168.16.101?raft_port=8808,192.168.16.101:8849?raft_port=8809                                                                                |
 | EMBEDDED_STORAGE                        | 是否开启集群嵌入式存储模式                             | `embedded`  默认 : none                                                                                                                                                                 |
 | NACOS_AUTH_CACHE_ENABLE                 | nacos.core.auth.caching.enabled           | default : false                                                                                                                                                                       |
 | NACOS_AUTH_USER_AGENT_AUTH_WHITE_ENABLE | nacos.core.auth.enable.userAgentAuthWhite | default : false                                                                                                                                                                       |
-| NACOS_AUTH_IDENTITY_KEY                 | nacos.core.auth.server.identity.key       | `注意：该环境变量在Nacos 2.2.1版本中已移除`                                                                                                                                                          |
-| NACOS_AUTH_IDENTITY_VALUE               | nacos.core.auth.server.identity.value     | `注意：该环境变量在Nacos 2.2.1版本中已移除`                                                                                                                                                          |
+| NACOS_AUTH_IDENTITY_KEY                 | nacos.core.auth.server.identity.key；生产环境必须使用唯一值 | `注意：其默认值从 Nacos 2.2.1 起移除，必须显式设置。`                                                                                                                                                    |
+| NACOS_AUTH_IDENTITY_VALUE               | nacos.core.auth.server.identity.value；生产环境必须使用唯一值 | `注意：其默认值从 Nacos 2.2.1 起移除，必须显式设置。`                                                                                                                                                    |
 | NACOS_SECURITY_IGNORE_URLS              | nacos.security.ignore.urls                | default : `/,/error,/**/*.css,/**/*.js,/**/*.html,/**/*.map,/**/*.svg,/**/*.png,/**/*.ico,/console-fe/public/**,/v1/auth/**,/v1/console/health/**,/actuator/**,/v1/console/server/**` |
 | DB_POOL_CONNECTION_TIMEOUT              | 数据库连接池超时时间，单位为毫秒                          | 默认 : **30000**                                                                                                                                                                        |
 | NACOS_CONSOLE_UI_ENABLED                | nacos.console.ui.enabled                  | default : `true`                                                                                                                                                                      |
 | NACOS_CORE_PARAM_CHECK_ENABLED          | nacos.core.param.check.enabled            | default : `true`                                                                                                                                                                      |
-| NACOS_AUTH_ADMIN_ENABLE                 | nacos.core.auth.admin.enable              | default : `true`                                                                                                                                                                      |
-| NACOS_AUTH_CONSOLE_ENABLE               | nacos.core.auth.console.enable            | default : `true`                                                                                                                                                                      |                                                                                                                                                                                       |
+| NACOS_AUTH_ADMIN_ENABLE                 | 独立控制 nacos.core.auth.admin.enabled     | default : `true`                                                                                                                                                                      |
+| NACOS_AUTH_CONSOLE_ENABLE               | 独立控制 nacos.core.auth.console.enabled   | default : `true`                                                                                                                                                                      |                                                                                                                                                                                       |
 | NACOS_CONSOLE_PORT                      | nacos.console.port                        | default : `8080`                                                                                                                                                                      |
 | NACOS_CONSOLE_CONTEXTPATH               | nacos.console.contextPath                 | default : ``                                                                                                                                                                          |
 | NACOS_DEPLOYMENT_TYPE                   | nacos.deployment.type                     | default : `merged` 支持配置 `server` `console`                                                                                                                                            |

@@ -16,6 +16,16 @@ startup.
 2. ~~NACOS_AUTH_IDENTITY_VALUE~~
 3. ~~NACOS_AUTH_TOKEN~~
 
+Starting with Nacos 3.3, Client API authentication (`nacos.core.auth.enabled`) is enabled by default when
+`NACOS_AUTH_ENABLE` is unset. Set `NACOS_AUTH_ENABLE=true` or `NACOS_AUTH_ENABLE=false` to override it explicitly.
+Explicit `false` is available as a temporary upgrade-compatibility option while clients are being configured with
+credentials. Earlier versioned images continue to use the defaults built into those image versions.
+
+Client API authentication is independent of Admin API and Console API authentication. This default change does not
+disable or otherwise change `NACOS_AUTH_ADMIN_ENABLE` or `NACOS_AUTH_CONSOLE_ENABLE`. Use unique, strong token and
+server identity values in production; credentials committed in this repository are for local examples only and must
+not be reused.
+
 ## Project directory
 
 * build：Nacos makes the source code of the docker image
@@ -111,29 +121,34 @@ Run the following command：
   docker-compose -f example/cluster-hostname.yaml up 
   ```
 
+* Log in (required for Client API requests by default in Nacos 3.3 and later)
+
+  ```powershell
+  curl -X POST 'http://127.0.0.1:8848/nacos/v3/auth/user/login' -d 'username=nacos' -d 'password=${your_password}'
+  ```
+
 * Service registration
 
   ```powershell
-  curl -X POST 'http://127.0.0.1:8848/nacos/v3/client/ns/instance?serviceName=quickstart.test.service&ip=127.0.0.1&port=8080
+  curl -X POST 'http://127.0.0.1:8848/nacos/v3/client/ns/instance?serviceName=quickstart.test.service&ip=127.0.0.1&port=8080' -H "accessToken:${your_access_token}"
   ```
 
 * Service discovery
 
     ```powershell
-    curl -X GET 'http://127.0.0.1:8848/nacos/v3/client/ns/instance/list?serviceName=quickstart.test.service'
+    curl -X GET 'http://127.0.0.1:8848/nacos/v3/client/ns/instance/list?serviceName=quickstart.test.service' -H "accessToken:${your_access_token}"
     ```
 
 * Publish config
 
   ```powershell
-  curl -X POST 'http://127.0.0.1:8848/nacos/v3/auth/user/login' -d 'username=nacos' -d 'password=${your_password}'
   curl -X POST 'http://127.0.0.1:8848/nacos/v3/admin/cs/config?dataId=quickstart.test.config&groupName=test&content=HelloWorld' -H "accessToken:${your_access_token}"
   ```
 
 * Get config
 
   ```powershell
-    curl -X GET 'http://127.0.0.1:8848/nacos/v3/client/cs/config?dataId=quickstart.test.config&groupName=test'
+    curl -X GET 'http://127.0.0.1:8848/nacos/v3/client/cs/config?dataId=quickstart.test.config&groupName=test' -H "accessToken:${your_access_token}"
   ```
 
 * Open the Nacos console in your browser
@@ -166,24 +181,24 @@ Run the following command：
 | NACOS_DEBUG                             | enable remote debug                                                                                                               | y/n default :n                                                                                                                                                                        |
 | TOMCAT_ACCESSLOG_ENABLED                | server.tomcat.accesslog.enabled                                                                                                   | default :false                                                                                                                                                                        |
 | NACOS_AUTH_SYSTEM_TYPE                  | The auth system to use, currently only 'nacos' is supported                                                                       | default :nacos                                                                                                                                                                        |
-| NACOS_AUTH_ENABLE                       | If turn on auth system                                                                                                            | default :false                                                                                                                                                                        |
+| NACOS_AUTH_ENABLE                       | Enable Client API authentication; independent of Admin and Console API authentication                                             | Unset uses the image default (`true` for Nacos 3.3+; earlier images keep their built-in default). Explicit `true`/`false` overrides it; use `false` only as a temporary upgrade aid.                                                                  |
 | NACOS_AUTH_TOKEN_EXPIRE_SECONDS         | The token expiration in seconds                                                                                                   | default :18000                                                                                                                                                                        |
-| NACOS_AUTH_TOKEN                        |                                                                                                                                   | `Note: It is removed from Nacos 2.2.1`                                                                                                                                                |
+| NACOS_AUTH_TOKEN                        | Base64-encoded token secret; use a unique production value                                                                        | `Note: Its default value was removed in Nacos 2.2.1, so it must be set explicitly.`                                                                                                   |
 | NACOS_AUTH_CACHE_ENABLE                 | Turn on/off caching of auth information. By turning on this switch, the update of auth information would have a 15 seconds delay. | default : false                                                                                                                                                                       |
 | MEMBER_LIST                             | Set the cluster list with a configuration file or command-line argument                                                           | eg:192.168.16.101:8847?raft_port=8807,192.168.16.101?raft_port=8808,192.168.16.101:8849?raft_port=8809                                                                                |
 | EMBEDDED_STORAGE                        | Use embedded storage in cluster mode without mysql                                                                                | `embedded` default : none                                                                                                                                                             |
 | NACOS_AUTH_CACHE_ENABLE                 | nacos.core.auth.caching.enabled                                                                                                   | default : false                                                                                                                                                                       |
 | NACOS_AUTH_USER_AGENT_AUTH_WHITE_ENABLE | nacos.core.auth.enable.userAgentAuthWhite                                                                                         | default : false                                                                                                                                                                       |
-| NACOS_AUTH_IDENTITY_KEY                 | nacos.core.auth.server.identity.key                                                                                               | `Note: It is removed from Nacos 2.2.1`                                                                                                                                                |
-| NACOS_AUTH_IDENTITY_VALUE               | nacos.core.auth.server.identity.value                                                                                             | `Note: It is removed from Nacos 2.2.1`                                                                                                                                                |
+| NACOS_AUTH_IDENTITY_KEY                 | nacos.core.auth.server.identity.key; use a unique production value                                                                | `Note: Its default value was removed in Nacos 2.2.1, so it must be set explicitly.`                                                                                                   |
+| NACOS_AUTH_IDENTITY_VALUE               | nacos.core.auth.server.identity.value; use a unique production value                                                              | `Note: Its default value was removed in Nacos 2.2.1, so it must be set explicitly.`                                                                                                   |
 | NACOS_SECURITY_IGNORE_URLS              | nacos.security.ignore.urls                                                                                                        | default : `/,/error,/**/*.css,/**/*.js,/**/*.html,/**/*.map,/**/*.svg,/**/*.png,/**/*.ico,/console-fe/public/**,/v1/auth/**,/v1/console/health/**,/actuator/**,/v1/console/server/**` |
 | NACOS_CONSOLE_UI_ENABLED                | nacos.console.ui.enabled                                                                                                          | default : `true`                                                                                                                                                                      |
 | NACOS_CORE_PARAM_CHECK_ENABLED          | nacos.core.param.check.enabled                                                                                                    | default : `true`                                                                                                                                                                      |
 | DB_POOL_CONNECTION_TIMEOUT              | Database connection pool timeout in milliseconds                                                                                  | default : **30000**                                                                                                                                                                   |
 | NACOS_CONSOLE_UI_ENABLED                | nacos.console.ui.enabled                                                                                                          | default : `true`                                                                                                                                                                      |
 | NACOS_CORE_PARAM_CHECK_ENABLED          | nacos.core.param.check.enabled                                                                                                    | default : `true`                                                                                                                                                                      |
-| NACOS_AUTH_ADMIN_ENABLE                 | nacos.core.auth.admin.enable                                                                                                      | default : `true`                                                                                                                                                                      |
-| NACOS_AUTH_CONSOLE_ENABLE               | nacos.core.auth.console.enable                                                                                                    | default : `true`                                                                                                                                                                      |                                                                                                                                                                                       |
+| NACOS_AUTH_ADMIN_ENABLE                 | Independently controls nacos.core.auth.admin.enabled                                                                              | default : `true`                                                                                                                                                                      |
+| NACOS_AUTH_CONSOLE_ENABLE               | Independently controls nacos.core.auth.console.enabled                                                                            | default : `true`                                                                                                                                                                      |                                                                                                                                                                                       |
 | NACOS_CONSOLE_PORT                      | nacos.console.port                                                                                                                | default : `8080`                                                                                                                                                                      |
 | NACOS_CONSOLE_CONTEXTPATH               | nacos.console.contextPath                                                                                                         | default : ``                                                                                                                                                                          |
 | NACOS_DEPLOYMENT_TYPE                   | nacos.deployment.type                                                                                                             | default : `merged` support config `server` `console`                                                                                                                                  |
@@ -237,4 +252,3 @@ example, an LDAP deployment can mount the LDAP auth plugin jar in one directory 
 Usage reference：[Nacos monitor-guide](https://nacos.io/zh-cn/docs/monitor-guide.html)
 
 **Note**:  When Grafana creates a new data source, the data source address must be **http://prometheus:9090**
-

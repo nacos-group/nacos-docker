@@ -5,6 +5,16 @@ on:
     branches: [master]
 
 jobs:
+  config-test:
+    name: Auth Configuration Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check shell syntax and auth defaults
+        run: |
+          bash -n build/bin/docker-startup.sh test/auth-defaults.sh
+          bash test/auth-defaults.sh
+
   build-test:
     name: Build Image
     runs-on: ubuntu-latest
