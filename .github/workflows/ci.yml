@@ -6,14 +6,21 @@ on:
 
 jobs:
   config-test:
-    name: Auth Configuration Test
+    name: Configuration and Script Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Check shell syntax and auth defaults
         run: |
-          bash -n build/bin/docker-startup.sh test/auth-defaults.sh
+          for script in build/bin/docker-startup.sh example/mysql-init.sh test/*.sh; do
+            bash -n "$script"
+          done
           bash test/auth-defaults.sh
+          bash test/mysql-init.sh
+          python3 -m py_compile test/docker-smoke.py
+          for example in example/*.yaml; do
+            docker compose --env-file example/.env -f "$example" config --quiet
+          done
 
   build-test:
     name: Build Image
@@ -39,8 +46,18 @@ jobs:
           load: false
 
   smoke-test:
-    name: Smoke Test
+    name: Smoke Test (${{ matrix.name }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: standard
+            file: build/Dockerfile
+            test-args: --mysql
+          - name: slim
+            file: build/Dockerfile.Slim
+            test-args: ""
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -48,31 +65,13 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: build
-          file: build/Dockerfile
+          file: ${{ matrix.file }}
           platforms: linux/amd64
           push: false
           load: true
           tags: nacos-smoke:test
-      - name: Run smoke test
-        run: |
-          docker run -d --name nacos-test \
-            -e MODE=standalone \
-            -e NACOS_AUTH_TOKEN=VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg= \
-            -e NACOS_AUTH_IDENTITY_KEY=test \
-            -e NACOS_AUTH_IDENTITY_VALUE=test \
-            -p 8848:8848 nacos-smoke:test
-
-          echo "Waiting for Nacos to start..."
-          for i in $(seq 1 60); do
-            if curl -sf http://localhost:8848/nacos/ > /dev/null 2>&1; then
-              echo "Nacos is ready after $((i * 2))s"
-              exit 0
-            fi
-            sleep 2
-          done
-          echo "::error::Nacos failed to start within 120s"
-          docker logs nacos-test
-          exit 1
-      - name: Cleanup
-        if: always()
-        run: docker rm -f nacos-test 2>/dev/null || true
+      - name: Prepare release-matched MySQL schema
+        if: matrix.name == 'standard'
+        run: bash example/mysql-init.sh
+      - name: Test startup, auth and persisted plugin configuration
+        run: python3 test/docker-smoke.py --image nacos-smoke:test ${{ matrix.test-args }}

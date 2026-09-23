@@ -66,7 +66,13 @@ run_startup() {
   )
 }
 
+mkdir -p "${TEST_DIR}/nacos/data-seed" "${TEST_DIR}/nacos/data"
+printf bundled-skill > "${TEST_DIR}/nacos/data-seed/skills-data.zip"
+printf bundled-agentspec > "${TEST_DIR}/nacos/data-seed/agentspec-data.zip"
+printf existing-skill > "${TEST_DIR}/nacos/data/skills-data.zip"
 run_startup
+[[ $(cat "${TEST_DIR}/nacos/data/skills-data.zip") == existing-skill ]]
+[[ $(cat "${TEST_DIR}/nacos/data/agentspec-data.zip") == bundled-agentspec ]]
 if grep -Fq -- "-Dnacos.core.auth.enabled=" "${JAVA_ARGS_FILE}"; then
   echo "Unset NACOS_AUTH_ENABLE must not add a JVM override" >&2
   exit 1

@@ -2,7 +2,7 @@ FROM alpine:latest
 LABEL maintainer="pader <huangmnlove@163.com>"
 
 # 安装依赖
-RUN apk add --no-cache openjdk17-jre curl iputils ncurses vim libcurl bash libstdc++
+RUN apk add --no-cache openjdk17-jre curl iputils ncurses vim libcurl bash libstdc++ ca-certificates tzdata
 
 # 设置环境变量
 ENV MODE="cluster" \
@@ -10,7 +10,9 @@ ENV MODE="cluster" \
     BASE_DIR="/home/nacos" \
     CLASSPATH=".:/home/nacos/conf:$CLASSPATH" \
     CLUSTER_CONF="/home/nacos/conf/cluster.conf" \
-    FUNCTION_MODE="all" \
+    FUNCTION_MODE="microservice" \
+    NACOS_AI_PIPELINE_ENABLED="false" \
+    NACOS_AI_PIPELINE_SKILL_SCANNER_ENABLED="false" \
     JAVA_HOME="/usr/lib/jvm/java-17-openjdk" \
     NACOS_USER="nacos" \
     JAVA="/usr/lib/jvm/java-17-openjdk/bin/java" \
@@ -23,14 +25,14 @@ ENV MODE="cluster" \
     TOMCAT_ACCESSLOG_ENABLED="false" \
     TIME_ZONE="Asia/Shanghai"
 
-ARG NACOS_VERSION=3.2.2
+ARG NACOS_VERSION=3.3.0-RC
 ARG HOT_FIX_FLAG=""
 
 WORKDIR $BASE_DIR
 
 # 下载并安装 Nacos
 RUN set -x \
-    && curl -SL "https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz" -o nacos-server.tar.gz \
+    && curl -fSL --retry 3 "https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz" -o nacos-server.tar.gz \
     && tar -xzvf nacos-server.tar.gz -C /home \
     && rm -rf nacos-server.tar.gz /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql \
     && ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone
@@ -46,5 +48,6 @@ RUN mkdir -p logs \
     && chmod +x bin/docker-startup.sh
 
 EXPOSE 8848
-EXPOSE 9848 8080
-ENTRYPOINT ["sh","bin/docker-startup.sh"]
+EXPOSE 9848 8080 9080
+EXPOSE 5353/tcp 5353/udp
+ENTRYPOINT ["bash", "bin/docker-startup.sh"]

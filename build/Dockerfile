@@ -50,7 +50,7 @@ ENV MODE="cluster" \
     TOMCAT_ACCESSLOG_ENABLED="false" \
     TIME_ZONE="Asia/Shanghai"
 
-ARG NACOS_VERSION=3.2.4
+ARG NACOS_VERSION=3.3.0-RC
 ARG HOT_FIX_FLAG=""
 ARG SKILLS_DATA_URL="https://download.nacos.io/nacos-server-data/skills-data.zip"
 ARG AGENTSPEC_DATA_URL="https://download.nacos.io/nacos-server-data/agentspec-data.zip"
@@ -60,9 +60,9 @@ WORKDIR ${BASE_DIR}
 RUN set -x \
     && curl -fSL --retry 3 --output nacos-server.tar.gz "https://github.com/alibaba/nacos/releases/download/${NACOS_VERSION}${HOT_FIX_FLAG}/nacos-server-${NACOS_VERSION}.tar.gz" \
     && tar -xzvf nacos-server.tar.gz -C /home \
-    && mkdir -p /home/nacos/data \
-    && curl -fSL --retry 3 --output /home/nacos/data/skills-data.zip "${SKILLS_DATA_URL}" \
-    && curl -fSL --retry 3 --output /home/nacos/data/agentspec-data.zip "${AGENTSPEC_DATA_URL}" \
+    && mkdir -p /home/nacos/data-seed \
+    && curl -fSL --retry 3 --output /home/nacos/data-seed/skills-data.zip "${SKILLS_DATA_URL}" \
+    && curl -fSL --retry 3 --output /home/nacos/data-seed/agentspec-data.zip "${AGENTSPEC_DATA_URL}" \
     && rm -rf nacos-server.tar.gz /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example /home/nacos/conf/nacos-mysql.sql \
     && ln -snf /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime \
     && echo ${TIME_ZONE} > /etc/timezone
@@ -77,6 +77,7 @@ RUN mkdir -p logs \
     && chmod +x bin/docker-startup.sh
 
 EXPOSE 8848
-EXPOSE 9848 8080
+EXPOSE 9848 8080 9080
+EXPOSE 5353/tcp 5353/udp
 
 ENTRYPOINT ["bash", "bin/docker-startup.sh"]

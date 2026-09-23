@@ -11,9 +11,13 @@ services:
       - NACOS_EXT_PLUGIN_DIRS=/home/nacos/ext-plugins,/home/nacos/ext-libs
     volumes:
       - ./standalone-logs/:/home/nacos/logs
+      - nacos-data:/home/nacos/data
       - ./plugins/:/home/nacos/ext-plugins
       - ./libs/:/home/nacos/ext-libs
     ports:
       - "8080:8080"
       - "8848:8848"
       - "9848:9848"
+
+volumes:
+  nacos-data:
