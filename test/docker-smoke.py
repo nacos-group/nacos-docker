@@ -79,6 +79,23 @@ def wait_ready(base, path):
     raise AssertionError(f"Readiness timeout at {base}{path}: {last}")
 
 
+def wait_config(base, path, expected_content, token):
+    # Publishing persists to MySQL before the asynchronous dump reaches Client API reads.
+    deadline = time.monotonic() + 30
+    last = None
+    while time.monotonic() < deadline:
+        last = request(base, path, token=token)
+        status, body = last
+        if status == 200 and isinstance(body, dict) and body.get("code") == 20004:
+            # Only retry RESOURCE_NOT_FOUND while the new config is being dumped.
+            time.sleep(0.5)
+            continue
+        data = success(last)
+        assert isinstance(data, dict) and data.get("content") == expected_content, last
+        return
+    raise AssertionError(f"Config propagation timeout at {base}{path}: {last}")
+
+
 def check_dns(name):
     # An absent service must receive NXDOMAIN on both published transports.
     query_id = 12345
@@ -267,8 +284,8 @@ class SmokeTest:
         self.client_roundtrip(base, token)
         config = {"dataId": "docker-smoke", "groupName": "DEFAULT_GROUP", "content": "mysql-roundtrip"}
         success(request(base, "/nacos/v3/admin/cs/config", "POST", config, token))
-        result = success(request(base, "/nacos/v3/client/cs/config?dataId=docker-smoke&groupName=DEFAULT_GROUP", token=token))
-        assert "mysql-roundtrip" in str(result), result
+        wait_config(base, "/nacos/v3/client/cs/config?dataId=docker-smoke&groupName=DEFAULT_GROUP",
+                    config["content"], token)
         env.update(NACOS_DEPLOYMENT_TYPE="console", MEMBER_LIST=server + ":8848")
         console = self.start("console", env, self.volume("console-data"), (8080,))
         console_base = self.ready(console, console=True)
