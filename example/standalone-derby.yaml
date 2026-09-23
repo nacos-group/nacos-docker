@@ -11,6 +11,7 @@ services:
       - NACOS_AUTH_TOKEN=VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg=
     volumes:
       - ./standalone-logs/:/home/nacos/logs
+      - nacos-data:/home/nacos/data
     ports:
       - "8080:8080"
       - "8848:8848"
@@ -31,3 +32,6 @@ services:
     ports:
       - "3000:3000"
     restart: on-failure
+
+volumes:
+  nacos-data:

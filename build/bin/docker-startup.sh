@@ -11,12 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-set -x
+set -e
 export CUSTOM_SEARCH_NAMES="application"
 export CUSTOM_SEARCH_LOCATIONS=file:${BASE_DIR}/conf/
 export MEMBER_LIST="$MEMBER_LIST"
 PLUGINS_DIR="/home/nacos/plugins/peer-finder"
 DEFAULT_LOADER_PATH="${BASE_DIR}/plugins,${BASE_DIR}/plugins/health,${BASE_DIR}/plugins/cmdb,${BASE_DIR}/plugins/selector"
+
+# Keep bundled archives outside the data volume so an empty bind mount can be initialized.
+# Existing archives and plugin state belong to the volume and must survive container replacement.
+mkdir -p "${BASE_DIR}/logs" "${BASE_DIR}/data"
+for archive in skills-data.zip agentspec-data.zip; do
+  if [[ -f "${BASE_DIR}/data-seed/${archive}" && ! -e "${BASE_DIR}/data/${archive}" ]]; then
+    cp "${BASE_DIR}/data-seed/${archive}" "${BASE_DIR}/data/${archive}"
+  fi
+done
 function print_servers() {
    if [[ ! -d "${PLUGINS_DIR}" ]]; then
     echo "" >"$CLUSTER_CONF"

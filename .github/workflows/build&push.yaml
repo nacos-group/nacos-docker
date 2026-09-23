@@ -87,8 +87,9 @@ jobs:
           images: nacos/nacos-server
           flavor: |
             latest=false
+          # Keep upstream prerelease/hotfix names; append the image suffix literally.
           tags: |
-            type=pep440,pattern=v{{version}}-slim
+            type=ref,event=tag,suffix=-slim
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6

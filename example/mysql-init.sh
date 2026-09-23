@@ -1,39 +1,33 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
-# 加载 NACOS_VERSION
-source .env
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# Keep the original .env source and precedence, independent of the working directory.
+source "${SCRIPT_DIR}/.env"
+: "${NACOS_VERSION:?NACOS_VERSION must be set in example/.env}"
 CLEAN_VERSION=${NACOS_VERSION#v}
-# deal -slim
-CLEAN_VERSION=${CLEAN_VERSION%-*}
+# Strip only the Docker image suffix. Preserve four-part versions, prereleases,
+# dated hotfixes and other upstream tag formats without SemVer/PEP 440 validation.
+CLEAN_VERSION=${CLEAN_VERSION%-slim}
 
-NEW_SCHEMA_URL="https://raw.githubusercontent.com/alibaba/nacos/${CLEAN_VERSION}/plugin-default-impl/nacos-default-datasource-plugin/nacos-datasource-plugin-mysql/src/main/resources/META-INF/mysql-schema.sql"
-OLD_SCHEMA_URL="https://raw.githubusercontent.com/alibaba/nacos/${CLEAN_VERSION}/distribution/conf/mysql-schema.sql"
-
-TARGET_DIR="./mysql-init"
-VERSIONED_FILE="${TARGET_DIR}/${CLEAN_VERSION}-mysql-schema.sql"
+SCHEMA_BASE="https://raw.githubusercontent.com/alibaba/nacos/${CLEAN_VERSION}"
+NEW_SCHEMA_URL="${SCHEMA_BASE}/plugin-default-impl/nacos-default-datasource-plugin/nacos-datasource-plugin-mysql/src/main/resources/META-INF/mysql-schema.sql"
+OLD_SCHEMA_URL="${SCHEMA_BASE}/distribution/conf/mysql-schema.sql"
+TARGET_DIR="${SCRIPT_DIR}/mysql-init"
 FINAL_FILE="${TARGET_DIR}/mysql-schema.sql"
-
-# 创建目录
 mkdir -p "${TARGET_DIR}"
+TEMP_FILE=$(mktemp "${TARGET_DIR}/.mysql-schema.XXXXXX")
+trap 'rm -f "${TEMP_FILE}"' EXIT
 
-# 下载 schema 文件（新路径优先，fallback 到老路径）
-echo "⬇️  Downloading MySQL schema for Nacos ${CLEAN_VERSION}..."
-if ! curl -sSL --fail "$NEW_SCHEMA_URL" -o "${VERSIONED_FILE}" 2>/dev/null; then
-  echo "⚠️  New path not found, trying legacy path..."
-  curl -sSL --fail "$OLD_SCHEMA_URL" -o "${VERSIONED_FILE}"
+echo "Downloading MySQL schema for Nacos ${CLEAN_VERSION}..."
+if ! curl -fsSL --retry 3 "${NEW_SCHEMA_URL}" -o "${TEMP_FILE}"; then
+  echo "Trying the distribution schema path..."
+  curl -fsSL --retry 3 "${OLD_SCHEMA_URL}" -o "${TEMP_FILE}"
 fi
-
-# 校验下载
-if [ ! -s "${VERSIONED_FILE}" ]; then
-  echo "❌ Failed to download schema file from $SCHEMA_URL"
+if [[ ! -s "${TEMP_FILE}" ]]; then
+  echo "Empty MySQL schema for Nacos ${CLEAN_VERSION}" >&2
   exit 1
 fi
-
-# 拷贝为标准文件名供 MySQL 初始化使用
-cp "${VERSIONED_FILE}" "${FINAL_FILE}"
-
-# 删除原始版本号文件
-rm -f "${VERSIONED_FILE}"
-
-echo "✅ Downloaded and prepared: ${FINAL_FILE}"
+chmod 644 "${TEMP_FILE}"
+mv "${TEMP_FILE}" "${FINAL_FILE}"
+echo "Prepared ${FINAL_FILE} (new databases only; existing databases need incremental migration)."

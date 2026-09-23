@@ -7,6 +7,7 @@ services:
       - ../env/nacos-standalone-mysql.env
     volumes:
       - ./standalone-logs/:/home/nacos/logs
+      - nacos-data:/home/nacos/data
     ports:
       - "8080:8080"
       - "8848:8848"
@@ -34,4 +35,5 @@ services:
       timeout: 10s
       retries: 10
 
-
+volumes:
+  nacos-data:

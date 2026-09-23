@@ -1,0 +1,21 @@
+# Optional MCP, Skill and ARD endpoints share the AI Registry port.
+services:
+  nacos:
+    image: nacos/nacos-server:${NACOS_VERSION}
+    environment:
+      MODE: standalone
+      NACOS_AUTH_IDENTITY_KEY: serverIdentity
+      NACOS_AUTH_IDENTITY_VALUE: security
+      NACOS_AUTH_TOKEN: VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg=
+      NACOS_AI_REGISTRY_ENABLED: "true"
+      NACOS_AI_SKILL_REGISTRY_ENABLED: "true"
+      NACOS_AI_ARD_ENABLED: "true"
+    ports:
+      - "8080:8080"
+      - "8848:8848"
+      - "9848:9848"
+      - "9080:9080"
+    volumes:
+      - nacos-data:/home/nacos/data
+volumes:
+  nacos-data:

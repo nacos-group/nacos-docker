@@ -7,6 +7,8 @@ services:
       - ../env/nacos-standalone-mysql.env
     volumes:
       - ./standalone-logs/:/home/nacos/logs
+      - ./init.d/application.properties:/home/nacos/conf/application.properties:ro
+      - nacos-data:/home/nacos/data
     ports:
       - "8080:8080"
       - "8848:8848"
@@ -51,3 +53,5 @@ services:
 #      - 3000:3000
 #    restart: on-failure
 
+volumes:
+  nacos-data:
