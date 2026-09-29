@@ -296,6 +296,21 @@ python3 test/docker-smoke.py --image nacos-smoke:test --mysql
 
 真实镜像测试覆盖默认鉴权、显式关闭 Client 鉴权、配置映射、Registry 自定义端口、DNS TCP/UDP、插件配置及状态重建恢复，并验证 MySQL 和独立 Console。测试使用独立容器、网络和数据卷，结束后清理自身资源。
 
+## 常见问题
+
+### Console 提示 `No available server after 3 retries`
+
+独立 Console 连不上 Nacos Server，通常是 Server 本身没有启动成功。先查看 Server 日志，例如 `docker logs nacos-standalone-server`。
+
+MySQL 示例中最常见的原因是没有执行 `mysql-init.sh`，Server 日志会出现 `No DataSource set`。MySQL 只在数据目录为空时执行初始化脚本，补跑脚本前需先清理已初始化的数据：
+
+```shell
+cd example
+docker compose -f standalone-independent-mysql.yaml down
+rm -rf ./mysql
+./mysql-init.sh && docker compose -f standalone-independent-mysql.yaml up
+```
+
 ## Nacos + Grafana + Prometheus
 
 使用参考：[Nacos monitor-guide](https://nacos.io/zh-cn/docs/monitor-guide.html)

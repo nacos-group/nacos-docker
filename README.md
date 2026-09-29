@@ -300,6 +300,21 @@ python3 test/docker-smoke.py --image nacos-smoke:test --mysql
 
 Image tests cover default auth, explicit Client auth opt-out, configuration mapping, a custom Registry port, DNS TCP/UDP, persisted plugin configuration/state after container replacement, MySQL and independent Console. Tests create isolated containers, networks and volumes and remove their own resources on exit.
 
+## Troubleshooting
+
+### Console reports `No available server after 3 retries`
+
+The independent Console cannot reach Nacos Server, which usually means the Server itself failed to start. Check its logs first, e.g. `docker logs nacos-standalone-server`.
+
+In the MySQL examples, the most common cause is skipping `mysql-init.sh`, and the Server logs show `No DataSource set`. MySQL runs the init scripts only when its data directory is empty, so remove the initialized data before running the script again:
+
+```shell
+cd example
+docker compose -f standalone-independent-mysql.yaml down
+rm -rf ./mysql
+./mysql-init.sh && docker compose -f standalone-independent-mysql.yaml up
+```
+
 ## Nacos + Grafana + Prometheus
 
 Usage reference：[Nacos monitor-guide](https://nacos.io/zh-cn/docs/monitor-guide.html)
