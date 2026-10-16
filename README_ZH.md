@@ -179,6 +179,8 @@ NACOS_VERSION=v3.3.0-RC-slim
 | JVM_MS                                  | - XX:MetaspaceSize                        | 默认 :128m                                                                                                                                                                              |
 | JVM_MMS                                 | -XX:MaxMetaspaceSize                      | 默认 :320m                                                                                                                                                                              |
 | NACOS_DEBUG                             | 是否开启远程DEBUG                               | y/n 默认 :n                                                                                                                                                                             |
+| JAVA_OPT | 额外的 JVM 参数，位于 `-jar` 之前（如 `-Dkey=value`） | 例：`-Dnacos.namespace.migrate.retry.times=60` |
+| JAVA_OPT_EXT | 额外的程序参数，追加在 `-jar nacos-server.jar` 之后（Spring `--key=value`）；在此处写 `-D` 参数不会传给 JVM，请改用 `JAVA_OPT` | 例：`--nacos.namespace.migrate.retry.times=60` |
 | TOMCAT_ACCESSLOG_ENABLED                | server.tomcat.accesslog.enabled           | 默认 :false                                                                                                                                                                             |
 | NACOS_AUTH_SYSTEM_TYPE | nacos.plugin.auth.type | nacos；支持 ldap、oidc 和自定义插件 |
 | NACOS_AUTH_ENABLE                       | 是否开启 Client API 鉴权；与 Admin、Console API 鉴权相互独立 | 未设置时使用镜像默认值（Nacos 3.3+ 为 `true`；旧镜像保留各自内置默认值）。显式 `true`/`false` 均可覆盖；`false` 仅建议作为有时限的升级兼容选择。                                                                                         |
