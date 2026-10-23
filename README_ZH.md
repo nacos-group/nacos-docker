@@ -112,6 +112,12 @@ NACOS_VERSION=v3.3.0-RC-slim
   ./mysql-init.sh && docker compose -f standalone-independent-mysql.yaml up
   ```
 
+Standalone MySQL 两个示例都需要先执行 `bash mysql-init.sh`。缺少
+`mysql-init/mysql-schema.sql` 时，Compose 会立即报告绑定挂载错误，避免创建没有 Nacos 表的空库。
+MySQL 只在数据目录为空时执行初始化 SQL。如果已经创建了空的 Nacos 数据库，请先备份，
+再手动导入与版本匹配的建表脚本；重启 Compose 不会重新执行初始化。
+如果已有 Nacos 表或数据，请使用审核后的增量迁移，不要重放全量建表脚本或删除数据目录。
+
 * docker单节点部署集群模式
 
   ```powershell
