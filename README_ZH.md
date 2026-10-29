@@ -38,7 +38,7 @@ server identity；仓库中提交的凭据仅用于本地示例，不得在生�
   镜像以后,移除了数据库主从镜像,具体原因请参考[移除主从镜像配置](https://github.com/nacos-group/nacos-docker/wiki/%E7%A7%BB%E9%99%A4%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%BB%E4%BB%8E%E9%95%9C%E5%83%8F%E9%85%8D%E7%BD%AE)
 * 从Nacos 1.3.1版本开始,数据库存储已经升级到8.0, 并且它向下兼容
 * 例子演示中使用的数据库是为了方便定制了官方Mysql镜像, 自动初始化的数据库脚本.
-* 如果你使用自定义数据库, 第一次启动Nacos前需要手动初始化 [数据库脚本](https://github.com/alibaba/nacos/blob/3.3.0-RC/plugin-default-impl/nacos-default-datasource-plugin/nacos-datasource-plugin-mysql/src/main/resources/META-INF/mysql-schema.sql)
+* 如果你使用自定义数据库, 第一次启动Nacos前需要手动初始化 [数据库脚本](https://github.com/alibaba/nacos/blob/3.3.0/plugin-default-impl/nacos-default-datasource-plugin/nacos-datasource-plugin-mysql/src/main/resources/META-INF/mysql-schema.sql)
 
 ## 快速开始
 
@@ -75,13 +75,13 @@ docker run --name nacos-standalone-derby-v2.5.1 \
 * 提示: 你需要通过 `example/.env` 中的以下配置来更改 Compose 文件中 [Nacos 镜像版本](https://hub.docker.com/r/nacos/nacos-server/tags)。
 
 ```dotenv
-NACOS_VERSION=v3.3.0-RC
+NACOS_VERSION=v3.3.0
 ```
 
 Standard 和 Slim 均构建 `linux/amd64`、`linux/arm64` 镜像，Arm Mac 无需强制选择 Slim。Slim 标签示例：
 
 ```dotenv
-NACOS_VERSION=v3.3.0-RC-slim
+NACOS_VERSION=v3.3.0-slim
 ```
 
 打开命令窗口执行：
@@ -215,6 +215,7 @@ NACOS_VERSION=v3.3.0-RC-slim
 | NACOS_CONSOLE_AI_MCP_IMPORT_ALLOWED_PRIVATE_ADDRESSES | nacos.console.ai.mcp.import.allowed-private-addresses | IP/CIDR list; empty |
 | NACOS_NAMING_DNS_ENABLED | nacos.naming.dns.enabled | false |
 | NACOS_NAMING_DNS_PORT | nacos.naming.dns.port | 5353 (TCP + UDP) |
+| NACOS_NAMING_DNS_BIND_ADDRESS | nacos.naming.dns.bind-address | 127.0.0.1 |
 
 ## 高级配置
 
@@ -254,9 +255,9 @@ docker run --name nacos-standalone \
 这个能力适合插件 jar 和运行时依赖 jar 需要分别挂载的场景。例如 LDAP 部署可以把 LDAP
 鉴权插件 jar 放在一个目录，把所需的 `spring-ldap-core` 依赖 jar 放在另一个目录。
 
-## 升级到 3.3.0-RC
+## 升级到 3.3.0
 
-此分支的 Dockerfile 和配置模板面向 3.3.0-RC，Java 仍使用 17。构建旧版 Nacos 请使用对应版本的仓库代码，不能只把此模板的 `NACOS_VERSION` 改回 3.2。
+此分支的 Dockerfile 和配置模板面向 3.3.0，Java 仍使用 17。构建旧版 Nacos 请使用对应版本的仓库代码，不能只把此模板的 `NACOS_VERSION` 改回 3.2。
 
 1. 先备份数据库及每个节点的 data、配置和插件。对照目标版本 schema 执行增量 DDL；`mysql-init.sh` 和 MySQL 示例 Dockerfile 只用于新库初始化，不会升级已有 MySQL 数据卷。
 2. 外置数据库补齐 `ai_resource_search_document`、`ai_resource_search_chunk`、`ai_resource_task` 表及索引。Search 默认开启；临时关闭可设置 `NACOS_AI_RESOURCE_SEARCH_ENABLED=false`，此时不能开启 ARD。按实际 schema 检查 `permissions.resource` 扩容及对应数据库的其他变化，不要在生产库重跑完整初始化 SQL。
@@ -265,7 +266,7 @@ docker run --name nacos-standalone \
 5. 保留节点原有 data；插件状态和运行时配置存储于 `data/plugin`，运行时持久化值可覆盖静态值。`.enabled` 是初始状态，已有状态请通过插件管理修改；`RESTART` 配置项仍需要重启。不要在节点间共用同一个 data 卷。
 6. 仅挂载经过 3.3 兼容验证的外部插件。旧 AI Pipeline Builder、旧 AI Resource Import SPI 和已删除的配置迁移 Mapper 不能直接沿用。历史 A2A/MCP、Raft 数据和回滚边界按官方升级手册处理，不能只回退镜像标签。
 
-详见 [3.3.0-RC 发布说明](https://github.com/alibaba/nacos/releases/tag/3.3.0-RC) 和 [next 升级手册](https://nacos.io/docs/next/manual/admin/upgrading/)。
+详见 [3.3.0 发布说明](https://github.com/alibaba/nacos/releases/tag/3.3.0) 和 [next 升级手册](https://nacos.io/docs/next/manual/admin/upgrading/)。
 
 ## 数据持久化与可选能力
 
@@ -281,6 +282,8 @@ docker compose -f example/standalone-ai-registry.yaml up
 ```
 
 `NACOS_AI_REGISTRY_ENABLED` 继续只控制 MCP；Skill 和 ARD 各有独立开关。修改 Registry/DNS 端口后还需同步修改 Compose 端口映射。私网 MCP 工具导入需要显式配置允许的 IP/CIDR。
+
+Nacos 3.3.0 的 DNS 默认监听容器内的回环地址。通过 Docker 端口映射提供 DNS 服务时，需要显式设置 `NACOS_NAMING_DNS_BIND_ADDRESS=0.0.0.0`，并仅向可信接口映射 TCP 和 UDP 端口（例如 `-p 127.0.0.1:5353:5353/tcp -p 127.0.0.1:5353:5353/udp`）。
 
 Standard/Slim 内置 Skill Scanner，SkillSpector 默认关闭。安装或挂载 SkillSpector 运行时后，设置 command 及 enabled；已有插件状态可能需要从控制台重新启用。Lite 默认 `FUNCTION_MODE=microservice` 并关闭 Pipeline，不内置 Python、扫描器或 AI 数据包，仓库已有的 `build/Dockerfile.Lite` 仅供自行构建，发布流程只发布 Standard/Slim。
 

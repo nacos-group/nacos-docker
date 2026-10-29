@@ -188,7 +188,8 @@ class SmokeTest:
         if not lite:
             env.update(NACOS_AI_REGISTRY_ENABLED="true", NACOS_AI_SKILL_REGISTRY_ENABLED="true",
                        NACOS_AI_ARD_ENABLED="true", NACOS_AI_REGISTRY_PORT="19080",
-                       NACOS_NAMING_DNS_ENABLED="true", NACOS_NAMING_DNS_PORT="15353")
+                       NACOS_NAMING_DNS_ENABLED="true", NACOS_NAMING_DNS_PORT="15353",
+                       NACOS_NAMING_DNS_BIND_ADDRESS="0.0.0.0")
         ports = (8848, 8080) if lite else (8848, 8080, 19080)
         dns_ports = () if lite else ("-p", "127.0.0.1::15353/tcp", "-p", "127.0.0.1::15353/udp")
         name = self.start("default", env, volume, ports, dns_ports)

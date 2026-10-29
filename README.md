@@ -39,7 +39,7 @@ not be reused.
   to [Removing the Master-Slave Image Configuration](https://github.com/nacos-group/nacos-docker/wiki/%E7%A7%BB%E9%99%A4%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%BB%E4%BB%8E%E9%95%9C%E5%83%8F%E9%85%8D%E7%BD%AE)
 * Since Nacos 1.3.1 version, the database storage has been upgraded to 8.0, and it is backward compatible
 * If you use a custom database, you need to initialize
-  the [database script](https://github.com/alibaba/nacos/blob/3.3.0-RC/plugin-default-impl/nacos-default-datasource-plugin/nacos-datasource-plugin-mysql/src/main/resources/META-INF/mysql-schema.sql) yourself for
+  the [database script](https://github.com/alibaba/nacos/blob/3.3.0/plugin-default-impl/nacos-default-datasource-plugin/nacos-datasource-plugin-mysql/src/main/resources/META-INF/mysql-schema.sql) yourself for
   the first time.
 
 ## Quick Start
@@ -77,13 +77,13 @@ docker run --name nacos-standalone-derby-v2.5.1 \
 * Tips: You can change [the version of the Nacos image](https://hub.docker.com/r/nacos/nacos-server/tags) in the compose file from the following configuration. `example/.env`
 
 ```dotenv
-NACOS_VERSION=v3.3.0-RC
+NACOS_VERSION=v3.3.0
 ```
 
 Both Standard and Slim support `linux/amd64` and `linux/arm64`; Arm Macs do not require the Slim variant. Example Slim tag:
 
 ```dotenv
-NACOS_VERSION=v3.3.0-RC-slim
+NACOS_VERSION=v3.3.0-slim
 ```
 
 Run the following command：
@@ -218,6 +218,7 @@ Run the following command：
 | NACOS_CONSOLE_AI_MCP_IMPORT_ALLOWED_PRIVATE_ADDRESSES | nacos.console.ai.mcp.import.allowed-private-addresses | IP/CIDR list; empty |
 | NACOS_NAMING_DNS_ENABLED | nacos.naming.dns.enabled | false |
 | NACOS_NAMING_DNS_PORT | nacos.naming.dns.port | 5353 (TCP + UDP) |
+| NACOS_NAMING_DNS_BIND_ADDRESS | nacos.naming.dns.bind-address | 127.0.0.1 |
 
 ## Advanced configuration
 
@@ -258,9 +259,9 @@ This is useful when a plugin jar and its runtime dependency jars need to be moun
 example, an LDAP deployment can mount the LDAP auth plugin jar in one directory and the required
 `spring-ldap-core` dependency jars in another.
 
-## Upgrade to 3.3.0-RC
+## Upgrade to 3.3.0
 
-This branch's Dockerfiles and configuration template target 3.3.0-RC and retain Java 17. To build older Nacos versions, use the corresponding repository revision; changing only `NACOS_VERSION` back to 3.2 is not supported by this template.
+This branch's Dockerfiles and configuration template target 3.3.0 and retain Java 17. To build older Nacos versions, use the corresponding repository revision; changing only `NACOS_VERSION` back to 3.2 is not supported by this template.
 
 1. Back up the database and each node's data, configuration and plugins. Apply reviewed incremental DDL from the target schema. `mysql-init.sh` and the MySQL example Dockerfiles initialize new databases; they do not upgrade existing MySQL volumes.
 2. Add `ai_resource_search_document`, `ai_resource_search_chunk`, `ai_resource_task` and their indexes to external databases. Search is enabled by default. `NACOS_AI_RESOURCE_SEARCH_ENABLED=false` temporarily disables it, but ARD then cannot be enabled. Check the actual `permissions.resource` size and other database-specific changes; never replay the full initialization SQL against production data.
@@ -269,7 +270,7 @@ This branch's Dockerfiles and configuration template target 3.3.0-RC and retain 
 5. Retain each node's existing data. Plugin states and runtime configuration live under `data/plugin`; persisted overrides take precedence over static settings. `.enabled` supplies initial state, so update existing states through plugin management. `RESTART` properties still require a restart. Never share one data volume between nodes.
 6. Mount only plugins verified for 3.3. Old AI Pipeline Builders, AI Resource Import SPIs and removed Config migration Mappers require migration. Follow the official runbook for historical A2A/MCP, Raft data and rollback boundaries; changing the image tag alone is not a rollback plan.
 
-See the [3.3.0-RC release notes](https://github.com/alibaba/nacos/releases/tag/3.3.0-RC) and [next upgrade manual](https://nacos.io/en/docs/next/manual/admin/upgrading/).
+See the [3.3.0 release notes](https://github.com/alibaba/nacos/releases/tag/3.3.0) and [next upgrade manual](https://nacos.io/en/docs/next/manual/admin/upgrading/).
 
 ## Persistent data and optional capabilities
 
@@ -285,6 +286,8 @@ docker compose -f example/standalone-ai-registry.yaml up
 ```
 
 `NACOS_AI_REGISTRY_ENABLED` continues to control only MCP; Skill and ARD have separate switches. Update Compose port mappings when changing Registry/DNS ports. Private-network MCP tool imports require an explicit IP/CIDR allowlist.
+
+Nacos 3.3.0 binds DNS to the container loopback address by default. To expose DNS through Docker port mappings, explicitly set `NACOS_NAMING_DNS_BIND_ADDRESS=0.0.0.0` and publish both TCP and UDP ports only on trusted interfaces (for example, `-p 127.0.0.1:5353:5353/tcp -p 127.0.0.1:5353:5353/udp`).
 
 Standard/Slim bundle Skill Scanner and disable SkillSpector by default. Install or mount the SkillSpector runtime before setting its command and enabling it; existing persisted states may also need updating in Console. Lite defaults to `FUNCTION_MODE=microservice` with Pipeline disabled and bundles no Python, scanners or AI archives. The existing `build/Dockerfile.Lite` is for local builds; the publishing workflow releases only Standard/Slim.
 
