@@ -218,6 +218,7 @@ Run the following command：
 | NACOS_CONSOLE_AI_MCP_IMPORT_ALLOWED_PRIVATE_ADDRESSES | nacos.console.ai.mcp.import.allowed-private-addresses | IP/CIDR list; empty |
 | NACOS_NAMING_DNS_ENABLED | nacos.naming.dns.enabled | false |
 | NACOS_NAMING_DNS_PORT | nacos.naming.dns.port | 5353 (TCP + UDP) |
+| NACOS_NAMING_DNS_BIND_ADDRESS | nacos.naming.dns.bind-address | 127.0.0.1 |
 
 ## Advanced configuration
 
@@ -285,6 +286,8 @@ docker compose -f example/standalone-ai-registry.yaml up
 ```
 
 `NACOS_AI_REGISTRY_ENABLED` continues to control only MCP; Skill and ARD have separate switches. Update Compose port mappings when changing Registry/DNS ports. Private-network MCP tool imports require an explicit IP/CIDR allowlist.
+
+Nacos 3.3.0 binds DNS to the container loopback address by default. To expose DNS through Docker port mappings, explicitly set `NACOS_NAMING_DNS_BIND_ADDRESS=0.0.0.0` and publish both TCP and UDP ports only on trusted interfaces (for example, `-p 127.0.0.1:5353:5353/tcp -p 127.0.0.1:5353:5353/udp`).
 
 Standard/Slim bundle Skill Scanner and disable SkillSpector by default. Install or mount the SkillSpector runtime before setting its command and enabling it; existing persisted states may also need updating in Console. Lite defaults to `FUNCTION_MODE=microservice` with Pipeline disabled and bundles no Python, scanners or AI archives. The existing `build/Dockerfile.Lite` is for local builds; the publishing workflow releases only Standard/Slim.
 

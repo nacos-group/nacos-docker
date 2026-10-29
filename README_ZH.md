@@ -215,6 +215,7 @@ NACOS_VERSION=v3.3.0-slim
 | NACOS_CONSOLE_AI_MCP_IMPORT_ALLOWED_PRIVATE_ADDRESSES | nacos.console.ai.mcp.import.allowed-private-addresses | IP/CIDR list; empty |
 | NACOS_NAMING_DNS_ENABLED | nacos.naming.dns.enabled | false |
 | NACOS_NAMING_DNS_PORT | nacos.naming.dns.port | 5353 (TCP + UDP) |
+| NACOS_NAMING_DNS_BIND_ADDRESS | nacos.naming.dns.bind-address | 127.0.0.1 |
 
 ## 高级配置
 
@@ -281,6 +282,8 @@ docker compose -f example/standalone-ai-registry.yaml up
 ```
 
 `NACOS_AI_REGISTRY_ENABLED` 继续只控制 MCP；Skill 和 ARD 各有独立开关。修改 Registry/DNS 端口后还需同步修改 Compose 端口映射。私网 MCP 工具导入需要显式配置允许的 IP/CIDR。
+
+Nacos 3.3.0 的 DNS 默认监听容器内的回环地址。通过 Docker 端口映射提供 DNS 服务时，需要显式设置 `NACOS_NAMING_DNS_BIND_ADDRESS=0.0.0.0`，并仅向可信接口映射 TCP 和 UDP 端口（例如 `-p 127.0.0.1:5353:5353/tcp -p 127.0.0.1:5353:5353/udp`）。
 
 Standard/Slim 内置 Skill Scanner，SkillSpector 默认关闭。安装或挂载 SkillSpector 运行时后，设置 command 及 enabled；已有插件状态可能需要从控制台重新启用。Lite 默认 `FUNCTION_MODE=microservice` 并关闭 Pipeline，不内置 Python、扫描器或 AI 数据包，仓库已有的 `build/Dockerfile.Lite` 仅供自行构建，发布流程只发布 Standard/Slim。
 
