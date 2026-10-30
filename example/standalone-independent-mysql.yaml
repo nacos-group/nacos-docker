@@ -38,7 +38,13 @@ services:
       - ../env/mysql.env
     volumes:
       - ./mysql:/var/lib/mysql
-      - ./mysql-init:/docker-entrypoint-initdb.d/
+      # Run bash mysql-init.sh before starting a new database.
+      - type: bind
+        source: ./mysql-init/mysql-schema.sql
+        target: /docker-entrypoint-initdb.d/mysql-schema.sql
+        read_only: true
+        bind:
+          create_host_path: false
     command:
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
