@@ -100,7 +100,7 @@ docker run --name nacos-native-mysql \
 * MySQL 的环境变量与其他镜像相同。使用 PostgreSQL 时，需要用 `postgresql` 数据源构建归档包，构建时传入
   `--build-arg NACOS_NATIVE_DATASOURCE=postgresql`，并挂载一份 `conf/application.properties`，其中模板里注释的
   PostgreSQL 配置项替换 MySQL 连接串。
-* 归档包不包含 AI 插件。MCP、Skill、ARD 注册中心和 AI 资源搜索保持归档包构建时的值，即默认值：三个注册中心关闭，资源搜索开启。把其中一项设为其他值（例如 `NACOS_AI_REGISTRY_ENABLED=true`），Server 会拒绝启动。
+* 归档包不含 nacos-default-ai-* 插件，但包含核心 AI 模块。MCP、Skill、ARD 注册中心和 AI 资源搜索保持归档包构建时的值，即默认值：三个注册中心关闭，资源搜索开启。把其中一项设为其他值（例如 `NACOS_AI_REGISTRY_ENABLED=true`），Server 会拒绝启动。
 * `NACOS_NATIVE_OPTS` 用于传递 Native 虚拟机参数，例如 `-Xmx1g`。
 * Server 以 uid 1000 运行，而不是 root。挂载的 `/home/nacos/data` 和 `/home/nacos/logs` 目录需要对该 uid 可写；
   使用命名卷时则继承镜像中目录的属主。
