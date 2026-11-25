@@ -45,6 +45,8 @@ COPY ${NACOS_NATIVE_ARCHIVE} /tmp/nacos-native.tar.gz
 
 # The archive unpacks to /home/nacos. Its launchers and its JVM configuration templates are removed;
 # the image starts the executable through bin/docker-native-startup.sh.
+# The executable writes its logs to user.home/nacos/logs, which is /home/nacos/nacos/logs for the container user, even
+# with -Dnacos.home=/home/nacos. The link below makes that path the Nacos home; the README describes it as a workaround.
 RUN set -eux; \
     tar -xzf /tmp/nacos-native.tar.gz -C /home --no-same-owner; \
     rm -f /tmp/nacos-native.tar.gz; \
@@ -55,6 +57,7 @@ RUN set -eux; \
     fi; \
     rm -f /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example; \
     mkdir -p /home/nacos/data /home/nacos/logs; \
+    ln -sfn . /home/nacos/nacos; \
     ln -snf "/usr/share/zoneinfo/${TIME_ZONE}" /etc/localtime; \
     echo "${TIME_ZONE}" > /etc/timezone
 

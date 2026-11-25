@@ -107,6 +107,7 @@ docker run --name nacos-native-mysql \
 * 归档包需在 linux/amd64 上构建，且其 glibc 版本不高于基础镜像 Ubuntu 24.04 的版本。
 * 夜间工作流（`.github/workflows/native-nightly.yml`）在 alibaba/nacos 默认分支最近 24 小时内有提交时（北京时间 02:00）从该分支构建镜像，对 MySQL 和 PostgreSQL 镜像做烟雾测试，并把通过测试的镜像推送到 `ghcr.io/<owner>/nacos-server`：MySQL 为 `native-nightly` 与 `native-nightly-<UTC 日期>`，PostgreSQL 为 `native-nightly-postgresql` 与 `native-nightly-postgresql-<UTC 日期>`。只构建 amd64。
 * 归档包的构建配置必须排除 Spring Boot 的 DataSource 自动配置：`spring.autoconfigure.exclude=org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration`。Nacos 使用自己的连接池。native profile 没有内嵌数据库驱动，而自动配置在没有 DataSource URL 时会在启动时失败。夜间工作流会写入这一行。
+* 即使设置了 `-Dnacos.home`，可执行文件的日志仍写到 `user.home/nacos/logs`。对容器用户来说就是 `/home/nacos/nacos/logs`，而这个目录无法创建，所以镜像把 `/home/nacos/nacos` 链接到 `/home/nacos`。这是对该行为的变通处理，不是修复。
 
 ## 其他使用方式
 

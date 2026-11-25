@@ -122,6 +122,9 @@ docker run --name nacos-native-mysql \
   `spring.autoconfigure.exclude=org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration`. Nacos uses
   its own connection pools. The native profile has no embedded database driver, and without a DataSource URL the
   auto-configuration fails at startup. The nightly workflow writes this line.
+* The executable writes its logs to `user.home/nacos/logs` even when `-Dnacos.home` is set. For the container user that
+  is `/home/nacos/nacos/logs`, which cannot be created, so the image links `/home/nacos/nacos` to `/home/nacos`. This is
+  a workaround for that behaviour, not a fix of it.
 
 ## Advanced Usage
 

@@ -69,6 +69,11 @@ run_image() {
   set -e
 }
 
+# The executable's default logs directory, /home/nacos/nacos/logs, must resolve to the Nacos home's logs.
+OUTPUT=$(docker run --rm --entrypoint sh "${IMAGE}" -c 'test "$(readlink -f /home/nacos/nacos/logs)" = /home/nacos/logs && echo linked') \
+  || fail "the image has no logs link"
+grep -qx linked <<< "${OUTPUT}" || fail "the logs link does not resolve to /home/nacos/logs"
+
 run_image "${AUTH[@]}" -e NACOS_NATIVE_OPTS=-Xmx1g
 [[ "${STATUS}" == 0 ]] || fail "start exited with ${STATUS}: ${OUTPUT}"
 grep -qx 'pid=1 uid=1000' <<< "${OUTPUT}" || fail "the executable is not PID 1 under uid 1000: ${OUTPUT}"
