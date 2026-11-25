@@ -113,7 +113,15 @@ docker run --name nacos-native-mysql \
   be writable by that uid; named volumes take the ownership of the image directories.
 * The archive must come from a linux/amd64 build whose glibc is not newer than that of Ubuntu 24.04, the base
   image.
-* The image is not published, and no nightly build is set up yet.
+* A nightly workflow (`.github/workflows/native-nightly.yml`) builds the image from the default branch of
+  alibaba/nacos when that branch had a commit in the last 24 hours (02:00 Beijing time). It tests the MySQL and
+  PostgreSQL images and publishes the ones that pass to `ghcr.io/<owner>/nacos-server`: `native-nightly` and
+  `native-nightly-<UTC date>` for MySQL, `native-nightly-postgresql` and `native-nightly-postgresql-<UTC date>` for
+  PostgreSQL. Only amd64 is built.
+* The build configuration of the archive must exclude Spring Boot's DataSource auto-configuration:
+  `spring.autoconfigure.exclude=org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration`. Nacos uses
+  its own connection pools. The native profile has no embedded database driver, and without a DataSource URL the
+  auto-configuration fails at startup. The nightly workflow writes this line.
 
 ## Advanced Usage
 

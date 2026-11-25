@@ -19,7 +19,7 @@ jobs:
           bash test/mysql-init.sh
           bash test/native-startup.sh
           bash test/native-image.sh
-          python3 -m py_compile test/docker-smoke.py
+          python3 -m py_compile test/docker-smoke.py test/native-smoke.py
           for example in example/*.yaml; do
             docker compose --env-file example/.env -f "$example" config --quiet
           done
