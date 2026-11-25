@@ -1,0 +1,78 @@
+# Native Server image. The Native executable of a Native archive runs instead of the JVM.
+#
+# The archive is built by alibaba/nacos from its Native profile (bootstrap/README-AOT.md). It is not a
+# release asset, so place it in build/native-dist/ first (that directory is git-ignored), then build:
+#
+#   docker build -f build/Dockerfile.Native \
+#     --build-arg NACOS_NATIVE_DATASOURCE=mysql \
+#     -t nacos/nacos-server:native-mysql build
+#
+# NACOS_NATIVE_ARCHIVE is relative to this build context (build/). NACOS_NATIVE_DATASOURCE must match
+# the datasource that the archive was built for; the build fails when it does not.
+# The archive must come from a linux/amd64 host whose glibc is not newer than the one in ubuntu:24.04.
+
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# The other images of this repository do not pin their packages either; the base image tag pins the release.
+# hadolint ignore=DL3008
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    tzdata \
+    && rm -rf /var/lib/apt/lists/*
+
+ARG NACOS_NATIVE_ARCHIVE=native-dist/nacos-native.tar.gz
+ARG NACOS_NATIVE_DATASOURCE=mysql
+
+ENV BASE_DIR="/home/nacos" \
+    PREFER_HOST_MODE="ip" \
+    SPRING_DATASOURCE_PLATFORM="${NACOS_NATIVE_DATASOURCE}" \
+    TIME_ZONE="Asia/Shanghai"
+
+# The Server runs as uid 1000 and does not need root. The default user of the base image takes that uid.
+RUN if getent passwd ubuntu >/dev/null; then userdel --remove ubuntu; fi \
+    && if getent group ubuntu >/dev/null; then groupdel ubuntu; fi \
+    && groupadd --gid 1000 nacos \
+    && useradd --uid 1000 --gid 1000 --no-create-home --home-dir /home/nacos --shell /usr/sbin/nologin nacos
+
+# The archive is extracted with tar rather than ADD, so that the owners recorded in the archive are not kept
+# and the manifest is checked right after extraction.
+# hadolint ignore=DL3010
+COPY ${NACOS_NATIVE_ARCHIVE} /tmp/nacos-native.tar.gz
+
+# The archive unpacks to /home/nacos. Its launchers and its JVM configuration templates are removed;
+# the image starts the executable through bin/docker-native-startup.sh.
+RUN set -eux; \
+    tar -xzf /tmp/nacos-native.tar.gz -C /home --no-same-owner; \
+    rm -f /tmp/nacos-native.tar.gz; \
+    test -x /home/nacos/target/nacos-server; \
+    if ! grep -qx "datasource=${NACOS_NATIVE_DATASOURCE}" /home/nacos/target/aot-manifest.properties; then \
+      echo "The Native archive is not built for datasource '${NACOS_NATIVE_DATASOURCE}'. Check its target/aot-manifest.properties, or pass the datasource with --build-arg NACOS_NATIVE_DATASOURCE." >&2; \
+      exit 1; \
+    fi; \
+    rm -f /home/nacos/bin/* /home/nacos/conf/*.properties /home/nacos/conf/*.example; \
+    mkdir -p /home/nacos/data /home/nacos/logs; \
+    ln -snf "/usr/share/zoneinfo/${TIME_ZONE}" /etc/localtime; \
+    echo "${TIME_ZONE}" > /etc/timezone
+
+COPY conf/application-native.properties /home/nacos/conf/application.properties
+COPY bin/docker-native-startup.sh /home/nacos/bin/docker-native-startup.sh
+
+# The configuration and the executable stay read-only for the Server; only data and logs are writable.
+RUN chmod 0755 /home/nacos/bin/docker-native-startup.sh \
+    && chown -R nacos:nacos /home/nacos/data /home/nacos/logs
+
+WORKDIR /home/nacos
+# The numeric uid lets an orchestrator check that the container does not run as root.
+USER 1000:1000
+
+EXPOSE 8848
+EXPOSE 9848 8080 9080
+
+HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=3 \
+    CMD ["sh", "-c", "curl -fsS -o /dev/null \"http://127.0.0.1:${NACOS_APPLICATION_PORT:-8848}${SERVER_SERVLET_CONTEXTPATH:-/nacos}/v3/admin/core/state/readiness\""]
+
+ENTRYPOINT ["bash", "bin/docker-native-startup.sh"]

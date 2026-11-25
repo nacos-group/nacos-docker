@@ -1,2 +1,3 @@
 example/mysql-init/
 test/__pycache__/
+build/native-dist/

@@ -72,6 +72,46 @@ docker run --name nacos-standalone-derby-v2.5.1 \
     -d nacos/nacos-server:v2.5.1
 ```
 
+## Native Server image (experimental)
+
+`build/Dockerfile.Native` runs the Native executable of a Native archive instead of the JVM. Nacos does not
+publish a Native archive yet. Build one from alibaba/nacos with its `native` profile (see
+`bootstrap/README-AOT.md`), and copy it to `build/native-dist/nacos-native.tar.gz`. Each archive is built for
+one datasource, and the image must name the same datasource:
+
+```shell
+docker build -f build/Dockerfile.Native \
+    --build-arg NACOS_NATIVE_DATASOURCE=mysql \
+    -t nacos/nacos-server:native-mysql build
+
+docker run --name nacos-native-mysql \
+    -e NACOS_AUTH_TOKEN=${your_nacos_auth_secret_token} \
+    -e NACOS_AUTH_IDENTITY_KEY=${your_nacos_server_identity_key} \
+    -e NACOS_AUTH_IDENTITY_VALUE=${your_nacos_server_identity_value} \
+    -e MYSQL_SERVICE_HOST=${mysql_host} \
+    -e MYSQL_SERVICE_DB_NAME=${mysql_database} \
+    -e MYSQL_SERVICE_USER=${mysql_user} \
+    -e MYSQL_SERVICE_PASSWORD=${mysql_password} \
+    -p 8848:8848 \
+    -p 9848:9848 \
+    -p 8080:8080 \
+    -d nacos/nacos-server:native-mysql
+```
+
+* The archive decides the standalone or cluster mode, the deployment and the datasource. `MODE`,
+  `SPRING_DATASOURCE_PLATFORM` and `FUNCTION_MODE` may repeat these values, but a value that differs makes the
+  container exit before Nacos starts.
+* The MySQL variables are the same as in the other images. For PostgreSQL, build the archive for the
+  `postgresql` datasource, pass `--build-arg NACOS_NATIVE_DATASOURCE=postgresql`, and mount a copy of
+  `conf/application.properties` in which the PostgreSQL lines (commented in the template) replace the MySQL URL.
+* The Native archive has no AI plugins, so the AI features are off in this image.
+* `NACOS_NATIVE_OPTS` passes Native VM options, for example `-Xmx1g`.
+* The Server runs as uid 1000, not root. Bind-mounted `/home/nacos/data` and `/home/nacos/logs` directories must
+  be writable by that uid; named volumes take the ownership of the image directories.
+* The archive must come from a linux/amd64 build whose glibc is not newer than that of Ubuntu 24.04, the base
+  image.
+* The image is not published, and no nightly build is set up yet.
+
 ## Advanced Usage
 
 * Tips: You can change [the version of the Nacos image](https://hub.docker.com/r/nacos/nacos-server/tags) in the compose file from the following configuration. `example/.env`

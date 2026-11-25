@@ -70,6 +70,43 @@ docker run --name nacos-standalone-derby-v2.5.1 \
     -d nacos/nacos-server:v2.5.1
 ```
 
+## Native 镜像（实验性）
+
+`build/Dockerfile.Native` 使用 Native 归档包中的 Nacos Native 可执行文件代替 JVM 启动 Server。Nacos 目前尚未发布
+Native 归档包，需要先按 alibaba/nacos 的 `native` profile 构建（参见 `bootstrap/README-AOT.md`），再把归档包复制到
+`build/native-dist/nacos-native.tar.gz`。每个归档包只对应一种数据源，镜像构建时必须指定同一种数据源：
+
+```shell
+docker build -f build/Dockerfile.Native \
+    --build-arg NACOS_NATIVE_DATASOURCE=mysql \
+    -t nacos/nacos-server:native-mysql build
+
+docker run --name nacos-native-mysql \
+    -e NACOS_AUTH_TOKEN=${your_nacos_auth_secret_token} \
+    -e NACOS_AUTH_IDENTITY_KEY=${your_nacos_server_identity_key} \
+    -e NACOS_AUTH_IDENTITY_VALUE=${your_nacos_server_identity_value} \
+    -e MYSQL_SERVICE_HOST=${mysql_host} \
+    -e MYSQL_SERVICE_DB_NAME=${mysql_database} \
+    -e MYSQL_SERVICE_USER=${mysql_user} \
+    -e MYSQL_SERVICE_PASSWORD=${mysql_password} \
+    -p 8848:8848 \
+    -p 9848:9848 \
+    -p 8080:8080 \
+    -d nacos/nacos-server:native-mysql
+```
+
+* 归档包决定 standalone 或 cluster 模式、部署方式和数据源。`MODE`、`SPRING_DATASOURCE_PLATFORM`、`FUNCTION_MODE`
+  可以重复声明这些值，但取值不一致时容器会在 Nacos 启动前退出。
+* MySQL 的环境变量与其他镜像相同。使用 PostgreSQL 时，需要用 `postgresql` 数据源构建归档包，构建时传入
+  `--build-arg NACOS_NATIVE_DATASOURCE=postgresql`，并挂载一份 `conf/application.properties`，其中模板里注释的
+  PostgreSQL 配置项替换 MySQL 连接串。
+* Native 归档包不包含 AI 插件，因此本镜像中的 AI 功能默认关闭。
+* `NACOS_NATIVE_OPTS` 用于传递 Native 虚拟机参数，例如 `-Xmx1g`。
+* Server 以 uid 1000 运行，而不是 root。挂载的 `/home/nacos/data` 和 `/home/nacos/logs` 目录需要对该 uid 可写；
+  使用命名卷时则继承镜像中目录的属主。
+* 归档包需在 linux/amd64 上构建，且其 glibc 版本不高于基础镜像 Ubuntu 24.04 的版本。
+* 该镜像尚未发布，夜间构建也尚未配置。
+
 ## 其他使用方式
 
 * 提示: 你需要通过 `example/.env` 中的以下配置来更改 Compose 文件中 [Nacos 镜像版本](https://hub.docker.com/r/nacos/nacos-server/tags)。

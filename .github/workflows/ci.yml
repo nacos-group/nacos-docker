@@ -12,11 +12,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check shell syntax and auth defaults
         run: |
-          for script in build/bin/docker-startup.sh example/mysql-init.sh test/*.sh; do
+          for script in build/bin/docker-startup.sh build/bin/docker-native-startup.sh example/mysql-init.sh test/*.sh; do
             bash -n "$script"
           done
           bash test/auth-defaults.sh
           bash test/mysql-init.sh
+          bash test/native-startup.sh
+          bash test/native-image.sh
           python3 -m py_compile test/docker-smoke.py
           for example in example/*.yaml; do
             docker compose --env-file example/.env -f "$example" config --quiet
