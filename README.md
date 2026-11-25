@@ -104,7 +104,10 @@ docker run --name nacos-native-mysql \
 * The MySQL variables are the same as in the other images. For PostgreSQL, build the archive for the
   `postgresql` datasource, pass `--build-arg NACOS_NATIVE_DATASOURCE=postgresql`, and mount a copy of
   `conf/application.properties` in which the PostgreSQL lines (commented in the template) replace the MySQL URL.
-* The Native archive has no AI plugins, so the AI features are off in this image.
+* The archive contains no AI plugin. The MCP, Skill and ARD registries and AI resource search keep the values the
+  archive was built with, which are the defaults: the three registries are off, and resource search is on.
+  Setting one of them to another value, for example `NACOS_AI_REGISTRY_ENABLED=true`, makes the Server refuse to
+  start.
 * `NACOS_NATIVE_OPTS` passes Native VM options, for example `-Xmx1g`.
 * The Server runs as uid 1000, not root. Bind-mounted `/home/nacos/data` and `/home/nacos/logs` directories must
   be writable by that uid; named volumes take the ownership of the image directories.
