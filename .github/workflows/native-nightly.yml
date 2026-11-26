@@ -182,10 +182,11 @@ jobs:
         run: |
           set -euo pipefail
           if [ "${DATASOURCE}" = mysql ]; then suffix=""; else suffix="-${DATASOURCE}"; fi
+          # docker push exits non-zero when the registry refuses a tag, so a successful push is the check.
+          # `docker manifest inspect` is not used: it reports "no such manifest" for the plain-HTTP registry of the test copy.
           for tag in "native-nightly${suffix}" "native-nightly${suffix}-${BUILD_DATE}"; do
             docker tag "nacos-native:${DATASOURCE}" "${IMAGE}:${tag}"
             docker push "${IMAGE}:${tag}"
-            docker manifest inspect "${IMAGE}:${tag}" > /dev/null
           done
 
       - name: Keep the archive when a step failed
