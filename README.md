@@ -125,6 +125,10 @@ docker run --name nacos-native-mysql \
 * The executable writes its logs to `user.home/nacos/logs` even when `-Dnacos.home` is set. For the container user that
   is `/home/nacos/nacos/logs`, which cannot be created, so the image links `/home/nacos/nacos` to `/home/nacos`. This is
   a workaround for that behaviour, not a fix of it.
+* The nightly build passes `build/native-metadata`, which registers the public methods of `com.zaxxer.hikari.HikariConfig`.
+  Spring binds the pool keys `nacos.plugin.datasource.db.pool.config.*` to that class by reflection. The bundled HikariCP
+  metadata of Nacos does not list those methods, so an executable that gets a pool key fails at startup. The JVM image sets
+  four pool keys. Remove the directory once the bundled metadata lists the methods.
 
 ## Advanced Usage
 

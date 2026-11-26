@@ -1,0 +1,11 @@
+{
+  "reflection": [
+    {
+      "condition": {
+        "typeReached": "com.zaxxer.hikari.HikariConfig"
+      },
+      "type": "com.zaxxer.hikari.HikariConfig",
+      "allPublicMethods": true
+    }
+  ]
+}

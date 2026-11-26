@@ -127,11 +127,14 @@ jobs:
           # Spring Boot's DataSource auto-configuration fails in the executable (see the README), so the build excludes it.
           printf 'spring.sql.init.platform=%s\nspring.autoconfigure.exclude=%s\n' "${DATASOURCE}" \
             org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration > "${RUNNER_TEMP}/build.properties"
+          # build/native-metadata registers the public methods of HikariConfig. Spring binds the pool keys of the
+          # configuration to them by reflection, and the bundled metadata of alibaba/nacos does not list them (see the README).
           ./mvnw -B '-Pnative,release-native,!dev' -pl distribution -am clean package \
             -DskipTests -Drat.skip=true -Dspotbugs.skip=true \
             -Dnacos.native.config="${RUNNER_TEMP}/build.properties" \
             -Dnacos.native.deployment=merged \
-            -Dnacos.native.standalone=true
+            -Dnacos.native.standalone=true \
+            -Dnacos.native.metadata="${GITHUB_WORKSPACE}/build/native-metadata"
 
       - name: Check the archive
         run: |

@@ -20,6 +20,7 @@ jobs:
           bash test/native-startup.sh
           bash test/native-image.sh
           python3 -m py_compile test/docker-smoke.py test/native-smoke.py
+          python3 -m json.tool build/native-metadata/reachability-metadata.json > /dev/null
           for example in example/*.yaml; do
             docker compose --env-file example/.env -f "$example" config --quiet
           done

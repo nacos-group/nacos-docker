@@ -108,6 +108,7 @@ docker run --name nacos-native-mysql \
 * 夜间工作流（`.github/workflows/native-nightly.yml`）在 alibaba/nacos 默认分支最近 24 小时内有提交时（北京时间 02:00）从该分支构建镜像，对 MySQL 和 PostgreSQL 镜像做烟雾测试，并把通过测试的镜像推送到 `ghcr.io/<owner>/nacos-server`：MySQL 为 `native-nightly` 与 `native-nightly-<UTC 日期>`，PostgreSQL 为 `native-nightly-postgresql` 与 `native-nightly-postgresql-<UTC 日期>`。只构建 amd64。
 * 归档包的构建配置必须排除 Spring Boot 的 DataSource 自动配置：`spring.autoconfigure.exclude=org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration`。Nacos 使用自己的连接池。native profile 没有内嵌数据库驱动，而自动配置在没有 DataSource URL 时会在启动时失败。夜间工作流会写入这一行。
 * 即使设置了 `-Dnacos.home`，可执行文件的日志仍写到 `user.home/nacos/logs`。对容器用户来说就是 `/home/nacos/nacos/logs`，而这个目录无法创建，所以镜像把 `/home/nacos/nacos` 链接到 `/home/nacos`。这是对该行为的变通处理，不是修复。
+* 夜间构建会传入 `build/native-metadata`，它注册了 `com.zaxxer.hikari.HikariConfig` 的公开方法。Spring 通过反射把 `nacos.plugin.datasource.db.pool.config.*` 绑定到该类上，而 Nacos 打包的 HikariCP 元数据没有列出这些方法，所以设置了连接池参数的可执行文件会在启动时失败。JVM 镜像设置了其中四项。等打包的元数据列出这些方法后，删除该目录即可。
 
 ## 其他使用方式
 
