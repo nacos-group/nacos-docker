@@ -1,0 +1,199 @@
+name: Nightly native image
+
+# Builds the Native Server image from the default branch of alibaba/nacos, tests the MySQL and PostgreSQL images,
+# and publishes the images that pass to GitHub Container Registry (GHCR).
+#
+# A scheduled run starts from the default branch of this repository, so a fork does not publish. It builds only when
+# alibaba/nacos had a commit in the last 24 hours. A manual run builds the requested ref and publishes only when
+# `publish` is set.
+#
+# Tags of ghcr.io/<owner>/nacos-server, where <date> is the UTC build date:
+#   native-nightly, native-nightly-<date>                       MySQL, the default datasource
+#   native-nightly-postgresql, native-nightly-postgresql-<date>  PostgreSQL
+
+on:
+  schedule:
+    # 18:00 UTC is 02:00 in Beijing.
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish the images that pass the smoke test
+        type: boolean
+        default: false
+      nacos_ref:
+        description: Branch, tag or commit of alibaba/nacos to build; empty for its default branch
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-native-image
+  cancel-in-progress: false
+
+jobs:
+  check-source:
+    name: Check alibaba/nacos
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      build: ${{ steps.check.outputs.build }}
+      revision: ${{ steps.check.outputs.revision }}
+      date: ${{ steps.check.outputs.date }}
+      image: ${{ steps.check.outputs.image }}
+    steps:
+      - name: Find the revision to build
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          REF: ${{ inputs.nacos_ref }}
+        run: |
+          set -euo pipefail
+          repo=alibaba/nacos
+          ref=${REF:-$(gh api "repos/${repo}" --jq .default_branch)}
+          revision=$(gh api "repos/${repo}/commits/${ref}" --jq .sha)
+          since=$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ)
+          recent=$(gh api "repos/${repo}/commits?sha=${revision}&since=${since}&per_page=100" --jq 'length')
+          build=true
+          if [[ "${EVENT}" == "schedule" && "${recent}" -eq 0 ]]; then
+            build=false
+          fi
+          owner=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
+          echo "${repo} ${ref} is at ${revision}; ${recent} commit(s) since ${since}; build=${build}"
+          {
+            echo "build=${build}"
+            echo "revision=${revision}"
+            echo "date=$(date -u +%Y%m%d)"
+            echo "image=ghcr.io/${owner}/nacos-server"
+          } >> "${GITHUB_OUTPUT}"
+
+  native:
+    name: Native ${{ matrix.datasource }}
+    needs: check-source
+    if: needs.check-source.outputs.build == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        datasource: [mysql, postgresql]
+    env:
+      DATASOURCE: ${{ matrix.datasource }}
+      REVISION: ${{ needs.check-source.outputs.revision }}
+      BUILD_DATE: ${{ needs.check-source.outputs.date }}
+      IMAGE: ${{ needs.check-source.outputs.image }}
+    steps:
+      - name: Check out nacos-docker
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Check out alibaba/nacos at the revision
+        uses: actions/checkout@v4
+        with:
+          repository: alibaba/nacos
+          ref: ${{ needs.check-source.outputs.revision }}
+          path: nacos
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: '25.2'
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install the C toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential zlib1g-dev
+
+      - name: Build the Native archive
+        working-directory: nacos
+        run: |
+          set -euo pipefail
+          # Spring Boot's DataSource auto-configuration fails in the executable (see the README), so the build excludes it.
+          printf 'spring.sql.init.platform=%s\nspring.autoconfigure.exclude=%s\n' "${DATASOURCE}" \
+            org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration > "${RUNNER_TEMP}/build.properties"
+          # build/native-metadata registers the public methods of HikariConfig. Spring binds the pool keys of the
+          # configuration to them by reflection, and the bundled metadata of alibaba/nacos does not list them (see the README).
+          ./mvnw -B '-Pnative,release-native,!dev' -pl distribution -am clean package \
+            -DskipTests -Drat.skip=true -Dspotbugs.skip=true \
+            -Dnacos.native.config="${RUNNER_TEMP}/build.properties" \
+            -Dnacos.native.deployment=merged \
+            -Dnacos.native.standalone=true \
+            -Dnacos.native.metadata="${GITHUB_WORKSPACE}/build/native-metadata"
+
+      - name: Check the archive
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          archives=(nacos/distribution/target/*native*.tar.gz)
+          if [ "${#archives[@]}" -ne 1 ]; then
+            echo "Expected one Native archive, found ${#archives[@]}" >&2
+            ls -la nacos/distribution/target >&2
+            exit 1
+          fi
+          mkdir -p build/native-dist
+          cp "${archives[0]}" build/native-dist/nacos-native.tar.gz
+          tar -tzf build/native-dist/nacos-native.tar.gz > "${RUNNER_TEMP}/archive-entries.txt"
+          grep -qx 'nacos/target/nacos-server' "${RUNNER_TEMP}/archive-entries.txt"
+          grep -qx 'nacos/target/aot-manifest.properties' "${RUNNER_TEMP}/archive-entries.txt"
+          ls -lh build/native-dist/nacos-native.tar.gz
+
+      - name: Build the image
+        run: |
+          set -euo pipefail
+          docker build -f build/Dockerfile.Native \
+            --build-arg "NACOS_NATIVE_DATASOURCE=${DATASOURCE}" \
+            --label "org.opencontainers.image.source=https://github.com/alibaba/nacos" \
+            --label "org.opencontainers.image.revision=${REVISION}" \
+            --label "org.opencontainers.image.created=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            -t "nacos-native:${DATASOURCE}" build
+
+      - name: Smoke test
+        run: |
+          set -euo pipefail
+          python3 test/native-smoke.py --datasource "${DATASOURCE}" \
+            --image "nacos-native:${DATASOURCE}" --nacos-source nacos
+
+      - name: Log in to GitHub Container Registry
+        if: (github.event_name != 'workflow_dispatch' || inputs.publish) && startsWith(needs.check-source.outputs.image, 'ghcr.io/')
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push the nightly tags
+        if: github.event_name != 'workflow_dispatch' || inputs.publish
+        run: |
+          set -euo pipefail
+          if [ "${DATASOURCE}" = mysql ]; then suffix=""; else suffix="-${DATASOURCE}"; fi
+          # docker push exits non-zero when the registry refuses a tag, so a successful push is the check.
+          # `docker manifest inspect` is not used: it reports "no such manifest" for the plain-HTTP registry of the test copy.
+          for tag in "native-nightly${suffix}" "native-nightly${suffix}-${BUILD_DATE}"; do
+            docker tag "nacos-native:${DATASOURCE}" "${IMAGE}:${tag}"
+            docker push "${IMAGE}:${tag}"
+          done
+
+      - name: Keep the archive when a step failed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nacos-native-${{ matrix.datasource }}
+          path: build/native-dist/nacos-native.tar.gz
+          if-no-files-found: ignore
+          retention-days: 3

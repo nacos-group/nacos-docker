@@ -70,6 +70,46 @@ docker run --name nacos-standalone-derby-v2.5.1 \
     -d nacos/nacos-server:v2.5.1
 ```
 
+## Native 镜像（实验性）
+
+`build/Dockerfile.Native` 使用 Native 归档包中的 Nacos Native 可执行文件代替 JVM 启动 Server。Nacos 目前尚未发布
+Native 归档包，需要先按 alibaba/nacos 的 `native` profile 构建（参见 `bootstrap/README-AOT.md`），再把归档包复制到
+`build/native-dist/nacos-native.tar.gz`。每个归档包只对应一种数据源，镜像构建时必须指定同一种数据源：
+
+```shell
+docker build -f build/Dockerfile.Native \
+    --build-arg NACOS_NATIVE_DATASOURCE=mysql \
+    -t nacos/nacos-server:native-mysql build
+
+docker run --name nacos-native-mysql \
+    -e NACOS_AUTH_TOKEN=${your_nacos_auth_secret_token} \
+    -e NACOS_AUTH_IDENTITY_KEY=${your_nacos_server_identity_key} \
+    -e NACOS_AUTH_IDENTITY_VALUE=${your_nacos_server_identity_value} \
+    -e MYSQL_SERVICE_HOST=${mysql_host} \
+    -e MYSQL_SERVICE_DB_NAME=${mysql_database} \
+    -e MYSQL_SERVICE_USER=${mysql_user} \
+    -e MYSQL_SERVICE_PASSWORD=${mysql_password} \
+    -p 8848:8848 \
+    -p 9848:9848 \
+    -p 8080:8080 \
+    -d nacos/nacos-server:native-mysql
+```
+
+* 归档包决定 standalone 或 cluster 模式、部署方式和数据源。`MODE`、`SPRING_DATASOURCE_PLATFORM`、`FUNCTION_MODE`
+  可以重复声明这些值，但取值不一致时容器会在 Nacos 启动前退出。
+* MySQL 的环境变量与其他镜像相同。使用 PostgreSQL 时，需要用 `postgresql` 数据源构建归档包，构建时传入
+  `--build-arg NACOS_NATIVE_DATASOURCE=postgresql`，并挂载一份 `conf/application.properties`，其中模板里注释的
+  PostgreSQL 配置项替换 MySQL 连接串。
+* 归档包不含 nacos-default-ai-* 插件，但包含核心 AI 模块。MCP、Skill、ARD 注册中心和 AI 资源搜索保持归档包构建时的值，即默认值：三个注册中心关闭，资源搜索开启。把其中一项设为其他值（例如 `NACOS_AI_REGISTRY_ENABLED=true`），Server 会拒绝启动。
+* `NACOS_NATIVE_OPTS` 用于传递 Native 虚拟机参数，例如 `-Xmx1g`。
+* Server 以 uid 1000 运行，而不是 root。挂载的 `/home/nacos/data` 和 `/home/nacos/logs` 目录需要对该 uid 可写；
+  使用命名卷时则继承镜像中目录的属主。
+* 归档包需在 linux/amd64 上构建，且其 glibc 版本不高于基础镜像 Ubuntu 24.04 的版本。
+* 夜间工作流（`.github/workflows/native-nightly.yml`）在 alibaba/nacos 默认分支最近 24 小时内有提交时（北京时间 02:00）从该分支构建镜像，对 MySQL 和 PostgreSQL 镜像做烟雾测试，并把通过测试的镜像推送到 `ghcr.io/<owner>/nacos-server`：MySQL 为 `native-nightly` 与 `native-nightly-<UTC 日期>`，PostgreSQL 为 `native-nightly-postgresql` 与 `native-nightly-postgresql-<UTC 日期>`。只构建 amd64。
+* 归档包的构建配置必须排除 Spring Boot 的 DataSource 自动配置：`spring.autoconfigure.exclude=org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration`。Nacos 使用自己的连接池。native profile 没有内嵌数据库驱动，而自动配置在没有 DataSource URL 时会在启动时失败。夜间工作流会写入这一行。
+* 即使设置了 `-Dnacos.home`，可执行文件的日志仍写到 `user.home/nacos/logs`。对容器用户来说就是 `/home/nacos/nacos/logs`，而这个目录无法创建，所以镜像把 `/home/nacos/nacos` 链接到 `/home/nacos`。这是对该行为的变通处理，不是修复。
+* 夜间构建会传入 `build/native-metadata`，它注册了 `com.zaxxer.hikari.HikariConfig` 的公开方法。Spring 通过反射把 `nacos.plugin.datasource.db.pool.config.*` 绑定到该类上，而 Nacos 打包的 HikariCP 元数据没有列出这些方法，所以设置了连接池参数的可执行文件会在启动时失败。JVM 镜像设置了其中四项。等打包的元数据列出这些方法后，删除该目录即可。
+
 ## 其他使用方式
 
 * 提示: 你需要通过 `example/.env` 中的以下配置来更改 Compose 文件中 [Nacos 镜像版本](https://hub.docker.com/r/nacos/nacos-server/tags)。

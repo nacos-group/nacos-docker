@@ -72,6 +72,64 @@ docker run --name nacos-standalone-derby-v2.5.1 \
     -d nacos/nacos-server:v2.5.1
 ```
 
+## Native Server image (experimental)
+
+`build/Dockerfile.Native` runs the Native executable of a Native archive instead of the JVM. Nacos does not
+publish a Native archive yet. Build one from alibaba/nacos with its `native` profile (see
+`bootstrap/README-AOT.md`), and copy it to `build/native-dist/nacos-native.tar.gz`. Each archive is built for
+one datasource, and the image must name the same datasource:
+
+```shell
+docker build -f build/Dockerfile.Native \
+    --build-arg NACOS_NATIVE_DATASOURCE=mysql \
+    -t nacos/nacos-server:native-mysql build
+
+docker run --name nacos-native-mysql \
+    -e NACOS_AUTH_TOKEN=${your_nacos_auth_secret_token} \
+    -e NACOS_AUTH_IDENTITY_KEY=${your_nacos_server_identity_key} \
+    -e NACOS_AUTH_IDENTITY_VALUE=${your_nacos_server_identity_value} \
+    -e MYSQL_SERVICE_HOST=${mysql_host} \
+    -e MYSQL_SERVICE_DB_NAME=${mysql_database} \
+    -e MYSQL_SERVICE_USER=${mysql_user} \
+    -e MYSQL_SERVICE_PASSWORD=${mysql_password} \
+    -p 8848:8848 \
+    -p 9848:9848 \
+    -p 8080:8080 \
+    -d nacos/nacos-server:native-mysql
+```
+
+* The archive decides the standalone or cluster mode, the deployment and the datasource. `MODE`,
+  `SPRING_DATASOURCE_PLATFORM` and `FUNCTION_MODE` may repeat these values, but a value that differs makes the
+  container exit before Nacos starts.
+* The MySQL variables are the same as in the other images. For PostgreSQL, build the archive for the
+  `postgresql` datasource, pass `--build-arg NACOS_NATIVE_DATASOURCE=postgresql`, and mount a copy of
+  `conf/application.properties` in which the PostgreSQL lines (commented in the template) replace the MySQL URL.
+* The archive contains no nacos-default-ai-* plugin, but the core AI module is in it. The MCP, Skill and ARD registries and AI resource search keep the values the
+  archive was built with, which are the defaults: the three registries are off, and resource search is on.
+  Setting one of them to another value, for example `NACOS_AI_REGISTRY_ENABLED=true`, makes the Server refuse to
+  start.
+* `NACOS_NATIVE_OPTS` passes Native VM options, for example `-Xmx1g`.
+* The Server runs as uid 1000, not root. Bind-mounted `/home/nacos/data` and `/home/nacos/logs` directories must
+  be writable by that uid; named volumes take the ownership of the image directories.
+* The archive must come from a linux/amd64 build whose glibc is not newer than that of Ubuntu 24.04, the base
+  image.
+* A nightly workflow (`.github/workflows/native-nightly.yml`) builds the image from the default branch of
+  alibaba/nacos when that branch had a commit in the last 24 hours (02:00 Beijing time). It tests the MySQL and
+  PostgreSQL images and publishes the ones that pass to `ghcr.io/<owner>/nacos-server`: `native-nightly` and
+  `native-nightly-<UTC date>` for MySQL, `native-nightly-postgresql` and `native-nightly-postgresql-<UTC date>` for
+  PostgreSQL. Only amd64 is built.
+* The build configuration of the archive must exclude Spring Boot's DataSource auto-configuration:
+  `spring.autoconfigure.exclude=org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration`. Nacos uses
+  its own connection pools. The native profile has no embedded database driver, and without a DataSource URL the
+  auto-configuration fails at startup. The nightly workflow writes this line.
+* The executable writes its logs to `user.home/nacos/logs` even when `-Dnacos.home` is set. For the container user that
+  is `/home/nacos/nacos/logs`, which cannot be created, so the image links `/home/nacos/nacos` to `/home/nacos`. This is
+  a workaround for that behaviour, not a fix of it.
+* The nightly build passes `build/native-metadata`, which registers the public methods of `com.zaxxer.hikari.HikariConfig`.
+  Spring binds the pool keys `nacos.plugin.datasource.db.pool.config.*` to that class by reflection. The bundled HikariCP
+  metadata of Nacos does not list those methods, so an executable that gets a pool key fails at startup. The JVM image sets
+  four pool keys. Remove the directory once the bundled metadata lists the methods.
+
 ## Advanced Usage
 
 * Tips: You can change [the version of the Nacos image](https://hub.docker.com/r/nacos/nacos-server/tags) in the compose file from the following configuration. `example/.env`
