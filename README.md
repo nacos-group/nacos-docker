@@ -115,6 +115,15 @@ Run the following command：
   ./mysql-init.sh && docker compose -f standalone-independent-mysql.yaml up
   ```
 
+For both standalone MySQL examples, run `bash mysql-init.sh` before starting Compose.
+The schema file is required: a missing `mysql-init/mysql-schema.sql` now causes an
+immediate bind-mount error instead of starting MySQL with an empty Nacos database.
+MySQL runs initialization SQL only when its data directory is empty. If MySQL has
+already created an empty Nacos database, back it up and import the release-matched
+schema into that database manually. Restarting Compose does not run initialization
+SQL again. For databases containing Nacos tables or data, use reviewed incremental
+migrations instead of importing the full schema or deleting the data directory.
+
 * Standalone Nacos Cluster
 
   ```powershell
